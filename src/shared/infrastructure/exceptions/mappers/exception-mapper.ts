@@ -10,15 +10,15 @@ export class ExceptionMapper {
   ]);
 
   private static readonly APPLICATION_STATUS_MAP = new Map<string, HttpStatus>([
-    [BusinessRuleException.name, HttpStatus.UNPROCESSABLE_ENTITY],
+    // [BusinessRuleException.name, HttpStatus.UNPROCESSABLE_ENTITY],
   ]);
 
   private static readonly INFRASTRUCTURE_STATUS_MAP = new Map<
     string,
     HttpStatus
   >([
-    [DatabaseException.name, HttpStatus.SERVICE_UNAVAILABLE],
-    [ExternalServiceException.name, HttpStatus.BAD_GATEWAY],
+    // [DatabaseException.name, HttpStatus.SERVICE_UNAVAILABLE],
+    // [ExternalServiceException.name, HttpStatus.BAD_GATEWAY],
   ]);
 
   static toHttpException(error: Error): HttpException {
