@@ -11,10 +11,7 @@ export class Validator<T> {
     this.value = value;
     const instance = new exceptionClass('test');
     if (!(instance instanceof DomainException)) {
-      throw new DomainException(
-        'Invalid exception type validator',
-        'INVALID_VALIDATOR',
-      );
+      throw new DomainException('Invalid exception type validator');
     }
     this.exceptionClass = exceptionClass;
   }
