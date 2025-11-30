@@ -12,6 +12,21 @@ export class Country {
     private readonly active: CountryActive,
     private readonly id?: CountryId,
   ) {}
+  static create(data: {
+    id?: number;
+    name: string;
+    abbreviation: string;
+    code: string;
+    active: boolean;
+  }): Country {
+    return new Country(
+      new CountryName(data.name),
+      new CountryAbbreviation(data.abbreviation),
+      new CountryCode(data.code),
+      new CountryActive(data.active),
+      data.id ? new CountryId(data.id) : undefined,
+    );
+  }
   public getId(): CountryId | undefined {
     return this.id;
   }

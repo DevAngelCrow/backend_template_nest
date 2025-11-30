@@ -57,7 +57,7 @@ export class ExceptionMapper {
       {
         statusCode: status,
         message: error.message,
-        code: error.code,
+        //code: error.code,
         type: 'DOMAIN_ERROR',
         timestamp: new Date().toISOString(),
       },

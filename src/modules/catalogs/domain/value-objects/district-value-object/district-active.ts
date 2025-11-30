@@ -1,7 +1,7 @@
 import { DomainException } from 'src/shared/domain/exceptions/domain.exception';
 import { Validator } from 'src/shared/domain/validator/validator-value-object';
 
-export class DepartmentActive {
+export class DistrictActive {
   private readonly _value: boolean;
 
   constructor(value: boolean) {
