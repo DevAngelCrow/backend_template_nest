@@ -4,8 +4,11 @@ import { CountryRepository } from 'src/modules/catalogs/domain/repositories/coun
 @Injectable()
 export class CountryGetAll {
   constructor(protected readonly countryRepository: CountryRepository) {}
-  public async run(): Promise<Country[]> {
-    const countries = await this.countryRepository.getAll();
-    return countries;
+  public async run(
+    page?: number,
+    per_page?: number,
+    filter?: string,
+  ): Promise<{ countries: Country[]; total: number }> {
+    return await this.countryRepository.getAll(page, per_page, filter);
   }
 }

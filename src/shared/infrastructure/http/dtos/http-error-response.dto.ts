@@ -1,32 +1,28 @@
 export class ErrorResponseDto {
   statusCode: number;
   message: string;
-  code?: string;
-  type:
-    | 'DOMAIN_ERROR'
-    | 'APPLICATION_ERROR'
-    | 'INFRASTRUCTURE_ERROR'
-    | 'INTERNAL_ERROR';
+  code: string;
+  type: string;
   timestamp: string;
   path?: string;
-  errors?: Array<{
-    field?: string;
+  stack?: string;
+  originalError?: {
+    name: string;
     message: string;
-  }>;
+  };
+
   constructor(
     statusCode: number,
     message: string,
-    type: ErrorResponseDto['type'],
-    code?: string,
+    code: string,
+    type: string,
     path?: string,
-    errors?: Array<{ field?: string; message: string }>,
   ) {
     this.statusCode = statusCode;
     this.message = message;
-    this.type = type;
     this.code = code;
-    this.path = path;
-    this.errors = errors;
+    this.type = type;
     this.timestamp = new Date().toISOString();
+    this.path = path;
   }
 }

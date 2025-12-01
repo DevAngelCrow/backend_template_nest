@@ -110,7 +110,7 @@ export class ExceptionMapper {
   ): HttpException {
     const response = new ErrorResponseDto(
       HttpStatus.INTERNAL_SERVER_ERROR,
-      'Internal server error',
+      error.message || 'Internal server error',
       'INTERNAL_ERROR',
       'INTERNAL_SERVER_ERROR',
       path,

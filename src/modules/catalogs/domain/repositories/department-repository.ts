@@ -8,7 +8,7 @@ export abstract class DepartmentRepository {
     page?: number,
     per_page?: number,
     filter?: string,
-  ): Promise<Department[]>;
+  ): Promise<{ departments: Department[]; total: number }>;
   abstract getOneById(id: DepartmentId): Promise<Department | null>;
   abstract delete(id: DepartmentId): Promise<void>;
 }

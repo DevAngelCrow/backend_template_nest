@@ -1,4 +1,6 @@
-export class NotFoundException extends Error {
+import { DomainException } from './domain.exception';
+
+export class NotFoundException extends DomainException {
   constructor(entity: string, id: string) {
     super(`${entity} with id ${id} not found`);
     this.name = 'NotFoundException';

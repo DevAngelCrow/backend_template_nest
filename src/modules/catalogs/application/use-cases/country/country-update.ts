@@ -2,6 +2,7 @@ import { CountryRepository } from 'src/modules/catalogs/domain/repositories/coun
 import { CountryDto } from '../../dtos/country.dto';
 import { Country } from 'src/modules/catalogs/domain/entities/country';
 import { Injectable } from '@nestjs/common';
+import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
 @Injectable()
 export class CountryUpdate {
@@ -14,7 +15,7 @@ export class CountryUpdate {
     }
     const foundCountry = await this.countryRepository.getOneById(countryId);
     if (!foundCountry) {
-      throw new Error(`Country with id ${countryId.value()} not found`);
+      throw new NotFoundException('Country', countryId.value().toString());
     }
     await this.countryRepository.update(country);
   }

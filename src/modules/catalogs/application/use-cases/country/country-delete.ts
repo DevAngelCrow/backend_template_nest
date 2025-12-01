@@ -1,3 +1,4 @@
+import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Injectable } from '@nestjs/common';
 import { CountryRepository } from 'src/modules/catalogs/domain/repositories/country-repository';
 import { CountryId } from 'src/modules/catalogs/domain/value-objects/country-value-object/country-id';
@@ -8,7 +9,7 @@ export class CountryDelete {
   public async run(id: number): Promise<void> {
     const country = await this.countryRepository.getOneById(new CountryId(id));
     if (!country) {
-      throw new Error(`Country with id ${id} not found`);
+      throw new NotFoundException('Country', id.toString());
     }
     const countryId = country.getId();
     if (!countryId) {

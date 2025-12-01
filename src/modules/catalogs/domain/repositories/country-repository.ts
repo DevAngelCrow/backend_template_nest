@@ -8,7 +8,7 @@ export abstract class CountryRepository {
     page?: number,
     per_page?: number,
     filter?: string,
-  ): Promise<Country[]>;
+  ): Promise<{ countries: Country[]; total: number }>;
   abstract getOneById(id: CountryId): Promise<Country | null>;
   abstract delete(id: CountryId): Promise<void>;
 }

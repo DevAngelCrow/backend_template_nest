@@ -11,10 +11,7 @@ export class MaritalStatusName {
     )
       .required('Marital status name is required')
       .string('Marital status name must be a string')
-      .maxLength(
-        100,
-        'Marital status name must be at most 100 characters long',
-      )
+      .maxLength(100, 'Marital status name must be at most 100 characters long')
       .getValue();
   }
 
