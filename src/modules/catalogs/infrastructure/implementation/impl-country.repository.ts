@@ -26,7 +26,7 @@ export class ImplCountryRepository implements CountryRepository {
       if (error instanceof Error) {
         throw new Error(`Error creating country: ${error.message}`);
       }
-      throw new Error('Error creating country: Unknown error');
+      throw new DatabaseException('Error creating country', 'create');
     }
   }
   async update(country: Country): Promise<void> {

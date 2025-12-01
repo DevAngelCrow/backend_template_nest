@@ -12,6 +12,21 @@ export class Department {
     private readonly active: DepartmentActive,
     private readonly id?: DepartmentId,
   ) {}
+  static create(data: {
+    id?: number;
+    name: string;
+    description: string;
+    id_country: number;
+    active: boolean;
+  }): Department {
+    return new Department(
+      new DepartmentName(data.name),
+      new DepartmentDescription(data.description),
+      new DepartmentIdCountry(data.id_country),
+      new DepartmentActive(data.active),
+      data.id ? new DepartmentId(data.id) : undefined,
+    );
+  }
   public getId(): DepartmentId | undefined {
     return this.id;
   }

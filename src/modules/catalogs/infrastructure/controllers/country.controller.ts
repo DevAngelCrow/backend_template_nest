@@ -12,10 +12,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { CountryCreate } from '../../application/use-cases/country/country-create';
-import { CreateCountryDto } from '../dtos/validators/create-country.dto';
+import { CreateCountryDto } from '../dtos/validators/country/create-country.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { CountryUpdate } from '../../application/use-cases/country/country-update';
-import { UpdateCountryDto } from '../dtos/validators/update-country.dto';
+import { UpdateCountryDto } from '../dtos/validators/country/update-country.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 
 import { CountryGetAll } from '../../application/use-cases/country/country-get-all';
