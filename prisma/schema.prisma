@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated"
+  output   = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -316,3 +316,5 @@ model rol_permissions {
   ctl_permissions ctl_permissions @relation(fields: [id_permission], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rol_permissions_id_permission_foreign")
   mnt_role        mnt_role        @relation(fields: [id_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rol_permissions_id_role_foreign")
 }
+
+

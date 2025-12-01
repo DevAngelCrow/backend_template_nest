@@ -9,7 +9,7 @@ export class ImplCountryRepository implements CountryRepository {
   constructor(private readonly prisma: PrismaService) {}
   async create(country: Country): Promise<void> {
     try {
-      await this.prisma.ctl_country.create({
+      await this.prisma.client.ctl_country.create({
         data: {
           name: country.getName().value(),
           code: country.getCode().value(),

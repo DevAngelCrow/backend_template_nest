@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { Country } from 'src/modules/catalogs/domain/entities/country';
 import { CountryRepository } from 'src/modules/catalogs/domain/repositories/country-repository';
 import { CountryId } from 'src/modules/catalogs/domain/value-objects/country-value-object/country-id';
 
+@Injectable()
 export class CountryGetOneById {
   constructor(protected readonly countryRepository: CountryRepository) {}
   public async run(id: number): Promise<Country | null> {

@@ -2,12 +2,12 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class CreateCountryDto {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
-  abbreviation: string;
+  abbreviation!: string;
   @IsString()
-  code: string;
+  code!: string;
   @IsBoolean()
   @IsOptional()
-  active: boolean;
+  active!: boolean;
 }
