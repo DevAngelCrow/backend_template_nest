@@ -12,6 +12,21 @@ export class District {
     private readonly active: DistrictActive,
     private readonly id?: DistrictId,
   ) {}
+  static create(data: {
+    id?: number;
+    name: string;
+    description: string;
+    id_municipality: number;
+    active: boolean;
+  }): District {
+    return new District(
+      new DistrictIdMunicipality(data.id_municipality),
+      new DistrictName(data.name),
+      new DistrictDescription(data.description),
+      new DistrictActive(data.active),
+      data.id ? new DistrictId(data.id) : undefined,
+    );
+  }
   public getId(): DistrictId | undefined {
     return this.id;
   }

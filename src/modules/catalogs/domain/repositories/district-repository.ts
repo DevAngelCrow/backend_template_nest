@@ -8,7 +8,7 @@ export abstract class DistrictRepository {
     page?: number,
     per_page?: number,
     filter?: string,
-  ): Promise<District[]>;
+  ): Promise<{ districts: District[]; total: number }>;
   abstract getOneById(id: DistrictId): Promise<District | null>;
   abstract delete(id: DistrictId): Promise<void>;
 }

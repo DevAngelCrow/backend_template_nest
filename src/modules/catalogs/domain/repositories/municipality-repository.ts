@@ -8,7 +8,7 @@ export abstract class MunicipalityRespository {
     page?: number,
     per_page?: number,
     filter?: string,
-  ): Promise<Municipality[]>;
+  ): Promise<{ municipalities: Municipality[]; total: number }>;
   abstract getOneById(id: MunicipalityId): Promise<Municipality | null>;
   abstract delete(id: MunicipalityId): Promise<void>;
 }
