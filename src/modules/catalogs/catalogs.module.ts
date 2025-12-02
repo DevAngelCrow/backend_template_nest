@@ -37,7 +37,12 @@ import { MunicipalityRespository } from './domain/repositories/municipality-repo
   imports: [
     RouterModule.register([{ path: 'catalogs', module: CatalogsModule }]),
   ],
-  controllers: [CountryController, DepartmentController, DistrictController, MunicipalityController],
+  controllers: [
+    CountryController,
+    DepartmentController,
+    DistrictController,
+    MunicipalityController,
+  ],
   providers: [
     CountryCreate,
     CountryUpdate,
