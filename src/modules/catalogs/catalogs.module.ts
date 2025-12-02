@@ -40,6 +40,14 @@ import { GlobalStatusGetAll } from './application/use-cases/global-status/global
 import { GlobalStatusGetOneById } from './application/use-cases/global-status/global-status-get-one-by-id';
 import { ImplGlobalStatusRepository } from './infrastructure/implementation/impl-global-status.repository';
 import { GlobalStatsusRepository } from './domain/repositories/global-status-repository';
+import { MaritalStatusController } from './infrastructure/controllers/marital-status.controller';
+import { MaritalStatusCreate } from './application/use-cases/marital-status/marital-status-create';
+import { MaritalStatusUpdate } from './application/use-cases/marital-status/marital-status-update';
+import { MaritalStatusDelete } from './application/use-cases/marital-status/marital-status-delete';
+import { MaritalStatusGetAll } from './application/use-cases/marital-status/marital-status-get-all';
+import { MaritalStatusGetOneById } from './application/use-cases/marital-status/marital-status-get-one-by-id';
+import { ImplMaritalStatusRepository } from './infrastructure/implementation/impl-marital-status.repository';
+import { MaritalStatusRepository } from './domain/repositories/marital-status-repository';
 
 @Module({
   imports: [
@@ -51,6 +59,7 @@ import { GlobalStatsusRepository } from './domain/repositories/global-status-rep
     DistrictController,
     MunicipalityController,
     GlobalStatusController,
+    MaritalStatusController,
   ],
   providers: [
     CountryCreate,
@@ -78,11 +87,17 @@ import { GlobalStatsusRepository } from './domain/repositories/global-status-rep
     GlobalStatusDelete,
     GlobalStatusGetAll,
     GlobalStatusGetOneById,
+    MaritalStatusCreate,
+    MaritalStatusUpdate,
+    MaritalStatusDelete,
+    MaritalStatusGetAll,
+    MaritalStatusGetOneById,
     { provide: CountryRepository, useClass: ImplCountryRepository },
     { provide: DepartmentRepository, useClass: ImplDepartmentRepository },
     { provide: DistrictRepository, useClass: ImplDistrictRepository },
     { provide: MunicipalityRespository, useClass: ImplMunicipalityRepository },
     { provide: GlobalStatsusRepository, useClass: ImplGlobalStatusRepository },
+    { provide: MaritalStatusRepository, useClass: ImplMaritalStatusRepository },
   ],
   exports: [
     CountryCreate,
@@ -110,6 +125,11 @@ import { GlobalStatsusRepository } from './domain/repositories/global-status-rep
     GlobalStatusDelete,
     GlobalStatusGetAll,
     GlobalStatusGetOneById,
+    MaritalStatusCreate,
+    MaritalStatusUpdate,
+    MaritalStatusDelete,
+    MaritalStatusGetAll,
+    MaritalStatusGetOneById,
   ],
 })
 export class CatalogsModule {}

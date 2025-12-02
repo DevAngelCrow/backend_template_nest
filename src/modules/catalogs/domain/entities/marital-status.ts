@@ -8,6 +8,17 @@ export class MaritalStatus {
     private readonly description?: MaritalStatusDescription,
     private readonly id?: MaritalStatusId,
   ) {}
+  static create(data: {
+    id?: number;
+    name: string;
+    description?: string;
+  }): MaritalStatus {
+    return new MaritalStatus(
+      new MaritalStatusName(data.name),
+      data.description ? new MaritalStatusDescription(data.description) : undefined,
+      data.id ? new MaritalStatusId(data.id) : undefined,
+    );
+  }
 
   public getId(): MaritalStatusId | undefined {
     return this.id;

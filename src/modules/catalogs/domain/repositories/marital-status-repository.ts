@@ -8,7 +8,7 @@ export abstract class MaritalStatusRepository {
     page?: number,
     per_page?: number,
     filter?: string,
-  ): Promise<MaritalStatus[]>;
+  ): Promise<{ maritalStatuses: MaritalStatus[]; total: number }>;
   abstract getOneById(id: MaritalStatusId): Promise<MaritalStatus | null>;
   abstract delete(id: MaritalStatusId): Promise<void>;
 }
