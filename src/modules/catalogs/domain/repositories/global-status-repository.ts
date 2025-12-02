@@ -8,7 +8,7 @@ export abstract class GlobalStatsusRepository {
     page?: number,
     per_page?: number,
     filter?: string,
-  ): Promise<GlobalStatus[]>;
+  ): Promise<{ globalStatuses: GlobalStatus[]; total: number }>;
   abstract getOneById(id: GlobalStatusId): Promise<GlobalStatus | null>;
   abstract delete(id: GlobalStatusId): Promise<void>;
 }

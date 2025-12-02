@@ -3,7 +3,9 @@ import { MunicipalityRespository } from 'src/modules/catalogs/domain/repositorie
 import { Injectable } from '@nestjs/common';
 @Injectable()
 export class MunicipalityGetAll {
-  constructor(protected readonly municipalityRepository: MunicipalityRespository) {}
+  constructor(
+    protected readonly municipalityRepository: MunicipalityRespository,
+  ) {}
   public async run(
     page?: number,
     per_page?: number,

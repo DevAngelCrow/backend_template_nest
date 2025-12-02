@@ -32,6 +32,14 @@ import { MunicipalityGetAll } from './application/use-cases/municipality/municip
 import { MunicipalityGetOneById } from './application/use-cases/municipality/municipality-get-one-by-id';
 import { ImplMunicipalityRepository } from './infrastructure/implementation/impl-municipality.repository';
 import { MunicipalityRespository } from './domain/repositories/municipality-repository';
+import { GlobalStatusController } from './infrastructure/controllers/global-status.controller';
+import { GlobalStatusCreate } from './application/use-cases/global-status/global-status-create';
+import { GlobalStatusUpdate } from './application/use-cases/global-status/global-status-update';
+import { GlobalStatusDelete } from './application/use-cases/global-status/global-status-delete';
+import { GlobalStatusGetAll } from './application/use-cases/global-status/global-status-get-all';
+import { GlobalStatusGetOneById } from './application/use-cases/global-status/global-status-get-one-by-id';
+import { ImplGlobalStatusRepository } from './infrastructure/implementation/impl-global-status.repository';
+import { GlobalStatsusRepository } from './domain/repositories/global-status-repository';
 
 @Module({
   imports: [
@@ -42,6 +50,7 @@ import { MunicipalityRespository } from './domain/repositories/municipality-repo
     DepartmentController,
     DistrictController,
     MunicipalityController,
+    GlobalStatusController,
   ],
   providers: [
     CountryCreate,
@@ -64,10 +73,16 @@ import { MunicipalityRespository } from './domain/repositories/municipality-repo
     MunicipalityDelete,
     MunicipalityGetAll,
     MunicipalityGetOneById,
+    GlobalStatusCreate,
+    GlobalStatusUpdate,
+    GlobalStatusDelete,
+    GlobalStatusGetAll,
+    GlobalStatusGetOneById,
     { provide: CountryRepository, useClass: ImplCountryRepository },
     { provide: DepartmentRepository, useClass: ImplDepartmentRepository },
     { provide: DistrictRepository, useClass: ImplDistrictRepository },
     { provide: MunicipalityRespository, useClass: ImplMunicipalityRepository },
+    { provide: GlobalStatsusRepository, useClass: ImplGlobalStatusRepository },
   ],
   exports: [
     CountryCreate,
@@ -90,6 +105,11 @@ import { MunicipalityRespository } from './domain/repositories/municipality-repo
     MunicipalityDelete,
     MunicipalityGetAll,
     MunicipalityGetOneById,
+    GlobalStatusCreate,
+    GlobalStatusUpdate,
+    GlobalStatusDelete,
+    GlobalStatusGetAll,
+    GlobalStatusGetOneById,
   ],
 })
 export class CatalogsModule {}

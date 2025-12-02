@@ -12,6 +12,21 @@ export class GlobalStatus {
     private readonly active: GlobalStatusActive,
     private readonly id?: GlobalStatusId,
   ) {}
+  static create(data: {
+    id?: number;
+    name: string;
+    description: string;
+    table_header: string;
+    active: boolean;
+  }): GlobalStatus {
+    return new GlobalStatus(
+      new GlobalStatusName(data.name),
+      new GlobalStatusDescription(data.description),
+      new GlobalStatusTableHeader(data.table_header),
+      new GlobalStatusActive(data.active),
+      data.id ? new GlobalStatusId(data.id) : undefined,
+    );
+  }
   public getId(): GlobalStatusId | undefined {
     return this.id;
   }
