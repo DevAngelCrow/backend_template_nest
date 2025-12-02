@@ -6,10 +6,13 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MunicipalityGetOneById {
-  constructor(protected readonly municipalityRepository: MunicipalityRespository) {}
+  constructor(
+    protected readonly municipalityRepository: MunicipalityRespository,
+  ) {}
   public async run(id: number): Promise<Municipality | null> {
     const municipalityId = new MunicipalityId(id);
-    const municipality = await this.municipalityRepository.getOneById(municipalityId);
+    const municipality =
+      await this.municipalityRepository.getOneById(municipalityId);
     if (!municipality) {
       throw new NotFoundException('Municipality', id.toString());
     }

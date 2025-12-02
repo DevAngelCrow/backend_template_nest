@@ -6,7 +6,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MunicipalityUpdate {
-  constructor(protected readonly municipalityRepository: MunicipalityRespository) {}
+  constructor(
+    protected readonly municipalityRepository: MunicipalityRespository,
+  ) {}
   public async run(municipality_dto: MunicipalityDto): Promise<void> {
     const municipality = Municipality.create({ ...municipality_dto });
     const municipalityId = municipality.getId();
