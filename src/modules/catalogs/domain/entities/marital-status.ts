@@ -15,7 +15,9 @@ export class MaritalStatus {
   }): MaritalStatus {
     return new MaritalStatus(
       new MaritalStatusName(data.name),
-      data.description ? new MaritalStatusDescription(data.description) : undefined,
+      data.description
+        ? new MaritalStatusDescription(data.description)
+        : undefined,
       data.id ? new MaritalStatusId(data.id) : undefined,
     );
   }
