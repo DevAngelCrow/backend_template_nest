@@ -20,6 +20,8 @@ import { PersonGetOneByEmail } from '../../application/use-cases/person/person-g
 import { UpdatePersonDto } from '../dtos/validators/person/update-person.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 
 type PersonGetAllResponse =
   | HttpPaginatedResponseDto<PersonHttpDto>
@@ -90,33 +92,36 @@ export class PersonController {
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
     @Query('filter') filter?: string,
   ): Promise<SuccessResponseDto<PersonGetAllResponse>> {
-    const { people, total } = await this.personGetAll.run(
-      page,
-      per_page,
-      filter,
-    );
-    const personDtoHttp = people.map((person) =>
-      PersonHttpDto.fromEntity(person),
-    );
-    if (page !== undefined && per_page !== undefined) {
-      const total_page = Math.ceil(total / per_page);
-      const paginatedResponse = new HttpPaginatedResponseDto(
-        personDtoHttp,
-        total,
-        total_page,
-        page,
-        per_page,
+    if (page && per_page) {
+      const paginationParams = new PaginationParamsDto(page, per_page);
+      const peoplePagination = await this.personGetAll.run(
+        paginationParams,
+        filter,
       );
-      return new SuccessResponseDto<HttpPaginatedResponseDto<PersonHttpDto>>(
-        paginatedResponse,
-        200,
-        'People retrieved successfully',
-      );
+      if (peoplePagination instanceof Pagination) {
+        const peopleHttpDto = peoplePagination
+          .getEntityList()
+          .map((person) => PersonHttpDto.fromEntity(person));
+        const paginatedPeopleResponse =
+          new HttpPaginatedResponseDto<PersonHttpDto>(
+            peopleHttpDto,
+            peoplePagination.getTotalItems(),
+            peoplePagination.getTotalPages(),
+            peoplePagination.getPage(),
+            peoplePagination.getPerPage(),
+          );
+        return new SuccessResponseDto<HttpPaginatedResponseDto<PersonHttpDto>>(
+          paginatedPeopleResponse,
+        );
+      }
     }
-    return new SuccessResponseDto<PersonHttpDto[]>(
-      personDtoHttp,
-      200,
-      'People retrieved successfully',
-    );
+
+    const people = await this.personGetAll.run(undefined, filter);
+
+    const peopleHttpDto =
+      people instanceof Array
+        ? people.map((person) => PersonHttpDto.fromEntity(person))
+        : [];
+    return new SuccessResponseDto<PersonHttpDto[]>(peopleHttpDto);
   }
 }

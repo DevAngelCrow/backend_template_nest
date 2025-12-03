@@ -2,9 +2,11 @@ import { Person } from '@/modules/profile/domain/entities/person';
 import { PersonRepository } from '@/modules/profile/domain/repositories/person.repository';
 import { PersonDto } from '../../dtos/person.dto';
 import { Injectable } from '@nestjs/common';
+import { Transactional } from '@/shared/infrastructure/decorators/transactional.decorator';
 @Injectable()
 export class PersonCreate {
   constructor(protected readonly personRepository: PersonRepository) {}
+  @Transactional()
   public async run(person_dto: PersonDto): Promise<Person | void> {
     const person = Person.create({
       first_name: person_dto.first_name,

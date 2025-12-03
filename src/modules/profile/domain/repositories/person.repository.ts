@@ -1,6 +1,8 @@
+import { Pagination } from '@/shared/domain/value-object/pagination';
 import { Person } from '../entities/person';
 import { PersonEmail } from '../value-objects/person-value-object/person-email';
 import { PersonId } from '../value-objects/person-value-object/person-id';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 
 export abstract class PersonRepository {
   abstract create(
@@ -9,10 +11,9 @@ export abstract class PersonRepository {
   ): Promise<Person | void>;
   abstract update(person: Person, nationalities: number[]): Promise<void>;
   abstract getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ people: Person[]; total: number }>;
+  ): Promise<Pagination<Person> | Person[]>;
   abstract getOneById(id: PersonId): Promise<Person | null>;
   abstract getOneByEmail(email: PersonEmail): Promise<Person | null>;
   abstract delete(id: PersonId): Promise<void>;

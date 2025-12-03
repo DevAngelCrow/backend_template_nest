@@ -13,9 +13,9 @@ export class HttpPaginatedResponseDto<T> {
     per_page: number,
   ) {
     this.data = data;
-    this.total_items = total_items;
-    this.total_page = total_page;
     this.current_page = current_page;
     this.per_page = per_page;
+    this.total_items = total_items;
+    this.total_page = total_page;
   }
 }
