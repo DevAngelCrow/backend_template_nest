@@ -15,6 +15,8 @@ import {
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { GlobalStatusHttpDto } from '../dtos/http/global-status-http-dto/global-status-http.dto';
 import { GlobalStatusCreate } from '../../application/use-cases/global-status/global-status-create';
 import { GlobalStatusUpdate } from '../../application/use-cases/global-status/global-status-update';
@@ -68,33 +70,40 @@ export class GlobalStatusController {
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
     @Query('filter') filter?: string,
   ): Promise<SuccessResponseDto<GlobalStatusGetAllResponse>> {
-    const { globalStatuses, total } = await this.globalStatusGetAll.run(
-      page,
-      per_page,
-      filter,
-    );
-    const globalStatusDtoHttp = globalStatuses.map((globalStatus) =>
-      GlobalStatusHttpDto.fromEntity(globalStatus),
-    );
-    if (page !== undefined && per_page !== undefined) {
-      const total_page = Math.ceil(total / per_page);
-
-      const paginatedResponse = new HttpPaginatedResponseDto(
-        globalStatusDtoHttp,
-        total,
-        total_page,
-        page,
-        per_page,
+    if (page && per_page) {
+      const paginationParams = new PaginationParamsDto(page, per_page);
+      const globalStatusesPagination = await this.globalStatusGetAll.run(
+        paginationParams,
+        filter,
       );
-
-      return new SuccessResponseDto(
-        paginatedResponse,
-        HttpStatus.OK,
-        'GlobalStatuses retrieved successfully',
-      );
+      if (globalStatusesPagination instanceof Pagination) {
+        const globalStatusesHttpDto = globalStatusesPagination
+          .getEntityList()
+          .map((globalStatus) => GlobalStatusHttpDto.fromEntity(globalStatus));
+        const paginatedGlobalStatusesResponse =
+          new HttpPaginatedResponseDto<GlobalStatusHttpDto>(
+            globalStatusesHttpDto,
+            globalStatusesPagination.getTotalItems(),
+            globalStatusesPagination.getTotalPages(),
+            globalStatusesPagination.getPage(),
+            globalStatusesPagination.getPerPage(),
+          );
+        return new SuccessResponseDto<HttpPaginatedResponseDto<GlobalStatusHttpDto>>(
+          paginatedGlobalStatusesResponse,
+          HttpStatus.OK,
+          'GlobalStatuses retrieved successfully',
+        );
+      }
     }
-    return new SuccessResponseDto(
-      globalStatusDtoHttp,
+
+    const globalStatuses = await this.globalStatusGetAll.run(undefined, filter);
+
+    const globalStatusesHttpDto =
+      globalStatuses instanceof Array
+        ? globalStatuses.map((globalStatus) => GlobalStatusHttpDto.fromEntity(globalStatus))
+        : [];
+    return new SuccessResponseDto<GlobalStatusHttpDto[]>(
+      globalStatusesHttpDto,
       HttpStatus.OK,
       'GlobalStatuses retrieved successfully',
     );

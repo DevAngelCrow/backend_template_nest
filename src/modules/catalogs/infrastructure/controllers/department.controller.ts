@@ -15,6 +15,8 @@ import {
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { DepartmentHttpDto } from '../dtos/http/department-http-dto/department-http.dto';
 import { DepartmentCreate } from '../../application/use-cases/department/department-create';
 import { DepartmentUpdate } from '../../application/use-cases/department/department-update';
@@ -68,33 +70,40 @@ export class DepartmentController {
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
     @Query('filter') filter?: string,
   ): Promise<SuccessResponseDto<DepartmentGetAllResponse>> {
-    const { departments, total } = await this.departmentGetAll.run(
-      page,
-      per_page,
-      filter,
-    );
-    const departmentDtoHttp = departments.map((department) =>
-      DepartmentHttpDto.fromEntity(department),
-    );
-    if (page !== undefined && per_page !== undefined) {
-      const total_page = Math.ceil(total / per_page);
-
-      const paginatedResponse = new HttpPaginatedResponseDto(
-        departmentDtoHttp,
-        total,
-        total_page,
-        page,
-        per_page,
+    if (page && per_page) {
+      const paginationParams = new PaginationParamsDto(page, per_page);
+      const departmentsPagination = await this.departmentGetAll.run(
+        paginationParams,
+        filter,
       );
-
-      return new SuccessResponseDto(
-        paginatedResponse,
-        HttpStatus.OK,
-        'Departments retrieved successfully',
-      );
+      if (departmentsPagination instanceof Pagination) {
+        const departmentsHttpDto = departmentsPagination
+          .getEntityList()
+          .map((department) => DepartmentHttpDto.fromEntity(department));
+        const paginatedDepartmentsResponse =
+          new HttpPaginatedResponseDto<DepartmentHttpDto>(
+            departmentsHttpDto,
+            departmentsPagination.getTotalItems(),
+            departmentsPagination.getTotalPages(),
+            departmentsPagination.getPage(),
+            departmentsPagination.getPerPage(),
+          );
+        return new SuccessResponseDto<HttpPaginatedResponseDto<DepartmentHttpDto>>(
+          paginatedDepartmentsResponse,
+          HttpStatus.OK,
+          'Departments retrieved successfully',
+        );
+      }
     }
-    return new SuccessResponseDto(
-      departmentDtoHttp,
+
+    const departments = await this.departmentGetAll.run(undefined, filter);
+
+    const departmentsHttpDto =
+      departments instanceof Array
+        ? departments.map((department) => DepartmentHttpDto.fromEntity(department))
+        : [];
+    return new SuccessResponseDto<DepartmentHttpDto[]>(
+      departmentsHttpDto,
       HttpStatus.OK,
       'Departments retrieved successfully',
     );

@@ -15,6 +15,8 @@ import {
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { DistrictHttpDto } from '../dtos/http/district-http-dto/district-http.dto';
 import { DistrictCreate } from '../../application/use-cases/district/district-create';
 import { DistrictUpdate } from '../../application/use-cases/district/district-update';
@@ -68,33 +70,40 @@ export class DistrictController {
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
     @Query('filter') filter?: string,
   ): Promise<SuccessResponseDto<DistrictGetAllResponse>> {
-    const { districts, total } = await this.districtGetAll.run(
-      page,
-      per_page,
-      filter,
-    );
-    const districtDtoHttp = districts.map((district) =>
-      DistrictHttpDto.fromEntity(district),
-    );
-    if (page !== undefined && per_page !== undefined) {
-      const total_page = Math.ceil(total / per_page);
-
-      const paginatedResponse = new HttpPaginatedResponseDto(
-        districtDtoHttp,
-        total,
-        total_page,
-        page,
-        per_page,
+    if (page && per_page) {
+      const paginationParams = new PaginationParamsDto(page, per_page);
+      const districtsPagination = await this.districtGetAll.run(
+        paginationParams,
+        filter,
       );
-
-      return new SuccessResponseDto(
-        paginatedResponse,
-        HttpStatus.OK,
-        'Districts retrieved successfully',
-      );
+      if (districtsPagination instanceof Pagination) {
+        const districtsHttpDto = districtsPagination
+          .getEntityList()
+          .map((district) => DistrictHttpDto.fromEntity(district));
+        const paginatedDistrictsResponse =
+          new HttpPaginatedResponseDto<DistrictHttpDto>(
+            districtsHttpDto,
+            districtsPagination.getTotalItems(),
+            districtsPagination.getTotalPages(),
+            districtsPagination.getPage(),
+            districtsPagination.getPerPage(),
+          );
+        return new SuccessResponseDto<HttpPaginatedResponseDto<DistrictHttpDto>>(
+          paginatedDistrictsResponse,
+          HttpStatus.OK,
+          'Districts retrieved successfully',
+        );
+      }
     }
-    return new SuccessResponseDto(
-      districtDtoHttp,
+
+    const districts = await this.districtGetAll.run(undefined, filter);
+
+    const districtsHttpDto =
+      districts instanceof Array
+        ? districts.map((district) => DistrictHttpDto.fromEntity(district))
+        : [];
+    return new SuccessResponseDto<DistrictHttpDto[]>(
+      districtsHttpDto,
       HttpStatus.OK,
       'Districts retrieved successfully',
     );

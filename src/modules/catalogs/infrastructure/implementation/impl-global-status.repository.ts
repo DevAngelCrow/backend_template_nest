@@ -5,6 +5,11 @@ import { GlobalStatusId } from '../../domain/value-objects/goblal-status-value-o
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_status } from 'generated/prisma/client';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
+import { EntityList } from '@/shared/domain/value-object/entity-list';
+import { TotalItems } from '@/shared/domain/value-object/total-items';
+import { TotalPages } from '@/shared/domain/value-object/total-page';
 
 @Injectable()
 export class ImplGlobalStatusRepository implements GlobalStatsusRepository {
@@ -48,36 +53,57 @@ export class ImplGlobalStatusRepository implements GlobalStatsusRepository {
     }
   }
   async getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ globalStatuses: GlobalStatus[]; total: number }> {
+  ): Promise<Pagination<GlobalStatus> | GlobalStatus[]> {
     try {
       const where = {
         name: {
           contains: filter,
+          mode: 'insensitive' as const,
         },
       };
       const [globalStatusesDb, total] = await Promise.all([
         this.prisma.ctl_status.findMany({
-          skip: page && per_page ? (page - 1) * per_page : undefined,
-          take: per_page,
-          where: {
-            name: {
-              contains: filter,
-            },
-          },
+          skip:
+            pagination_params?.getPage().value() &&
+            pagination_params?.getPerPage().value()
+              ? (pagination_params.getPage().value() - 1) *
+                pagination_params.getPerPage().value()
+              : undefined,
+          take: pagination_params?.getPerPage().value(),
+          where,
           orderBy: {
             id: 'asc',
           },
         }),
         this.prisma.ctl_status.count({ where }),
       ]);
+
       const globalStatuses = globalStatusesDb.map((globalStatusDb) =>
         this.mapToDomain(globalStatusDb),
       );
+
       this.globalStatuses = globalStatuses;
-      return { globalStatuses: this.globalStatuses, total: total };
+
+      if (!pagination_params) {
+        return globalStatuses;
+      }
+
+      const entityList: EntityList<GlobalStatus> =
+        globalStatuses.length > 0
+          ? new EntityList<GlobalStatus>(globalStatuses)
+          : new EntityList<GlobalStatus>([]);
+
+      return new Pagination<GlobalStatus>(
+        entityList,
+        pagination_params.getPage(),
+        pagination_params.getPerPage(),
+        new TotalItems(total),
+        new TotalPages(
+          Math.ceil(total / pagination_params.getPerPage().value()),
+        ),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error getting global statuses: ${error.message}`);

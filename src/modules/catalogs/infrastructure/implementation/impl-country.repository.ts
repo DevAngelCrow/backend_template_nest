@@ -6,6 +6,11 @@ import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/pris
 import { ctl_country } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
+import { EntityList } from '@/shared/domain/value-object/entity-list';
+import { TotalItems } from '@/shared/domain/value-object/total-items';
+import { TotalPages } from '@/shared/domain/value-object/total-page';
 
 @Injectable()
 export class ImplCountryRepository implements CountryRepository {
@@ -50,32 +55,31 @@ export class ImplCountryRepository implements CountryRepository {
     }
   }
   async getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ countries: Country[]; total: number }> {
+  ): Promise<Pagination<Country> | Country[]> {
     try {
       const where = {
         name: {
           contains: filter,
+          mode: 'insensitive' as const,
         },
       };
       const [countriesDb, total] = await Promise.all([
         this.prisma.ctl_country.findMany({
-          skip: page && per_page ? (page - 1) * per_page : undefined,
-          take: per_page,
-          where: {
-            name: {
-              contains: filter,
-            },
-          },
+          skip:
+            pagination_params?.getPage().value() &&
+            pagination_params?.getPerPage().value()
+              ? (pagination_params.getPage().value() - 1) *
+                pagination_params.getPerPage().value()
+              : undefined,
+          take: pagination_params?.getPerPage().value(),
+          where,
           orderBy: {
             id: 'asc',
           },
         }),
-        this.prisma.ctl_country.count({
-          where,
-        }),
+        this.prisma.ctl_country.count({ where }),
       ]);
 
       const countries = countriesDb.map((countryDb) =>
@@ -83,10 +87,28 @@ export class ImplCountryRepository implements CountryRepository {
       );
 
       this.countries = countries;
-      return { countries: this.countries, total: total };
+
+      if (!pagination_params) {
+        return countries;
+      }
+
+      const entityList: EntityList<Country> =
+        countries.length > 0
+          ? new EntityList<Country>(countries)
+          : new EntityList<Country>([]);
+
+      return new Pagination<Country>(
+        entityList,
+        pagination_params.getPage(),
+        pagination_params.getPerPage(),
+        new TotalItems(total),
+        new TotalPages(
+          Math.ceil(total / pagination_params.getPerPage().value()),
+        ),
+      );
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error creating country: ${error.message}`);
+        throw new Error(`Error getting countries: ${error.message}`);
       }
       throw new DatabaseException('Error getting countries', 'getAll');
     }

@@ -5,6 +5,11 @@ import { DepartmentId } from '../../domain/value-objects/department-value-object
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_department } from 'generated/prisma/client';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
+import { EntityList } from '@/shared/domain/value-object/entity-list';
+import { TotalItems } from '@/shared/domain/value-object/total-items';
+import { TotalPages } from '@/shared/domain/value-object/total-page';
 
 @Injectable()
 export class ImplDepartmentRepository implements DepartmentRepository {
@@ -48,36 +53,57 @@ export class ImplDepartmentRepository implements DepartmentRepository {
     }
   }
   async getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ departments: Department[]; total: number }> {
+  ): Promise<Pagination<Department> | Department[]> {
     try {
       const where = {
         name: {
           contains: filter,
+          mode: 'insensitive' as const,
         },
       };
       const [departmentsDb, total] = await Promise.all([
         this.prisma.ctl_department.findMany({
-          skip: page && per_page ? (page - 1) * per_page : undefined,
-          take: per_page,
-          where: {
-            name: {
-              contains: filter,
-            },
-          },
+          skip:
+            pagination_params?.getPage().value() &&
+            pagination_params?.getPerPage().value()
+              ? (pagination_params.getPage().value() - 1) *
+                pagination_params.getPerPage().value()
+              : undefined,
+          take: pagination_params?.getPerPage().value(),
+          where,
           orderBy: {
             id: 'asc',
           },
         }),
         this.prisma.ctl_department.count({ where }),
       ]);
+
       const departments = departmentsDb.map((departmentDb) =>
         this.mapToDomain(departmentDb),
       );
+
       this.departments = departments;
-      return { departments: this.departments, total: total };
+
+      if (!pagination_params) {
+        return departments;
+      }
+
+      const entityList: EntityList<Department> =
+        departments.length > 0
+          ? new EntityList<Department>(departments)
+          : new EntityList<Department>([]);
+
+      return new Pagination<Department>(
+        entityList,
+        pagination_params.getPage(),
+        pagination_params.getPerPage(),
+        new TotalItems(total),
+        new TotalPages(
+          Math.ceil(total / pagination_params.getPerPage().value()),
+        ),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error getting departments: ${error.message}`);

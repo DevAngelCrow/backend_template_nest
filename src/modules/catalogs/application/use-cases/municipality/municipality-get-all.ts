@@ -1,16 +1,24 @@
 import { Municipality } from 'src/modules/catalogs/domain/entities/municipality';
 import { MunicipalityRespository } from 'src/modules/catalogs/domain/repositories/municipality-repository';
 import { Injectable } from '@nestjs/common';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 @Injectable()
 export class MunicipalityGetAll {
   constructor(
     protected readonly municipalityRepository: MunicipalityRespository,
   ) {}
   public async run(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParamsDto,
     filter?: string,
-  ): Promise<{ municipalities: Municipality[]; total: number }> {
-    return await this.municipalityRepository.getAll(page, per_page, filter);
+  ): Promise<Pagination<Municipality> | Municipality[]> {
+    if (pagination_params) {
+      const paginationParams = PaginationParams.create({
+        ...pagination_params,
+      });
+      return await this.municipalityRepository.getAll(paginationParams, filter);
+    }
+    return await this.municipalityRepository.getAll(undefined, filter);
   }
 }

@@ -23,6 +23,8 @@ import { CountryGetOneById } from '../../application/use-cases/country/country-g
 import { CountryDelete } from '../../application/use-cases/country/country-delete';
 import { CountryHttpDto } from '../dtos/http/country-http-dto/country-http.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 
 type CountryGetAllResponse =
   | HttpPaginatedResponseDto<CountryHttpDto>
@@ -68,33 +70,40 @@ export class CountryController {
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
     @Query('filter') filter?: string,
   ): Promise<SuccessResponseDto<CountryGetAllResponse>> {
-    const { countries, total } = await this.countryGetAll.run(
-      page,
-      per_page,
-      filter,
-    );
-    const countryDtoHttp = countries.map((country) =>
-      CountryHttpDto.fromEntity(country),
-    );
-    if (page !== undefined && per_page !== undefined) {
-      const total_page = Math.ceil(total / per_page);
-
-      const paginatedResponse = new HttpPaginatedResponseDto(
-        countryDtoHttp,
-        total,
-        total_page,
-        page,
-        per_page,
+    if (page && per_page) {
+      const paginationParams = new PaginationParamsDto(page, per_page);
+      const countriesPagination = await this.countryGetAll.run(
+        paginationParams,
+        filter,
       );
-
-      return new SuccessResponseDto(
-        paginatedResponse,
-        HttpStatus.OK,
-        'Countries retrieved successfully',
-      );
+      if (countriesPagination instanceof Pagination) {
+        const countriesHttpDto = countriesPagination
+          .getEntityList()
+          .map((country) => CountryHttpDto.fromEntity(country));
+        const paginatedCountriesResponse =
+          new HttpPaginatedResponseDto<CountryHttpDto>(
+            countriesHttpDto,
+            countriesPagination.getTotalItems(),
+            countriesPagination.getTotalPages(),
+            countriesPagination.getPage(),
+            countriesPagination.getPerPage(),
+          );
+        return new SuccessResponseDto<HttpPaginatedResponseDto<CountryHttpDto>>(
+          paginatedCountriesResponse,
+          HttpStatus.OK,
+          'Countries retrieved successfully',
+        );
+      }
     }
-    return new SuccessResponseDto(
-      countryDtoHttp,
+
+    const countries = await this.countryGetAll.run(undefined, filter);
+
+    const countriesHttpDto =
+      countries instanceof Array
+        ? countries.map((country) => CountryHttpDto.fromEntity(country))
+        : [];
+    return new SuccessResponseDto<CountryHttpDto[]>(
+      countriesHttpDto,
       HttpStatus.OK,
       'Countries retrieved successfully',
     );

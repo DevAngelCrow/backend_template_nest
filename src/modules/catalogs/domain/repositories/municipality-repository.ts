@@ -1,14 +1,15 @@
+import { Pagination } from '@/shared/domain/value-object/pagination';
 import { Municipality } from '../entities/municipality';
 import { MunicipalityId } from '../value-objects/municipality-value-object/municipality-id';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 
 export abstract class MunicipalityRespository {
   abstract create(municipality: Municipality): Promise<void>;
   abstract update(municipality: Municipality): Promise<void>;
   abstract getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ municipalities: Municipality[]; total: number }>;
+  ): Promise<Pagination<Municipality> | Municipality[]>;
   abstract getOneById(id: MunicipalityId): Promise<Municipality | null>;
   abstract delete(id: MunicipalityId): Promise<void>;
 }

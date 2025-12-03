@@ -5,6 +5,11 @@ import { MunicipalityId } from '../../domain/value-objects/municipality-value-ob
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_municipality } from 'generated/prisma/client';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
+import { EntityList } from '@/shared/domain/value-object/entity-list';
+import { TotalItems } from '@/shared/domain/value-object/total-items';
+import { TotalPages } from '@/shared/domain/value-object/total-page';
 
 @Injectable()
 export class ImplMunicipalityRepository implements MunicipalityRespository {
@@ -48,36 +53,57 @@ export class ImplMunicipalityRepository implements MunicipalityRespository {
     }
   }
   async getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ municipalities: Municipality[]; total: number }> {
+  ): Promise<Pagination<Municipality> | Municipality[]> {
     try {
       const where = {
         name: {
           contains: filter,
+          mode: 'insensitive' as const,
         },
       };
       const [municipalitiesDb, total] = await Promise.all([
         this.prisma.ctl_municipality.findMany({
-          skip: page && per_page ? (page - 1) * per_page : undefined,
-          take: per_page,
-          where: {
-            name: {
-              contains: filter,
-            },
-          },
+          skip:
+            pagination_params?.getPage().value() &&
+            pagination_params?.getPerPage().value()
+              ? (pagination_params.getPage().value() - 1) *
+                pagination_params.getPerPage().value()
+              : undefined,
+          take: pagination_params?.getPerPage().value(),
+          where,
           orderBy: {
             id: 'asc',
           },
         }),
         this.prisma.ctl_municipality.count({ where }),
       ]);
+
       const municipalities = municipalitiesDb.map((municipalityDb) =>
         this.mapToDomain(municipalityDb),
       );
+
       this.municipalities = municipalities;
-      return { municipalities: this.municipalities, total: total };
+
+      if (!pagination_params) {
+        return municipalities;
+      }
+
+      const entityList: EntityList<Municipality> =
+        municipalities.length > 0
+          ? new EntityList<Municipality>(municipalities)
+          : new EntityList<Municipality>([]);
+
+      return new Pagination<Municipality>(
+        entityList,
+        pagination_params.getPage(),
+        pagination_params.getPerPage(),
+        new TotalItems(total),
+        new TotalPages(
+          Math.ceil(total / pagination_params.getPerPage().value()),
+        ),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error getting municipalities: ${error.message}`);

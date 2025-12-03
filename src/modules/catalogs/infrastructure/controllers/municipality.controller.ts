@@ -15,6 +15,8 @@ import {
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Pagination } from '@/shared/domain/value-object/pagination';
+import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { MunicipalityHttpDto } from '../dtos/http/municipality-http-dto/municipality-http.dto';
 import { MunicipalityCreate } from '../../application/use-cases/municipality/municipality-create';
 import { MunicipalityUpdate } from '../../application/use-cases/municipality/municipality-update';
@@ -68,33 +70,40 @@ export class MunicipalityController {
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
     @Query('filter') filter?: string,
   ): Promise<SuccessResponseDto<MunicipalityGetAllResponse>> {
-    const { municipalities, total } = await this.municipalityGetAll.run(
-      page,
-      per_page,
-      filter,
-    );
-    const municipalityDtoHttp = municipalities.map((municipality) =>
-      MunicipalityHttpDto.fromEntity(municipality),
-    );
-    if (page !== undefined && per_page !== undefined) {
-      const total_page = Math.ceil(total / per_page);
-
-      const paginatedResponse = new HttpPaginatedResponseDto(
-        municipalityDtoHttp,
-        total,
-        total_page,
-        page,
-        per_page,
+    if (page && per_page) {
+      const paginationParams = new PaginationParamsDto(page, per_page);
+      const municipalitiesPagination = await this.municipalityGetAll.run(
+        paginationParams,
+        filter,
       );
-
-      return new SuccessResponseDto(
-        paginatedResponse,
-        HttpStatus.OK,
-        'Municipalities retrieved successfully',
-      );
+      if (municipalitiesPagination instanceof Pagination) {
+        const municipalitiesHttpDto = municipalitiesPagination
+          .getEntityList()
+          .map((municipality) => MunicipalityHttpDto.fromEntity(municipality));
+        const paginatedMunicipalitiesResponse =
+          new HttpPaginatedResponseDto<MunicipalityHttpDto>(
+            municipalitiesHttpDto,
+            municipalitiesPagination.getTotalItems(),
+            municipalitiesPagination.getTotalPages(),
+            municipalitiesPagination.getPage(),
+            municipalitiesPagination.getPerPage(),
+          );
+        return new SuccessResponseDto<HttpPaginatedResponseDto<MunicipalityHttpDto>>(
+          paginatedMunicipalitiesResponse,
+          HttpStatus.OK,
+          'Municipalities retrieved successfully',
+        );
+      }
     }
-    return new SuccessResponseDto(
-      municipalityDtoHttp,
+
+    const municipalities = await this.municipalityGetAll.run(undefined, filter);
+
+    const municipalitiesHttpDto =
+      municipalities instanceof Array
+        ? municipalities.map((municipality) => MunicipalityHttpDto.fromEntity(municipality))
+        : [];
+    return new SuccessResponseDto<MunicipalityHttpDto[]>(
+      municipalitiesHttpDto,
       HttpStatus.OK,
       'Municipalities retrieved successfully',
     );
