@@ -9,6 +9,7 @@ import { PrismaClient } from '../../../../../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import 'dotenv/config';
+import { TransactionContextService } from '../../services/transaction-context.service';
 
 @Injectable()
 export class PrismaService
@@ -17,7 +18,7 @@ export class PrismaService
 {
   private readonly logger = new Logger('template-project:prisma');
   // private prisma: PrismaClient;
-  constructor() {
+  constructor(private transactionContext: TransactionContextService) {
     const connectionString = `${process.env.DB_PROVIDER}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?schema=public`;
     const pool = new Pool({
       connectionString,
@@ -46,9 +47,7 @@ export class PrismaService
       throw error;
     }
   }
-
-  // Exponer métodos de Prisma
-  // get client(): PrismaClient {
-  //   return this.prisma;
-  // }
+  get client() {
+    return this.transactionContext.getTransaction() || this;
+  }
 }
