@@ -1,14 +1,15 @@
+import { Pagination } from '@/shared/domain/value-object/pagination';
 import { Document } from '../entities/document';
 import { DocumentId } from '../value-objects/document-value-object/document-id';
+import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 
 export abstract class DocumentRepository {
   abstract create(document: Document): Promise<void>;
   abstract update(document: Document): Promise<void>;
   abstract getAll(
-    page?: number,
-    per_page?: number,
+    pagination_params?: PaginationParams,
     filter?: string,
-  ): Promise<{ documents: Document[]; total: number }>;
+  ): Promise<Pagination<Document> | Document[]>;
   abstract getOneById(id: DocumentId): Promise<Document | null>;
   abstract delete(id: DocumentId): Promise<void>;
 }
