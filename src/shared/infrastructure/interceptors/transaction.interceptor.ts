@@ -31,8 +31,8 @@ export class TransactionInterceptor implements NestInterceptor {
         async (prisma): Promise<unknown> => {
           const transactionResult: unknown = await this.transactionContext.run(
             prisma,
-            async () => {
-              return await lastValueFrom(next.handle());
+            async (): Promise<unknown> => {
+              return (await lastValueFrom(next.handle())) as unknown;
             },
           );
           return transactionResult;
