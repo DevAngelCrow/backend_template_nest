@@ -88,7 +88,9 @@ export class DocumentController {
             documentsPagination.getPage(),
             documentsPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<DocumentHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<DocumentHttpDto>
+        >(
           paginatedDocumentsResponse,
           HttpStatus.OK,
           'Documents retrieved successfully',
