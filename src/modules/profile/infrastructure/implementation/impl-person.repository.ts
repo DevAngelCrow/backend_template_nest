@@ -12,6 +12,7 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { mnt_peopleWhereInput } from 'generated/prisma/models';
 
 @Injectable()
 export class ImplPersonRepository implements PersonRepository {
@@ -22,21 +23,30 @@ export class ImplPersonRepository implements PersonRepository {
     filter?: string,
   ): Promise<Pagination<Person> | Person[]> {
     try {
-      const where = {
-        OR: [
-          {
-            first_name: {
-              contains: filter,
-            },
-            last_name: {
-              contains: filter,
-            },
-            middle_name: {
-              contains: filter,
-            },
-          },
-        ],
-      };
+      const where: mnt_peopleWhereInput | undefined = filter
+        ? {
+            OR: [
+              {
+                first_name: {
+                  contains: filter,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                last_name: {
+                  contains: filter,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                middle_name: {
+                  contains: filter,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          }
+        : undefined;
       const [personsDb, total] = await Promise.all([
         this.prisma.mnt_people.findMany({
           skip:
@@ -46,24 +56,7 @@ export class ImplPersonRepository implements PersonRepository {
                 pagination_params.getPerPage().value()
               : undefined,
           take: pagination_params?.getPerPage().value(),
-          where: {
-            OR: [
-              {
-                first_name: {
-                  contains: filter,
-                  mode: 'insensitive',
-                },
-                last_name: {
-                  contains: filter,
-                  mode: 'insensitive',
-                },
-                middle_name: {
-                  contains: filter,
-                  mode: 'insensitive',
-                },
-              },
-            ],
-          },
+          where,
           include: {
             people_country: {
               orderBy: {
@@ -80,20 +73,22 @@ export class ImplPersonRepository implements PersonRepository {
         }),
         this.prisma.mnt_people.count({ where }),
       ]);
-      const persons = personsDb.map((personDb) => this.mapToDomain(personDb));
+      const persons = personsDb.map((personDb: mnt_people) =>
+        this.mapToDomain(personDb),
+      );
       this.persons = persons;
       if (!pagination_params) {
-        return persons;
+        return this.persons;
       }
       const entityList: EntityList<Person> =
         persons.length > 0
-          ? new EntityList<Person>(persons)
+          ? new EntityList<Person>(this.persons)
           : new EntityList<Person>([]);
       return new Pagination<Person>(
         entityList,
         pagination_params.getPage(),
         pagination_params.getPerPage(),
-        new TotalItems(total),
+        new TotalItems(Number(total)),
         new TotalPages(
           Math.ceil(total / pagination_params.getPerPage().value()),
         ),
@@ -213,9 +208,9 @@ export class ImplPersonRepository implements PersonRepository {
       );
     }
   }
-  delete(id: PersonId): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+  // delete(id: PersonId): Promise<void> {
+  //   throw new Error('Method not implemented.');
+  // }
   private mapToDomain(prismaPerson: mnt_people): Person {
     return Person.create({
       first_name: prismaPerson.first_name,
