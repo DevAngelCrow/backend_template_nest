@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './shared/infrastructure/persistence/prisma/prisma.module';
 import { CatalogsModule } from './modules/catalogs/catalogs.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { StorageModule } from './modules/storage/storage.module';
 import { TransactionInterceptor } from './shared/infrastructure/interceptors/transaction.interceptor';
 
 @Module({
@@ -14,6 +15,7 @@ import { TransactionInterceptor } from './shared/infrastructure/interceptors/tra
     PrismaModule,
     CatalogsModule,
     ProfileModule,
+    StorageModule,
   ],
   providers: [
     {
