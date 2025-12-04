@@ -11,13 +11,13 @@ import { StorageFilesSize } from '../value-objects/storage-files-value-object/st
 export class StorageFiles<T> {
   constructor(
     private readonly filename: StorageFilesFileName,
-    private readonly id_provider: StorageFilesIdProvider,
     private readonly size: StorageFilesSize,
     private readonly mime_type: StorageFilesMimeType,
     private readonly active: StorageFilesActive,
     private readonly content_file: StorageFilesContentFile<T>,
-    private readonly path: StorageFilesPath,
-    private readonly id_user: StorageFilesIdUser,
+    private readonly id_provider: StorageFilesIdProvider,
+    private readonly path?: StorageFilesPath,
+    private readonly id_user?: StorageFilesIdUser,
     private readonly id?: StorageFilesId,
   ) {}
   static create<U>(data: {
@@ -28,18 +28,18 @@ export class StorageFiles<T> {
     mime_type: string;
     active: boolean;
     content_file: U;
-    path: string;
-    id_user: number;
+    path?: string;
+    id_user?: number;
   }) {
     return new StorageFiles(
       new StorageFilesFileName(data.filename),
-      new StorageFilesIdProvider(data.id_provider),
       new StorageFilesSize(data.size),
       new StorageFilesMimeType(data.mime_type),
       new StorageFilesActive(data.active),
       new StorageFilesContentFile(data.content_file),
-      new StorageFilesPath(data.path),
-      new StorageFilesIdUser(data.id_user),
+      new StorageFilesIdProvider(data.id_provider),
+      data.path ? new StorageFilesPath(data.path) : undefined,
+      data.id_user ? new StorageFilesIdUser(data.id_user) : undefined,
       data.id ? new StorageFilesId(data.id) : undefined,
     );
   }
@@ -64,10 +64,10 @@ export class StorageFiles<T> {
   getContentFile(): StorageFilesContentFile<T> {
     return this.content_file;
   }
-  getPath(): StorageFilesPath {
+  getPath(): StorageFilesPath | undefined {
     return this.path;
   }
-  getIdUser(): StorageFilesIdUser {
+  getIdUser(): StorageFilesIdUser | undefined {
     return this.id_user;
   }
 }

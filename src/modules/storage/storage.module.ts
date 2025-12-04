@@ -9,12 +9,16 @@ import { ProviderStorageDelete } from './application/use-cases/provider-storage/
 import { ProviderStorageRepository } from './domain/repositories/provider-storage.repository';
 import { ImplProviderStorageRepository } from './infrastructure/implementation/impl-provider-storage.repository';
 import { ProviderStorageGetOneByCode } from './application/use-cases/provider-storage/provider-storage-get-one-by-code';
+import { StorageFilesUploadFlow } from './application/use-cases/storage-files/storage-files-upload-flow';
+import { StorageFilesRepository } from './domain/repositories/storage-files.repository';
+import { ImplStorageFilesRepository } from './infrastructure/implementation/impl-storage-files.repository';
+import { StorageFilesController } from './infrastructure/controllers/storage-files.controller';
 
 @Module({
   imports: [
     RouterModule.register([{ path: 'storage', module: StorageModule }]),
   ],
-  controllers: [ProviderStorageController],
+  controllers: [ProviderStorageController, StorageFilesController],
   providers: [
     ProviderStorageCreate,
     ProviderStorageUpdate,
@@ -22,9 +26,14 @@ import { ProviderStorageGetOneByCode } from './application/use-cases/provider-st
     ProviderStorageGetOneById,
     ProviderStorageDelete,
     ProviderStorageGetOneByCode,
+    StorageFilesUploadFlow,
     {
       provide: ProviderStorageRepository,
       useClass: ImplProviderStorageRepository,
+    },
+    {
+      provide: StorageFilesRepository,
+      useClass: ImplStorageFilesRepository,
     },
   ],
   exports: [],
