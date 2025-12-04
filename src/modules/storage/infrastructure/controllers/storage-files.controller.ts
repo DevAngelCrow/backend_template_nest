@@ -29,7 +29,7 @@ export class StorageFilesController {
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
-      'ProviderStorage created successfully',
+      'StorageFile created successfully',
     );
   }
 }
