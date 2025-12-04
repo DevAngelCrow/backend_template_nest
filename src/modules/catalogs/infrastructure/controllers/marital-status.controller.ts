@@ -79,7 +79,9 @@ export class MaritalStatusController {
       if (maritalStatusesPagination instanceof Pagination) {
         const maritalStatusesHttpDto = maritalStatusesPagination
           .getEntityList()
-          .map((maritalStatus) => MaritalStatusHttpDto.fromEntity(maritalStatus));
+          .map((maritalStatus) =>
+            MaritalStatusHttpDto.fromEntity(maritalStatus),
+          );
         const paginatedMaritalStatusesResponse =
           new HttpPaginatedResponseDto<MaritalStatusHttpDto>(
             maritalStatusesHttpDto,
@@ -88,7 +90,9 @@ export class MaritalStatusController {
             maritalStatusesPagination.getPage(),
             maritalStatusesPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<MaritalStatusHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<MaritalStatusHttpDto>
+        >(
           paginatedMaritalStatusesResponse,
           HttpStatus.OK,
           'MaritalStatuses retrieved successfully',
@@ -96,11 +100,16 @@ export class MaritalStatusController {
       }
     }
 
-    const maritalStatuses = await this.maritalStatusGetAll.run(undefined, filter);
+    const maritalStatuses = await this.maritalStatusGetAll.run(
+      undefined,
+      filter,
+    );
 
     const maritalStatusesHttpDto =
       maritalStatuses instanceof Array
-        ? maritalStatuses.map((maritalStatus) => MaritalStatusHttpDto.fromEntity(maritalStatus))
+        ? maritalStatuses.map((maritalStatus) =>
+            MaritalStatusHttpDto.fromEntity(maritalStatus),
+          )
         : [];
     return new SuccessResponseDto<MaritalStatusHttpDto[]>(
       maritalStatusesHttpDto,

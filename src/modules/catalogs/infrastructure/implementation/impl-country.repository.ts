@@ -82,26 +82,29 @@ export class ImplCountryRepository implements CountryRepository {
         this.prisma.ctl_country.count({ where }),
       ]);
 
-      const countries = countriesDb.map((countryDb) =>
-        this.mapToDomain(countryDb),
-      );
+      const countries =
+        countriesDb.length > 0
+          ? countriesDb.map((countryDb: ctl_country) =>
+              this.mapToDomain(countryDb),
+            )
+          : [];
 
       this.countries = countries;
 
       if (!pagination_params) {
-        return countries;
+        return this.countries;
       }
 
       const entityList: EntityList<Country> =
         countries.length > 0
-          ? new EntityList<Country>(countries)
+          ? new EntityList<Country>(this.countries)
           : new EntityList<Country>([]);
 
       return new Pagination<Country>(
         entityList,
         pagination_params.getPage(),
         pagination_params.getPerPage(),
-        new TotalItems(total),
+        new TotalItems(Number(total)),
         new TotalPages(
           Math.ceil(total / pagination_params.getPerPage().value()),
         ),
@@ -115,11 +118,12 @@ export class ImplCountryRepository implements CountryRepository {
   }
   async getOneById(id: CountryId): Promise<Country | null> {
     try {
-      const countryDb = await this.prisma.ctl_country.findFirst({
-        where: {
-          id: id.value(),
-        },
-      });
+      const countryDb: ctl_country | null =
+        await this.prisma.ctl_country.findFirst({
+          where: {
+            id: id.value(),
+          },
+        });
       if (!countryDb) {
         return null;
       }

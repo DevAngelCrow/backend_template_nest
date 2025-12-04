@@ -92,26 +92,29 @@ export class ImplAddressRepository implements AddressRepository {
         this.prisma.mnt_address.count({ where }),
       ]);
 
-      const addresses = addressesDb.map((addressDb) =>
-        this.mapToDomain(addressDb),
-      );
+      const addresses =
+        addressesDb.length > 0
+          ? addressesDb.map((addressDb: mnt_address) =>
+              this.mapToDomain(addressDb),
+            )
+          : [];
 
       this.addresses = addresses;
 
       if (!pagination_params) {
-        return addresses;
+        return this.addresses;
       }
 
       const entityList: EntityList<Address> =
         addresses.length > 0
-          ? new EntityList<Address>(addresses)
+          ? new EntityList<Address>(this.addresses)
           : new EntityList<Address>([]);
 
       return new Pagination<Address>(
         entityList,
         pagination_params.getPage(),
         pagination_params.getPerPage(),
-        new TotalItems(total),
+        new TotalItems(Number(total)),
         new TotalPages(
           Math.ceil(total / pagination_params.getPerPage().value()),
         ),
@@ -125,11 +128,12 @@ export class ImplAddressRepository implements AddressRepository {
   }
   async getOneById(id: AddressId): Promise<Address | null> {
     try {
-      const addressDb = await this.prisma.mnt_address.findFirst({
-        where: {
-          id: id.value(),
-        },
-      });
+      const addressDb: mnt_address | null =
+        await this.prisma.mnt_address.findFirst({
+          where: {
+            id: id.value(),
+          },
+        });
       if (!addressDb) {
         return null;
       }

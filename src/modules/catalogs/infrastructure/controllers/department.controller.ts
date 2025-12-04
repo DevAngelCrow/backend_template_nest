@@ -88,7 +88,9 @@ export class DepartmentController {
             departmentsPagination.getPage(),
             departmentsPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<DepartmentHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<DepartmentHttpDto>
+        >(
           paginatedDepartmentsResponse,
           HttpStatus.OK,
           'Departments retrieved successfully',
@@ -100,7 +102,9 @@ export class DepartmentController {
 
     const departmentsHttpDto =
       departments instanceof Array
-        ? departments.map((department) => DepartmentHttpDto.fromEntity(department))
+        ? departments.map((department) =>
+            DepartmentHttpDto.fromEntity(department),
+          )
         : [];
     return new SuccessResponseDto<DepartmentHttpDto[]>(
       departmentsHttpDto,

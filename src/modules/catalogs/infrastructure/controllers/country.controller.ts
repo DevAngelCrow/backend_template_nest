@@ -25,6 +25,7 @@ import { CountryHttpDto } from '../dtos/http/country-http-dto/country-http.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { Country } from '../../domain/entities/country';
 
 type CountryGetAllResponse =
   | HttpPaginatedResponseDto<CountryHttpDto>
@@ -79,7 +80,7 @@ export class CountryController {
       if (countriesPagination instanceof Pagination) {
         const countriesHttpDto = countriesPagination
           .getEntityList()
-          .map((country) => CountryHttpDto.fromEntity(country));
+          .map((country: Country) => CountryHttpDto.fromEntity(country));
         const paginatedCountriesResponse =
           new HttpPaginatedResponseDto<CountryHttpDto>(
             countriesHttpDto,

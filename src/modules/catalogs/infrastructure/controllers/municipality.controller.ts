@@ -88,7 +88,9 @@ export class MunicipalityController {
             municipalitiesPagination.getPage(),
             municipalitiesPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<MunicipalityHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<MunicipalityHttpDto>
+        >(
           paginatedMunicipalitiesResponse,
           HttpStatus.OK,
           'Municipalities retrieved successfully',
@@ -100,7 +102,9 @@ export class MunicipalityController {
 
     const municipalitiesHttpDto =
       municipalities instanceof Array
-        ? municipalities.map((municipality) => MunicipalityHttpDto.fromEntity(municipality))
+        ? municipalities.map((municipality) =>
+            MunicipalityHttpDto.fromEntity(municipality),
+          )
         : [];
     return new SuccessResponseDto<MunicipalityHttpDto[]>(
       municipalitiesHttpDto,

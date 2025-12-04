@@ -88,7 +88,9 @@ export class GlobalStatusController {
             globalStatusesPagination.getPage(),
             globalStatusesPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<GlobalStatusHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<GlobalStatusHttpDto>
+        >(
           paginatedGlobalStatusesResponse,
           HttpStatus.OK,
           'GlobalStatuses retrieved successfully',
@@ -100,7 +102,9 @@ export class GlobalStatusController {
 
     const globalStatusesHttpDto =
       globalStatuses instanceof Array
-        ? globalStatuses.map((globalStatus) => GlobalStatusHttpDto.fromEntity(globalStatus))
+        ? globalStatuses.map((globalStatus) =>
+            GlobalStatusHttpDto.fromEntity(globalStatus),
+          )
         : [];
     return new SuccessResponseDto<GlobalStatusHttpDto[]>(
       globalStatusesHttpDto,

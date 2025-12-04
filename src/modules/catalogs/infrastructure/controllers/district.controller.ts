@@ -88,7 +88,9 @@ export class DistrictController {
             districtsPagination.getPage(),
             districtsPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<DistrictHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<DistrictHttpDto>
+        >(
           paginatedDistrictsResponse,
           HttpStatus.OK,
           'Districts retrieved successfully',

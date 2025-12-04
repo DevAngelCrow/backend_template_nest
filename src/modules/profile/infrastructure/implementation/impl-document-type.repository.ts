@@ -81,26 +81,29 @@ export class ImplDocumentTypeRepository implements DocumentTypeRepository {
         this.prisma.ctl_document_type.count({ where }),
       ]);
 
-      const documentTypes = documentTypesDb.map((documentTypeDb) =>
-        this.mapToDomain(documentTypeDb),
-      );
+      const documentTypes =
+        documentTypesDb.length > 0
+          ? documentTypesDb.map((documentTypeDb: ctl_document_type) =>
+              this.mapToDomain(documentTypeDb),
+            )
+          : [];
 
       this.documentTypes = documentTypes;
 
       if (!pagination_params) {
-        return documentTypes;
+        return this.documentTypes;
       }
 
       const entityList: EntityList<DocumentType> =
         documentTypes.length > 0
-          ? new EntityList<DocumentType>(documentTypes)
+          ? new EntityList<DocumentType>(this.documentTypes)
           : new EntityList<DocumentType>([]);
 
       return new Pagination<DocumentType>(
         entityList,
         pagination_params.getPage(),
         pagination_params.getPerPage(),
-        new TotalItems(total),
+        new TotalItems(Number(total)),
         new TotalPages(
           Math.ceil(total / pagination_params.getPerPage().value()),
         ),
@@ -114,11 +117,12 @@ export class ImplDocumentTypeRepository implements DocumentTypeRepository {
   }
   async getOneById(id: DocumentTypeId): Promise<DocumentType | null> {
     try {
-      const documentTypeDb = await this.prisma.ctl_document_type.findFirst({
-        where: {
-          id: id.value(),
-        },
-      });
+      const documentTypeDb: ctl_document_type | null =
+        await this.prisma.ctl_document_type.findFirst({
+          where: {
+            id: id.value(),
+          },
+        });
       if (!documentTypeDb) {
         return null;
       }

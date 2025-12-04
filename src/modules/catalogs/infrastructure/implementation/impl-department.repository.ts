@@ -80,26 +80,29 @@ export class ImplDepartmentRepository implements DepartmentRepository {
         this.prisma.ctl_department.count({ where }),
       ]);
 
-      const departments = departmentsDb.map((departmentDb) =>
-        this.mapToDomain(departmentDb),
-      );
+      const departments =
+        departmentsDb.length > 0
+          ? departmentsDb.map((departmentDb: ctl_department) =>
+              this.mapToDomain(departmentDb),
+            )
+          : [];
 
       this.departments = departments;
 
       if (!pagination_params) {
-        return departments;
+        return this.departments;
       }
 
       const entityList: EntityList<Department> =
         departments.length > 0
-          ? new EntityList<Department>(departments)
+          ? new EntityList<Department>(this.departments)
           : new EntityList<Department>([]);
 
       return new Pagination<Department>(
         entityList,
         pagination_params.getPage(),
         pagination_params.getPerPage(),
-        new TotalItems(total),
+        new TotalItems(Number(total)),
         new TotalPages(
           Math.ceil(total / pagination_params.getPerPage().value()),
         ),
@@ -113,11 +116,12 @@ export class ImplDepartmentRepository implements DepartmentRepository {
   }
   async getOneById(id: DepartmentId): Promise<Department | null> {
     try {
-      const departmentDb = await this.prisma.ctl_department.findFirst({
-        where: {
-          id: id.value(),
-        },
-      });
+      const departmentDb: ctl_department | null =
+        await this.prisma.ctl_department.findFirst({
+          where: {
+            id: id.value(),
+          },
+        });
       if (!departmentDb) {
         return null;
       }
