@@ -5,6 +5,7 @@ import { CatalogsModule } from './modules/catalogs/catalogs.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { TransactionInterceptor } from './shared/infrastructure/interceptors/transaction.interceptor';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TransactionInterceptor } from './shared/infrastructure/interceptors/tra
     CatalogsModule,
     ProfileModule,
     StorageModule,
+    AuthModule,
   ],
   providers: [
     {
