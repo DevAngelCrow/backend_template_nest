@@ -12,6 +12,7 @@ import {
 import { Register } from '../../application/use-cases/auth/register';
 import { RegisterValidatorDto } from '../dtos/validators/auth/register.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 type FileUpload = Express.Multer.File;
 
 @Controller('/')
@@ -31,22 +32,6 @@ export class UserController {
       null,
       HttpStatus.CREATED,
       'User created successfully',
-    );
-  }
-  @Get('user-name/:user_name')
-  @HttpCode(200)
-  async getByUserName(
-    @Param('user_name') user_name: string,
-  ): Promise<SuccessResponseDto<UserHttpDto>> {
-    const user = await this.userGetByUserName.run(user_name);
-    if (!user) {
-      throw new NotFoundException('User', user_name.toString());
-    }
-    const userHttpDto = UserHttpDto.fromEntity(user);
-    return new SuccessResponseDto<UserHttpDto>(
-      userHttpDto,
-      HttpStatus.OK,
-      `User with user_name ${user_name} retrieved successfully`,
     );
   }
 }
