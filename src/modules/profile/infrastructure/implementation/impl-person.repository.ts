@@ -107,7 +107,7 @@ export class ImplPersonRepository implements PersonRepository {
     nationalities: number[],
   ): Promise<Person | void> {
     try {
-      await this.prisma.mnt_people.create({
+     const personDb = await this.prisma.mnt_people.create({
         data: {
           first_name: person.getFirstName().value(),
           last_name: person.getLastName().value(),
@@ -126,6 +126,8 @@ export class ImplPersonRepository implements PersonRepository {
           },
         },
       });
+      const personCreatedEntity = this.mapToDomain(personDb);
+      return personCreatedEntity;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error creating person: ${error.message}`);

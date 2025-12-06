@@ -4,7 +4,7 @@ import { AddressId } from '../value-objects/address-value-object/address-id';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 
 export abstract class AddressRepository {
-  abstract create(address: Address): Promise<void>;
+  abstract create(address: Address): Promise<Address>;
   abstract update(address: Address): Promise<void>;
   abstract getAll(
     pagination_params?: PaginationParams,

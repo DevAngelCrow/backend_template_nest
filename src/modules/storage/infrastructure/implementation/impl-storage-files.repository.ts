@@ -47,7 +47,7 @@ export class ImplStorageFilesRepository implements StorageFilesRepository {
             mime_type: storage_file.getMimeType().value(),
             active: storage_file.getActive().value(),
             id_provider: storage_file.getIdProvider().value(),
-            path: storage_file.getPath()?.value() || '',
+            path: storage_file.getPath().value(),
           },
         });
       const storageFileCreate = StorageFiles.create<T>({

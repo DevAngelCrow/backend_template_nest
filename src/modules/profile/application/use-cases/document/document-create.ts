@@ -6,8 +6,8 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class DocumentCreate {
   constructor(protected readonly documentRepository: DocumentRepository) {}
-  public async run(document_dto: DocumentDto): Promise<void> {
+  public async run(document_dto: DocumentDto): Promise<Document> {
     const document = Document.create({ ...document_dto });
-    await this.documentRepository.create(document);
+    return await this.documentRepository.create(document);
   }
 }

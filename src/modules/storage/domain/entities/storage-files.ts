@@ -16,7 +16,7 @@ export class StorageFiles<T> {
     private readonly active: StorageFilesActive,
     private readonly content_file: StorageFilesContentFile<T>,
     private readonly id_provider: StorageFilesIdProvider,
-    private readonly path?: StorageFilesPath,
+    private readonly path: StorageFilesPath,
     private readonly id_user?: StorageFilesIdUser,
     private readonly id?: StorageFilesId,
   ) {}
@@ -28,7 +28,7 @@ export class StorageFiles<T> {
     mime_type: string;
     active: boolean;
     content_file: U;
-    path?: string;
+    path: string;
     id_user?: number;
   }) {
     return new StorageFiles(
@@ -38,7 +38,7 @@ export class StorageFiles<T> {
       new StorageFilesActive(data.active),
       new StorageFilesContentFile(data.content_file),
       new StorageFilesIdProvider(data.id_provider),
-      data.path ? new StorageFilesPath(data.path) : undefined,
+      new StorageFilesPath(data.path),
       data.id_user ? new StorageFilesIdUser(data.id_user) : undefined,
       data.id ? new StorageFilesId(data.id) : undefined,
     );
@@ -64,7 +64,7 @@ export class StorageFiles<T> {
   getContentFile(): StorageFilesContentFile<T> {
     return this.content_file;
   }
-  getPath(): StorageFilesPath | undefined {
+  getPath(): StorageFilesPath {
     return this.path;
   }
   getIdUser(): StorageFilesIdUser | undefined {

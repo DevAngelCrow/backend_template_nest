@@ -8,7 +8,7 @@ export class StorageFilesDto<T> {
     public readonly mime_type: string,
     public readonly active: boolean,
     public readonly content_file: T,
-    public readonly path?: string,
+    public readonly path: string,
     public readonly id_user?: number,
     public readonly id?: number,
   ) {}
@@ -22,7 +22,7 @@ export class StorageFilesDto<T> {
       provider_storage.getMimeType().value(),
       provider_storage.getActive().value(),
       provider_storage.getContentFile().value(),
-      provider_storage.getPath()?.value(),
+      provider_storage.getPath().value(),
       provider_storage.getIdUser()?.value(),
       provider_storage.getId()?.value(),
     );

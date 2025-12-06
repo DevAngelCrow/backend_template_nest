@@ -16,9 +16,9 @@ import { TotalPages } from '@/shared/domain/value-object/total-page';
 export class ImplDocumentRepository implements DocumentRepository {
   private documents: Document[] = [];
   constructor(private readonly prisma: PrismaService) {}
-  async create(document: Document): Promise<void> {
+  async create(document: Document): Promise<Document> {
     try {
-      await this.prisma.mnt_document.create({
+      const documentDb = await this.prisma.mnt_document.create({
         data: {
           document_number: document.getNumberDocument().value(),
           description: document.getDescription().value(),
@@ -27,6 +27,15 @@ export class ImplDocumentRepository implements DocumentRepository {
           active: document.getActive().value(),
         },
       });
+      const documentCreateEntity = Document.create({
+        number_document: document.getNumberDocument().value(),
+        description: document.getDescription().value(),
+        id_people: document.getIdPeople().value(),
+        id_type_document: document.getIdTypeDocument().value(),
+        active: document.getActive().value(),
+        id: Number(documentDb.id),
+      });
+      return documentCreateEntity;
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Error creating document: ${error.message}`);

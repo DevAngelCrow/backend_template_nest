@@ -21,7 +21,7 @@ export class StorageFilesUploadFlow<T extends FileUpload> {
   public async run(
     storage_file_content: T,
     provider_storage_code: string,
-  ): Promise<void> {
+  ): Promise<StorageFiles<T>> {
     const storageFileUpload = new StorageFilesContentFile<T>(
       storage_file_content,
     );
@@ -49,6 +49,6 @@ export class StorageFilesUploadFlow<T extends FileUpload> {
       storageContentFile.path.value(),
     );
     const storageFileEntity = StorageFiles.create<T>({ ...storageFileDto });
-    await this.storageFilesRepository.create<T>(storageFileEntity);
+    return await this.storageFilesRepository.create<T>(storageFileEntity);
   }
 }

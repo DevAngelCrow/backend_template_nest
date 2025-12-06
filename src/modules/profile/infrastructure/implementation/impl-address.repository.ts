@@ -16,9 +16,9 @@ import { TotalPages } from '@/shared/domain/value-object/total-page';
 export class ImplAddressRepository implements AddressRepository {
   private addresses: Address[] = [];
   constructor(private readonly prisma: PrismaService) {}
-  async create(address: Address): Promise<void> {
+  async create(address: Address): Promise<Address> {
     try {
-      await this.prisma.mnt_address.create({
+      const addressDb = await this.prisma.mnt_address.create({
         data: {
           street: address.getStreet().value(),
           street_number: address.getStreetNumber().value(),
@@ -32,6 +32,19 @@ export class ImplAddressRepository implements AddressRepository {
           active: true,
         },
       });
+      const addressCreateEntity = Address.create({
+        street: address.getStreet().value(),
+        street_number: address.getStreetNumber().value(),
+        neighborhood: address.getNeighborhood().value(),
+        id_district: address.getIdDistrict().value(),
+        house_number: address.getHouseNumber().value(),
+        block: address.getBlock().value(),
+        pathway: address.getPathway().value(),
+        current: address.getCurrent().value(),
+        id_people: address.getIdPeople().value(),
+        id: Number(addressDb.id),
+      });
+      return addressCreateEntity;
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Error creating address: ${error.message}`);
