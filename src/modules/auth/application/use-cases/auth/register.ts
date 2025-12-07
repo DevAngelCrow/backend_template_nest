@@ -3,15 +3,14 @@ import { UserCreate } from '../user/user-create';
 import { AddressCreateService } from '@/modules/profile/application/services/address/address-create.service';
 import { DocumentCreateService } from '@/modules/profile/application/services/document/document-create.service';
 import { StorageUploadService } from '@/modules/storage/application/services/storage/storage-upload.service';
-import { RegisterDto } from '../dtos/register.dto';
+import { RegisterDto } from '../../dtos/register.dto';
 import { PersonDto } from '@/modules/profile/application/dtos/person.dto';
 
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 import { AddressDto } from '@/modules/profile/application/dtos/address.dto';
-import { UserDto } from '../dtos/user.dto';
+import { UserDto } from '../../dtos/user.dto';
 import { DocumentDto } from '@/modules/profile/application/dtos/document.dto';
 import { Injectable } from '@nestjs/common';
-import { Transactional } from '@/shared/infrastructure/decorators/transactional.decorator';
 
 interface FileUpload {
   originalname: string;
@@ -27,7 +26,7 @@ export class Register<T extends FileUpload> {
     private readonly documentCreateService: DocumentCreateService,
     private readonly storageUploadService: StorageUploadService<T>,
   ) {}
-  @Transactional()
+
   async run(
     register_dto: RegisterDto<T>,
     provider_storage_code: string,
@@ -91,7 +90,7 @@ export class Register<T extends FileUpload> {
 
     // 5. Crear usuario
     const userDto = new UserDto(
-      /*idPerson*/ 99,
+      idPerson,
       register_dto.user_name,
       register_dto.password,
       register_dto.id_status_user,

@@ -3,6 +3,7 @@ import { Document } from '../../domain/entities/document';
 import { DocumentRepository } from '../../domain/repositories/document.repository';
 import { DocumentId } from '../../domain/value-objects/document-value-object/document-id';
 import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { mnt_document } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
@@ -15,10 +16,18 @@ import { TotalPages } from '@/shared/domain/value-object/total-page';
 @Injectable()
 export class ImplDocumentRepository implements DocumentRepository {
   private documents: Document[] = [];
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactionContext: TransactionContextService,
+  ) {}
+
+  private getPrismaClient() {
+    return this.transactionContext.getTransaction() ?? this.prisma;
+  }
   async create(document: Document): Promise<Document> {
     try {
-      const documentDb = await this.prisma.mnt_document.create({
+      const prisma = this.getPrismaClient();
+      const documentDb = await prisma.mnt_document.create({
         data: {
           document_number: document.getNumberDocument().value(),
           description: document.getDescription().value(),
@@ -45,7 +54,8 @@ export class ImplDocumentRepository implements DocumentRepository {
   }
   async update(document: Document): Promise<void> {
     try {
-      await this.prisma.mnt_document.update({
+      const prisma = this.getPrismaClient();
+      await prisma.mnt_document.update({
         where: {
           id: document.getId()?.value(),
         },
@@ -75,8 +85,9 @@ export class ImplDocumentRepository implements DocumentRepository {
           mode: 'insensitive' as const,
         },
       };
+      const prisma = this.getPrismaClient();
       const [documentsDb, total] = await Promise.all([
-        this.prisma.mnt_document.findMany({
+        prisma.mnt_document.findMany({
           skip:
             pagination_params?.getPage().value() &&
             pagination_params?.getPerPage().value()
@@ -89,7 +100,7 @@ export class ImplDocumentRepository implements DocumentRepository {
             id: 'asc',
           },
         }),
-        this.prisma.mnt_document.count({ where }),
+        prisma.mnt_document.count({ where }),
       ]);
 
       const documents = documentsDb.map((documentDb) =>
@@ -125,7 +136,8 @@ export class ImplDocumentRepository implements DocumentRepository {
   }
   async getOneById(id: DocumentId): Promise<Document | null> {
     try {
-      const documentDb = await this.prisma.mnt_document.findFirst({
+      const prisma = this.getPrismaClient();
+      const documentDb = await prisma.mnt_document.findFirst({
         where: {
           id: id.value(),
         },
@@ -144,7 +156,8 @@ export class ImplDocumentRepository implements DocumentRepository {
   }
   async delete(id: DocumentId): Promise<void> {
     try {
-      const documentDb = await this.prisma.mnt_document.update({
+      const prisma = this.getPrismaClient();
+      const documentDb = await prisma.mnt_document.update({
         where: {
           id: id.value(),
         },

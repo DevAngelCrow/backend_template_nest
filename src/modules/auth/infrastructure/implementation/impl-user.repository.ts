@@ -1,4 +1,5 @@
 import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { UserRepository } from '../../domain/repositories/user-repository';
 import { User } from '../../domain/entities/user';
 //import { UserId } from '../../domain/value-objects/user-value-object/user-id';
@@ -10,14 +11,22 @@ import { mnt_user } from 'generated/prisma/client';
 
 @Injectable()
 export class ImplUserRepository implements UserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactionContext: TransactionContextService,
+  ) {}
+
+  private getPrismaClient() {
+    return this.transactionContext.getTransaction() ?? this.prisma;
+  }
   async create(user: User): Promise<User> {
     try {
+      const prisma = this.getPrismaClient();
       const passwordHasher = new PasswordHasher();
       const hashedPassword = await passwordHasher.hash(
         user.getPassword().value(),
       );
-      const userCreatedPrisma = await this.prisma.mnt_user.create({
+      const userCreatedPrisma = await prisma.mnt_user.create({
         data: {
           id_people: user.getIdPeople().value(),
           user_name: user.getUserName().value(),
@@ -52,7 +61,8 @@ export class ImplUserRepository implements UserRepository {
   //   }
   async getOneByUserName(user_name: UserName): Promise<User | null> {
     try {
-      const userDb: mnt_user | null = await this.prisma.mnt_user.findFirst({
+      const prisma = this.getPrismaClient();
+      const userDb: mnt_user | null = await prisma.mnt_user.findFirst({
         where: {
           user_name: user_name.value(),
         },

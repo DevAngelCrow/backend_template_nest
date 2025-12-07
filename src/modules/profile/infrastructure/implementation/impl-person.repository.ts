@@ -1,4 +1,5 @@
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { Person } from '../../domain/entities/person';
 import { PersonRepository } from '../../domain/repositories/person.repository';
 import { PersonEmail } from '../../domain/value-objects/person-value-object/person-email';
@@ -16,7 +17,14 @@ import { mnt_peopleWhereInput } from 'generated/prisma/models';
 @Injectable()
 export class ImplPersonRepository implements PersonRepository {
   private persons: Person[] = [];
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactionContext: TransactionContextService,
+  ) {}
+
+  private getPrismaClient() {
+    return this.transactionContext.getTransaction() ?? this.prisma;
+  }
   async getAll(
     pagination_params?: PaginationParams,
     filter?: string,
@@ -46,8 +54,9 @@ export class ImplPersonRepository implements PersonRepository {
             ],
           }
         : undefined;
+      const prisma = this.getPrismaClient();
       const [personsDb, total] = await Promise.all([
-        this.prisma.mnt_people.findMany({
+        prisma.mnt_people.findMany({
           skip:
             pagination_params?.getPage().value() &&
             pagination_params?.getPerPage().value()
@@ -70,7 +79,7 @@ export class ImplPersonRepository implements PersonRepository {
             id: 'asc',
           },
         }),
-        this.prisma.mnt_people.count({ where }),
+        prisma.mnt_people.count({ where }),
       ]);
       const persons = personsDb.map((personDb: mnt_people) =>
         this.mapToDomain(personDb),
@@ -104,7 +113,8 @@ export class ImplPersonRepository implements PersonRepository {
     nationalities: number[],
   ): Promise<Person | void> {
     try {
-      const personDb = await this.prisma.mnt_people.create({
+      const prisma = this.getPrismaClient();
+      const personDb = await prisma.mnt_people.create({
         data: {
           first_name: person.getFirstName().value(),
           last_name: person.getLastName().value(),
@@ -134,7 +144,8 @@ export class ImplPersonRepository implements PersonRepository {
   }
   async update(person: Person, nationalities: number[]): Promise<void> {
     try {
-      await this.prisma.mnt_people.update({
+      const prisma = this.getPrismaClient();
+      await prisma.mnt_people.update({
         where: {
           id: person.getId()?.value(),
         },
@@ -167,7 +178,8 @@ export class ImplPersonRepository implements PersonRepository {
 
   async getOneById(id: PersonId): Promise<Person | null> {
     try {
-      const personDb = await this.prisma.mnt_people.findFirst({
+      const prisma = this.getPrismaClient();
+      const personDb = await prisma.mnt_people.findFirst({
         where: {
           id: id.value(),
         },
@@ -186,7 +198,8 @@ export class ImplPersonRepository implements PersonRepository {
   }
   async getOneByEmail(email: PersonEmail): Promise<Person | null> {
     try {
-      const personDb = await this.prisma.mnt_people.findFirst({
+      const prisma = this.getPrismaClient();
+      const personDb = await prisma.mnt_people.findFirst({
         where: {
           email: email.value(),
         },

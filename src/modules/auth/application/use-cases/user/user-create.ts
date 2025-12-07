@@ -1,6 +1,6 @@
 import { UserRepository } from '@/modules/auth/domain/repositories/user-repository';
 import { Injectable } from '@nestjs/common';
-import { UserDto } from '../dtos/user.dto';
+import { UserDto } from '../../dtos/user.dto';
 import { User } from '@/modules/auth/domain/entities/user';
 
 @Injectable()

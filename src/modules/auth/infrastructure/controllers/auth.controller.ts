@@ -11,15 +11,23 @@ import { Register } from '../../application/use-cases/auth/register';
 import { RegisterValidatorDto } from '../dtos/validators/auth/register.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
-import { RegisterDto } from '../../application/use-cases/dtos/register.dto';
+import { RegisterDto } from '../../application/dtos/register.dto';
+import { Transactional } from '@/shared/infrastructure/decorators/transactional.decorator';
+import { LoginDto } from '../dtos/validators/auth/login.dto';
+import { AuthLoginHttpDto } from '../dtos/http/user-http-dto/auth-login-http.dto';
+import { Login } from '../../application/use-cases/auth/login';
 type FileUpload = Express.Multer.File;
 
 @Controller('/')
 export class AuthController {
-  constructor(private readonly register: Register<FileUpload>) {}
+  constructor(
+    private readonly register: Register<FileUpload>,
+    private readonly loginUseCase: Login,
+  ) {}
   @Post('sign-up')
   @HttpCode(201)
   @UseInterceptors(FileInterceptor('file_img'))
+  @Transactional()
   async create(
     @Body() request: RegisterValidatorDto,
     @UploadedFile() file_img: FileUpload,
@@ -67,6 +75,27 @@ export class AuthController {
       null,
       HttpStatus.CREATED,
       'User created successfully',
+    );
+  }
+
+  @Post('login')
+  @HttpCode(200)
+  async login(
+    @Body() request: LoginDto,
+  ): Promise<SuccessResponseDto<AuthLoginHttpDto>> {
+    const authLogin = await this.loginUseCase.run(
+      request.user_name,
+      request.password,
+    );
+    const authLoginHttpDto = new AuthLoginHttpDto(
+      authLogin.user_name,
+      authLogin.id,
+      authLogin.token,
+    );
+    return new SuccessResponseDto<AuthLoginHttpDto>(
+      authLoginHttpDto,
+      HttpStatus.OK,
+      'Successfully logged in',
     );
   }
 }

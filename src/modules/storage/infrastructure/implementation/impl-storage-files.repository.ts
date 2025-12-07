@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { mkdir, writeFile } from 'fs/promises';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { StorageFilesPath } from '../../domain/value-objects/storage-files-value-object/storage-files-path';
 
@@ -14,7 +15,14 @@ import { StorageFilesPath } from '../../domain/value-objects/storage-files-value
 export class ImplStorageFilesRepository implements StorageFilesRepository {
   private diskPath = join(process.cwd(), 'storage');
   private basePath = 'profile_img';
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactionContext: TransactionContextService,
+  ) {}
+
+  private getPrismaClient() {
+    return this.transactionContext.getTransaction() ?? this.prisma;
+  }
   async upload<T>(storage_file_content: StorageFilesContentFile<T>): Promise<{
     content_file: StorageFilesContentFile<T>;
     path: StorageFilesPath;
@@ -39,17 +47,17 @@ export class ImplStorageFilesRepository implements StorageFilesRepository {
   }
   async create<T>(storage_file: StorageFiles<T>): Promise<StorageFiles<T>> {
     try {
-      const storageFileCreatePrisma =
-        await this.prisma.mnt_storage_files.create({
-          data: {
-            filename: storage_file.getFilename().value(),
-            size: storage_file.getSize().value(),
-            mime_type: storage_file.getMimeType().value(),
-            active: storage_file.getActive().value(),
-            id_provider: storage_file.getIdProvider().value(),
-            path: storage_file.getPath().value(),
-          },
-        });
+      const prisma = this.getPrismaClient();
+      const storageFileCreatePrisma = await prisma.mnt_storage_files.create({
+        data: {
+          filename: storage_file.getFilename().value(),
+          size: storage_file.getSize().value(),
+          mime_type: storage_file.getMimeType().value(),
+          active: storage_file.getActive().value(),
+          id_provider: storage_file.getIdProvider().value(),
+          path: storage_file.getPath().value(),
+        },
+      });
       const storageFileCreate = StorageFiles.create<T>({
         filename: storageFileCreatePrisma.filename,
         id_provider: Number(storageFileCreatePrisma.id_provider),
