@@ -6,7 +6,6 @@ import { PersonId } from '../../domain/value-objects/person-value-object/person-
 import { Injectable } from '@nestjs/common';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { mnt_people } from 'generated/prisma/browser';
-import { Transactional } from '@/shared/infrastructure/decorators/transactional.decorator';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
 import { EntityList } from '@/shared/domain/value-object/entity-list';
@@ -100,14 +99,12 @@ export class ImplPersonRepository implements PersonRepository {
       throw new DatabaseException('Error getting persons', 'getAll');
     }
   }
-
-  @Transactional()
   async create(
     person: Person,
     nationalities: number[],
   ): Promise<Person | void> {
     try {
-     const personDb = await this.prisma.mnt_people.create({
+      const personDb = await this.prisma.mnt_people.create({
         data: {
           first_name: person.getFirstName().value(),
           last_name: person.getLastName().value(),
@@ -135,7 +132,6 @@ export class ImplPersonRepository implements PersonRepository {
       throw new DatabaseException('Error creating person', 'create');
     }
   }
-  @Transactional()
   async update(person: Person, nationalities: number[]): Promise<void> {
     try {
       await this.prisma.mnt_people.update({

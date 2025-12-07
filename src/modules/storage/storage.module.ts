@@ -13,6 +13,7 @@ import { StorageFilesUploadFlow } from './application/use-cases/storage-files/st
 import { StorageFilesRepository } from './domain/repositories/storage-files.repository';
 import { ImplStorageFilesRepository } from './infrastructure/implementation/impl-storage-files.repository';
 import { StorageFilesController } from './infrastructure/controllers/storage-files.controller';
+import { StorageUploadService } from './application/services/storage/storage-upload.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { StorageFilesController } from './infrastructure/controllers/storage-fil
   ],
   controllers: [ProviderStorageController, StorageFilesController],
   providers: [
+    StorageUploadService,
     ProviderStorageCreate,
     ProviderStorageUpdate,
     ProviderStorageGetAll,
@@ -36,6 +38,6 @@ import { StorageFilesController } from './infrastructure/controllers/storage-fil
       useClass: ImplStorageFilesRepository,
     },
   ],
-  exports: [],
+  exports: [StorageUploadService],
 })
 export class StorageModule {}

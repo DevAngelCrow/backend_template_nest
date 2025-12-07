@@ -32,6 +32,9 @@ import { AddressGetOneById } from './application/use-cases/address/address-get-o
 import { AddressDelete } from './application/use-cases/address/address-delete';
 import { AddressRepository } from './domain/repositories/address.repository';
 import { ImplAddressRepository } from './infrastructure/implementation/impl-address.repository';
+import { PersonCreateService } from './application/services/person/person-create.service';
+import { AddressCreateService } from './application/services/address/address-create.service';
+import { DocumentCreateService } from './application/services/document/document-create.service';
 
 @Module({
   imports: [
@@ -44,6 +47,7 @@ import { ImplAddressRepository } from './infrastructure/implementation/impl-addr
     AddressController,
   ],
   providers: [
+    PersonCreateService,
     PersonCreate,
     PersonGetAll,
     PersonGetOneByEmail,
@@ -56,12 +60,14 @@ import { ImplAddressRepository } from './infrastructure/implementation/impl-addr
     DocumentTypeGetOneById,
     DocumentTypeDelete,
     { provide: DocumentTypeRepository, useClass: ImplDocumentTypeRepository },
+    DocumentCreateService,
     DocumentCreate,
     DocumentUpdate,
     DocumentGetAll,
     DocumentGetOneById,
     DocumentDelete,
     { provide: DocumentRepository, useClass: ImplDocumentRepository },
+    AddressCreateService,
     AddressCreate,
     AddressUpdate,
     AddressGetAll,
@@ -69,6 +75,11 @@ import { ImplAddressRepository } from './infrastructure/implementation/impl-addr
     AddressDelete,
     { provide: AddressRepository, useClass: ImplAddressRepository },
   ],
-  exports: [PersonCreate],
+  exports: [
+    PersonCreate,
+    PersonCreateService,
+    AddressCreateService,
+    DocumentCreateService,
+  ],
 })
 export class ProfileModule {}

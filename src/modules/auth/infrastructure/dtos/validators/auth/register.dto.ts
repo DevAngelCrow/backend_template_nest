@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
@@ -7,7 +8,7 @@ import {
   IsOptional,
   IsString,
   IsArray,
-  MaxLength,
+  IsDate,
 } from 'class-validator';
 
 export class RegisterValidatorDto {
@@ -28,6 +29,7 @@ export class RegisterValidatorDto {
   @IsNotEmpty()
   birthdate!: Date;
 
+  @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
   id_gender!: number;
@@ -36,6 +38,7 @@ export class RegisterValidatorDto {
   @IsNotEmpty()
   email!: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
   id_marital_status!: number;
@@ -44,6 +47,7 @@ export class RegisterValidatorDto {
   @IsNotEmpty()
   phone!: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsOptional()
   id_status?: number;
@@ -61,14 +65,17 @@ export class RegisterValidatorDto {
   @IsNotEmpty()
   password!: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsOptional()
   id_status_user?: number;
 
-  @IsDateString()
-  @IsNotEmpty()
+  @Type(() => Date)
+  @IsDate()
+  @IsOptional()
   last_access!: Date;
 
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   is_validated?: boolean;
@@ -86,6 +93,7 @@ export class RegisterValidatorDto {
   @IsNotEmpty()
   neighborhood!: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
   id_district!: number;
@@ -102,11 +110,13 @@ export class RegisterValidatorDto {
   @IsNotEmpty()
   pathway!: string;
 
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   current?: boolean;
 
   // Document data
+  @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
   id_type_document!: number;
@@ -119,6 +129,7 @@ export class RegisterValidatorDto {
   @IsOptional()
   description?: string;
 
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   active?: boolean;
