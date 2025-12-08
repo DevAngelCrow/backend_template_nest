@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 interface JwtPayload {
   user_name: string;
   id: number;
+  sub: number;
 }
 @Injectable()
 export class ImplTokenGeneratorPort implements TokenGeneratorPort {
@@ -14,6 +15,7 @@ export class ImplTokenGeneratorPort implements TokenGeneratorPort {
     const payload: JwtPayload = {
       user_name: user_name.value(),
       id: id.value(),
+      sub: id.value(),
     };
     return await this.jwtService.signAsync(payload);
   }

@@ -16,6 +16,7 @@ import { Transactional } from '@/shared/infrastructure/decorators/transactional.
 import { LoginDto } from '../dtos/validators/auth/login.dto';
 import { AuthLoginHttpDto } from '../dtos/http/user-http-dto/auth-login-http.dto';
 import { Login } from '../../application/use-cases/auth/login';
+import { SkipAuth } from '../decorators/public-route.decorator';
 type FileUpload = Express.Multer.File;
 
 @Controller('/')
@@ -24,6 +25,7 @@ export class AuthController {
     private readonly register: Register<FileUpload>,
     private readonly loginUseCase: Login,
   ) {}
+  @SkipAuth()
   @Post('sign-up')
   @HttpCode(201)
   @UseInterceptors(FileInterceptor('file_img'))
@@ -77,7 +79,7 @@ export class AuthController {
       'User created successfully',
     );
   }
-
+  @SkipAuth()
   @Post('login')
   @HttpCode(200)
   async login(

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RouterModule } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { UserController } from './infrastructure/controllers/user.controller';
 import { UserCreate } from './application/use-cases/user/user-create';
 import { UserRepository } from './domain/repositories/user-repository';
@@ -18,12 +18,16 @@ import { FinduserService } from './application/services/find-user.service';
 import { CredentialsValidationService } from './application/services/credentials-validation.service';
 import { CredentialsValidationPort } from './domain/ports/credentials-validation.port';
 import { ImplCredentialsValidatorPort } from './infrastructure/implementation/auth-port-implementation/impl-credentials-validator.port';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
+import { JwtPassportAuthGuard } from './infrastructure/guards/jwt-passport-auth.guard';
 
 @Module({
   imports: [
     RouterModule.register([{ path: 'auth', module: AuthModule }]),
     ProfileModule,
     StorageModule,
+    PassportModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
@@ -39,6 +43,7 @@ import { ImplCredentialsValidatorPort } from './infrastructure/implementation/au
     TokenGeneratorService,
     CredentialsValidationService,
     FinduserService,
+    JwtStrategy,
     {
       provide: UserRepository,
       useClass: ImplUserRepository,
@@ -50,6 +55,10 @@ import { ImplCredentialsValidatorPort } from './infrastructure/implementation/au
     {
       provide: CredentialsValidationPort,
       useClass: ImplCredentialsValidatorPort,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtPassportAuthGuard,
     },
   ],
   exports: [],

@@ -3,7 +3,7 @@ import { CountryController } from './infrastructure/controllers/country.controll
 import { CountryCreate } from './application/use-cases/country/country-create';
 import { CountryRepository } from './domain/repositories/country-repository';
 import { ImplCountryRepository } from './infrastructure/implementation/impl-country.repository';
-import { RouterModule } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { CountryUpdate } from './application/use-cases/country/country-update';
 import { CountryDelete } from './application/use-cases/country/country-delete';
 import { CountryGetAll } from './application/use-cases/country/country-get-all';
@@ -48,6 +48,7 @@ import { MaritalStatusGetAll } from './application/use-cases/marital-status/mari
 import { MaritalStatusGetOneById } from './application/use-cases/marital-status/marital-status-get-one-by-id';
 import { ImplMaritalStatusRepository } from './infrastructure/implementation/impl-marital-status.repository';
 import { MaritalStatusRepository } from './domain/repositories/marital-status-repository';
+import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
 
 @Module({
   imports: [
@@ -98,6 +99,7 @@ import { MaritalStatusRepository } from './domain/repositories/marital-status-re
     { provide: MunicipalityRespository, useClass: ImplMunicipalityRepository },
     { provide: GlobalStatsusRepository, useClass: ImplGlobalStatusRepository },
     { provide: MaritalStatusRepository, useClass: ImplMaritalStatusRepository },
+    { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
   exports: [
     CountryCreate,

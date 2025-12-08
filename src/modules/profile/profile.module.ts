@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RouterModule } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { PersonController } from './infrastructure/controllers/person.controller';
 import { PersonCreate } from './application/use-cases/person/person-create';
 import { PersonRepository } from './domain/repositories/person.repository';
@@ -35,6 +35,7 @@ import { ImplAddressRepository } from './infrastructure/implementation/impl-addr
 import { PersonCreateService } from './application/services/person/person-create.service';
 import { AddressCreateService } from './application/services/address/address-create.service';
 import { DocumentCreateService } from './application/services/document/document-create.service';
+import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { DocumentCreateService } from './application/services/document/document-
     AddressGetOneById,
     AddressDelete,
     { provide: AddressRepository, useClass: ImplAddressRepository },
+    { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
   exports: [
     PersonCreate,

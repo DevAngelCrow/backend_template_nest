@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RouterModule } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { ProviderStorageController } from './infrastructure/controllers/provider-storage.controller';
 import { ProviderStorageCreate } from './application/use-cases/provider-storage/provider-storage-create';
 import { ProviderStorageUpdate } from './application/use-cases/provider-storage/provider-storage-update';
@@ -14,6 +14,7 @@ import { StorageFilesRepository } from './domain/repositories/storage-files.repo
 import { ImplStorageFilesRepository } from './infrastructure/implementation/impl-storage-files.repository';
 import { StorageFilesController } from './infrastructure/controllers/storage-files.controller';
 import { StorageUploadService } from './application/services/storage/storage-upload.service';
+import { JwtAuthGuard } from '../auth/infrastructure/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { StorageUploadService } from './application/services/storage/storage-upl
       provide: StorageFilesRepository,
       useClass: ImplStorageFilesRepository,
     },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
   exports: [StorageUploadService],
 })
