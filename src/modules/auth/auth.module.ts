@@ -21,6 +21,12 @@ import { ImplCredentialsValidatorPort } from './infrastructure/implementation/au
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import { JwtPassportAuthGuard } from './infrastructure/guards/jwt-passport-auth.guard';
+import { SendVerificationEmail } from './application/use-cases/email/send-verification-email';
+import { VerifyEmail } from './application/use-cases/email/verify-email';
+import { EmailSenderPort } from './domain/ports/email-sender.port';
+import { EmailService } from './infrastructure/services/email.service';
+import { VerificationTokenRepository } from './domain/repositories/verification-token-repository';
+import { ImplVerificationTokenRepository } from './infrastructure/implementation/impl-verification-token.repository';
 
 @Module({
   imports: [
@@ -44,6 +50,16 @@ import { JwtPassportAuthGuard } from './infrastructure/guards/jwt-passport-auth.
     CredentialsValidationService,
     FinduserService,
     JwtStrategy,
+    SendVerificationEmail,
+    VerifyEmail,
+    {
+      provide: EmailSenderPort,
+      useClass: EmailService,
+    },
+    {
+      provide: VerificationTokenRepository,
+      useClass: ImplVerificationTokenRepository,
+    },
     {
       provide: UserRepository,
       useClass: ImplUserRepository,

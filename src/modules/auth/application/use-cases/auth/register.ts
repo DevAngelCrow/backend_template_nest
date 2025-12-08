@@ -11,6 +11,7 @@ import { AddressDto } from '@/modules/profile/application/dtos/address.dto';
 import { UserDto } from '../../dtos/user.dto';
 import { DocumentDto } from '@/modules/profile/application/dtos/document.dto';
 import { Injectable } from '@nestjs/common';
+import { SendVerificationEmail } from '../email/send-verification-email';
 
 interface FileUpload {
   originalname: string;
@@ -25,6 +26,7 @@ export class Register<T extends FileUpload> {
     private readonly addressCreateService: AddressCreateService,
     private readonly documentCreateService: DocumentCreateService,
     private readonly storageUploadService: StorageUploadService<T>,
+    private readonly sendVerificationEmail: SendVerificationEmail,
   ) {}
 
   async run(
@@ -98,8 +100,17 @@ export class Register<T extends FileUpload> {
       register_dto.is_validated,
     );
 
-    await this.userCreate.run(userDto);
+    const userCreated = await this.userCreate.run(userDto);
 
+    const idUser = userCreated.getId()?.value();
+    if (!idUser) {
+      throw new Error('User id is undefined after creation');
+    }
+    await this.sendVerificationEmail.run(
+      idUser,
+      register_dto.email,
+      register_dto.user_name,
+    );
     // 6. Asignar rol
     //const userRoleDto = new UserRoleDto(user.getId().value(), [2]);
 

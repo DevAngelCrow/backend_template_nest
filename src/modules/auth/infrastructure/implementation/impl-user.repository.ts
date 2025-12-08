@@ -2,12 +2,12 @@ import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/pris
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { UserRepository } from '../../domain/repositories/user-repository';
 import { User } from '../../domain/entities/user';
-//import { UserId } from '../../domain/value-objects/user-value-object/user-id';
 import { UserName } from '../../domain/value-objects/user-value-object/user-name';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { Injectable } from '@nestjs/common';
 import { PasswordHasher } from '@/modules/auth/infrastructure/services/password-hasher.service';
 import { mnt_user } from 'generated/prisma/client';
+import { UserId } from '../../domain/value-objects/user-value-object/user-id';
 
 @Injectable()
 export class ImplUserRepository implements UserRepository {
@@ -15,6 +15,51 @@ export class ImplUserRepository implements UserRepository {
     private readonly prisma: PrismaService,
     private readonly transactionContext: TransactionContextService,
   ) {}
+  public async getOneById(id: UserId): Promise<User | null> {
+    try {
+      const prisma = this.getPrismaClient();
+      const userDb: mnt_user | null = await prisma.mnt_user.findFirst({
+        where: {
+          id: id.value(),
+        },
+      });
+      if (!userDb) {
+        return null;
+      }
+      const userEntity = User.create({
+        id: Number(userDb.id),
+        id_people: Number(userDb.id_people),
+        user_name: userDb.user_name,
+        password: '',
+        id_status: Number(userDb.id_status),
+        last_access: userDb.last_access,
+        is_validated: userDb.is_validated,
+      });
+      return userEntity;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error getting user by user_name: ${error.message}`);
+      }
+      throw new DatabaseException(
+        'Error getting user by user_name',
+        'getOneByUserName',
+      );
+    }
+  }
+  public async markEmailAsVerified(user_id: UserId): Promise<void> {
+    try {
+      const prisma = this.getPrismaClient();
+      await prisma.mnt_user.update({
+        where: { id: user_id.value() },
+        data: { is_validated: true, email_verified_at: new Date() },
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error creating user: ${error.message}`);
+      }
+      throw new DatabaseException('Error creating user', 'markEmailAsVerified');
+    }
+  }
 
   private getPrismaClient() {
     return this.transactionContext.getTransaction() ?? this.prisma;

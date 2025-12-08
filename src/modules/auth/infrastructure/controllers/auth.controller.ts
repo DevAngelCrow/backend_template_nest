@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import { LoginDto } from '../dtos/validators/auth/login.dto';
 import { AuthLoginHttpDto } from '../dtos/http/user-http-dto/auth-login-http.dto';
 import { Login } from '../../application/use-cases/auth/login';
 import { SkipAuth } from '../decorators/public-route.decorator';
+import { VerifyEmail } from '../../application/use-cases/email/verify-email';
 type FileUpload = Express.Multer.File;
 
 @Controller('/')
@@ -24,6 +27,7 @@ export class AuthController {
   constructor(
     private readonly register: Register<FileUpload>,
     private readonly loginUseCase: Login,
+    private readonly verifyEmailUseCase: VerifyEmail,
   ) {}
   @SkipAuth()
   @Post('sign-up')
@@ -82,6 +86,7 @@ export class AuthController {
   @SkipAuth()
   @Post('login')
   @HttpCode(200)
+  @Transactional()
   async login(
     @Body() request: LoginDto,
   ): Promise<SuccessResponseDto<AuthLoginHttpDto>> {
@@ -98,6 +103,18 @@ export class AuthController {
       authLoginHttpDto,
       HttpStatus.OK,
       'Successfully logged in',
+    );
+  }
+  @SkipAuth()
+  @Get('verify-email')
+  async verifyEmail(
+    @Query('token') token: string,
+  ): Promise<SuccessResponseDto<null>> {
+    await this.verifyEmailUseCase.run(token);
+    return new SuccessResponseDto<null>(
+      null,
+      HttpStatus.OK,
+      'Email verified successfully',
     );
   }
 }
