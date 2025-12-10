@@ -1,10 +1,8 @@
 import { DocumentRepository } from 'src/modules/profile/domain/repositories/document.repository';
 import { DocumentDto } from '../../dtos/document.dto';
 import { Document } from 'src/modules/profile/domain/entities/document';
-import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
-@Injectable()
 export class DocumentUpdate {
   constructor(protected readonly documentRepository: DocumentRepository) {}
   public async run(document_dto: DocumentDto): Promise<void> {

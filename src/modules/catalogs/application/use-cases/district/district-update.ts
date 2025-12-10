@@ -2,9 +2,7 @@ import { DistrictRepository } from '@/modules/catalogs/domain/repositories/distr
 import { DistrictDto } from '../../dtos/district.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { District } from '@/modules/catalogs/domain/entities/district';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class DistrictUpdate {
   constructor(protected readonly districtRepository: DistrictRepository) {}
   public async run(district_dto: DistrictDto): Promise<void> {
@@ -13,13 +11,9 @@ export class DistrictUpdate {
     if (!districtId) {
       throw new Error(`District id is undefined`);
     }
-    const foundDistrict =
-      await this.districtRepository.getOneById(districtId);
+    const foundDistrict = await this.districtRepository.getOneById(districtId);
     if (!foundDistrict) {
-      throw new NotFoundException(
-        'District',
-        districtId.value().toString(),
-      );
+      throw new NotFoundException('District', districtId.value().toString());
     }
     await this.districtRepository.update(district);
   }

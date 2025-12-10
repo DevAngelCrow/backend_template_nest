@@ -1,10 +1,8 @@
 import { PersonRepository } from '@/modules/profile/domain/repositories/person.repository';
-import { Injectable } from '@nestjs/common';
 import { PersonDto } from '../../dtos/person.dto';
 import { Person } from '@/modules/profile/domain/entities/person';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
-@Injectable()
 export default class PersonUpdate {
   constructor(private readonly personRepository: PersonRepository) {}
   public async run(person_dto: PersonDto): Promise<void> {

@@ -1,10 +1,8 @@
 import { Department } from 'src/modules/catalogs/domain/entities/department';
 import { DepartmentRepository } from 'src/modules/catalogs/domain/repositories/department-repository';
-import { Injectable } from '@nestjs/common';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
 export class DepartmentGetAll {
   constructor(protected readonly departmentRepository: DepartmentRepository) {}
   public async run(

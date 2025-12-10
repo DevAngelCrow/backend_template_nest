@@ -1,10 +1,9 @@
 import { Municipality } from 'src/modules/catalogs/domain/entities/municipality';
 import { MunicipalityRespository } from 'src/modules/catalogs/domain/repositories/municipality-repository';
-import { Injectable } from '@nestjs/common';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
+
 export class MunicipalityGetAll {
   constructor(
     protected readonly municipalityRepository: MunicipalityRespository,

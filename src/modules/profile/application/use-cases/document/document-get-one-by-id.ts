@@ -1,10 +1,8 @@
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { Injectable } from '@nestjs/common';
 import { Document } from 'src/modules/profile/domain/entities/document';
 import { DocumentRepository } from 'src/modules/profile/domain/repositories/document.repository';
 import { DocumentId } from 'src/modules/profile/domain/value-objects/document-value-object/document-id';
 
-@Injectable()
 export class DocumentGetOneById {
   constructor(protected readonly documentRepository: DocumentRepository) {}
   public async run(id: number): Promise<Document | null> {

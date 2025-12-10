@@ -1,10 +1,8 @@
 import { AddressRepository } from 'src/modules/profile/domain/repositories/address.repository';
 import { AddressDto } from '../../dtos/address.dto';
 import { Address } from 'src/modules/profile/domain/entities/address';
-import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
-@Injectable()
 export class AddressUpdate {
   constructor(protected readonly addressRepository: AddressRepository) {}
   public async run(address_dto: AddressDto): Promise<void> {

@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { DocumentType } from 'src/modules/profile/domain/entities/document-type';
 import { DocumentTypeRepository } from 'src/modules/profile/domain/repositories/document-type.repository';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
 export class DocumentTypeGetAll {
   constructor(
     protected readonly documentTypeRepository: DocumentTypeRepository,
@@ -17,10 +15,7 @@ export class DocumentTypeGetAll {
       const paginationParams = PaginationParams.create({
         ...pagination_params,
       });
-      return await this.documentTypeRepository.getAll(
-        paginationParams,
-        filter,
-      );
+      return await this.documentTypeRepository.getAll(paginationParams, filter);
     }
     return await this.documentTypeRepository.getAll(undefined, filter);
   }

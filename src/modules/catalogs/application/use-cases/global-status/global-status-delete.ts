@@ -1,9 +1,7 @@
 import { GlobalStatsusRepository } from '@/modules/catalogs/domain/repositories/global-status-repository';
 import { GlobalStatusId } from '@/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class GlobalStatusDelete {
   constructor(
     protected readonly globalStatusRepository: GlobalStatsusRepository,

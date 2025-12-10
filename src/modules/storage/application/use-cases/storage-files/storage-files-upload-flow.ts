@@ -1,7 +1,6 @@
 import { StorageFilesRepository } from '@/modules/storage/domain/repositories/storage-files.repository';
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
-import { Injectable } from '@nestjs/common';
 import { StorageFilesDto } from '../../dtos/storage-files.dto';
 import { ProviderStorageCode } from '@/modules/storage/domain/value-objects/provider-storage-value-object/provider-storage-code';
 import { ProviderStorageRepository } from '@/modules/storage/domain/repositories/provider-storage.repository';
@@ -12,7 +11,6 @@ interface FileUpload {
   size: number;
   mimetype: string;
 }
-@Injectable()
 export class StorageFilesUploadFlow<T extends FileUpload> {
   constructor(
     private readonly storageFilesRepository: StorageFilesRepository,

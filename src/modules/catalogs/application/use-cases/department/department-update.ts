@@ -2,9 +2,7 @@ import { DepartmentRepository } from '@/modules/catalogs/domain/repositories/dep
 import { DepartmentDto } from '../../dtos/department.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Department } from '@/modules/catalogs/domain/entities/department';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class DepartmentUpdate {
   constructor(protected readonly departmentRepository: DepartmentRepository) {}
   public async run(department_dto: DepartmentDto): Promise<void> {

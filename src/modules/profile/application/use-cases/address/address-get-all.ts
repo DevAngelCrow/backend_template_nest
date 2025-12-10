@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { Address } from 'src/modules/profile/domain/entities/address';
 import { AddressRepository } from 'src/modules/profile/domain/repositories/address.repository';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
+
 export class AddressGetAll {
   constructor(protected readonly addressRepository: AddressRepository) {}
   public async run(

@@ -5,9 +5,6 @@ import { UserName } from '@/modules/auth/domain/value-objects/user-value-object/
 import { UserPassword } from '@/modules/auth/domain/value-objects/user-value-object/user-password';
 import { AuthenticateDto } from '../../dtos/authenticate.dto';
 import { UnauthorizedException } from '@/shared/application/exceptions/unauthorized.exception';
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
 export class Login {
   constructor(
     private readonly credentialsValidationPort: CredentialsValidationPort,

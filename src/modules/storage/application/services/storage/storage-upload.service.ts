@@ -1,13 +1,11 @@
 import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
 import { StorageFilesUploadFlow } from '../../use-cases/storage-files/storage-files-upload-flow';
-import { Injectable } from '@nestjs/common';
 
 interface FileUpload {
   originalname: string;
   size: number;
   mimetype: string;
 }
-@Injectable()
 export class StorageUploadService<T extends FileUpload> {
   constructor(private readonly storageUpload: StorageFilesUploadFlow<T>) {}
   async run(

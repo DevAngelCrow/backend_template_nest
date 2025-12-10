@@ -153,12 +153,11 @@ export class ImplAddressRepository implements AddressRepository {
   async getOneById(id: AddressId): Promise<Address | null> {
     try {
       const prisma = this.getPrismaClient();
-      const addressDb: mnt_address | null =
-        await prisma.mnt_address.findFirst({
-          where: {
-            id: id.value(),
-          },
-        });
+      const addressDb: mnt_address | null = await prisma.mnt_address.findFirst({
+        where: {
+          id: id.value(),
+        },
+      });
       if (!addressDb) {
         return null;
       }

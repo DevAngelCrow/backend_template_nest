@@ -2,9 +2,7 @@ import { MunicipalityRespository } from '@/modules/catalogs/domain/repositories/
 import { MunicipalityDto } from '../../dtos/municipality.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Municipality } from '@/modules/catalogs/domain/entities/municipality';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class MunicipalityUpdate {
   constructor(
     protected readonly municipalityRepository: MunicipalityRespository,

@@ -38,6 +38,7 @@ export class AuthController {
     @Body() request: RegisterValidatorDto,
     @UploadedFile() file_img: FileUpload,
   ): Promise<SuccessResponseDto<null>> {
+    console.log('Register request in the controller:', request);
     const registerDto = new RegisterDto<FileUpload>(
       request.first_name,
       request.middle_name,

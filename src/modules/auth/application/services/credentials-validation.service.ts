@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import { CredentialsValidationPort } from '../../domain/ports/credentials-validation.port';
 import { UserName } from '../../domain/value-objects/user-value-object/user-name';
 import { UserPassword } from '../../domain/value-objects/user-value-object/user-password';
 
-@Injectable()
 export class CredentialsValidationService {
   constructor(
     private readonly credentialsValidationPort: CredentialsValidationPort,

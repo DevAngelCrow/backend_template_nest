@@ -2,9 +2,7 @@ import { GlobalStatus } from 'src/modules/catalogs/domain/entities/global-status
 import { GlobalStatsusRepository } from 'src/modules/catalogs/domain/repositories/global-status-repository';
 import { GlobalStatusId } from 'src/modules/catalogs/domain/value-objects/goblal-status-value-object/global-status-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class GlobalStatusGetOneById {
   constructor(
     protected readonly globalStatusRepository: GlobalStatsusRepository,

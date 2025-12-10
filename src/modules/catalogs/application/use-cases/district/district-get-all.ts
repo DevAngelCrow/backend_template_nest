@@ -1,10 +1,9 @@
 import { District } from 'src/modules/catalogs/domain/entities/district';
 import { DistrictRepository } from 'src/modules/catalogs/domain/repositories/district-repository';
-import { Injectable } from '@nestjs/common';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
+
 export class DistrictGetAll {
   constructor(protected readonly districtRepository: DistrictRepository) {}
   public async run(

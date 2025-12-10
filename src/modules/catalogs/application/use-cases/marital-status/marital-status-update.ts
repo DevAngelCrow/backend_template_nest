@@ -2,9 +2,7 @@ import { MaritalStatusRepository } from '@/modules/catalogs/domain/repositories/
 import { MaritalStatusDto } from '../../dtos/marital-status.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { MaritalStatus } from '@/modules/catalogs/domain/entities/marital-status';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class MaritalStatusUpdate {
   constructor(
     protected readonly maritalStatusRepository: MaritalStatusRepository,

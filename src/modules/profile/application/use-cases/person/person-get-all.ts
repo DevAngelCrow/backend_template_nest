@@ -3,9 +3,7 @@ import { PersonRepository } from '@/modules/profile/domain/repositories/person.r
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class PersonGetAll {
   constructor(protected readonly personRepository: PersonRepository) {}
   public async run(

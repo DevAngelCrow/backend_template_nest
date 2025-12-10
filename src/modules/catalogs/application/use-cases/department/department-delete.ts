@@ -1,9 +1,7 @@
 import { DepartmentRepository } from '@/modules/catalogs/domain/repositories/department-repository';
 import { DepartmentId } from '@/modules/catalogs/domain/value-objects/department-value-object/department-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class DepartmentDelete {
   constructor(protected readonly departmentRepository: DepartmentRepository) {}
   public async run(id: number): Promise<void> {

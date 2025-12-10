@@ -1,9 +1,6 @@
 import { DocumentCreate } from '../../use-cases/document/document-create';
 import { DocumentDto } from '../../dtos/document.dto';
 import { Document } from '@/modules/profile/domain/entities/document';
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
 export class DocumentCreateService {
   constructor(private readonly documentCreate: DocumentCreate) {}
   async run(document_dto: DocumentDto): Promise<Document> {

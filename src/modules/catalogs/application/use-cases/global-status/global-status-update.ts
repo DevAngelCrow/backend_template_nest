@@ -2,9 +2,7 @@ import { GlobalStatsusRepository } from '@/modules/catalogs/domain/repositories/
 import { GlobalStatusDto } from '../../dtos/global-status.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { GlobalStatus } from '@/modules/catalogs/domain/entities/global-status';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class GlobalStatusUpdate {
   constructor(
     protected readonly globalStatusRepository: GlobalStatsusRepository,

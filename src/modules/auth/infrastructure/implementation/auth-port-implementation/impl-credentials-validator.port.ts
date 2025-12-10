@@ -4,7 +4,8 @@ import { UserPassword } from '@/modules/auth/domain/value-objects/user-value-obj
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { PasswordHasher } from '../../services/password-hasher.service';
-
+import { Injectable } from '@nestjs/common';
+@Injectable()
 export class ImplCredentialsValidatorPort implements CredentialsValidationPort {
   constructor(
     private readonly prisma: PrismaService,

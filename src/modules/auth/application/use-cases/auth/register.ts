@@ -10,7 +10,6 @@ import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/
 import { AddressDto } from '@/modules/profile/application/dtos/address.dto';
 import { UserDto } from '../../dtos/user.dto';
 import { DocumentDto } from '@/modules/profile/application/dtos/document.dto';
-import { Injectable } from '@nestjs/common';
 import { SendVerificationEmail } from '../email/send-verification-email';
 
 interface FileUpload {
@@ -18,7 +17,6 @@ interface FileUpload {
   size: number;
   mimetype: string;
 }
-@Injectable()
 export class Register<T extends FileUpload> {
   constructor(
     private readonly userCreate: UserCreate,
@@ -42,7 +40,6 @@ export class Register<T extends FileUpload> {
       storageFileDto.value(),
       provider_storage_code,
     );
-
     // 2. Crear persona
     const peopleDto = new PersonDto(
       register_dto.first_name,
@@ -59,7 +56,6 @@ export class Register<T extends FileUpload> {
     );
 
     const person = await this.personCreateService.run(peopleDto);
-
     const idPerson = person?.getId()?.value();
     if (!idPerson) {
       throw new Error('Person id is undefined after creation');
@@ -76,9 +72,7 @@ export class Register<T extends FileUpload> {
       register_dto.current,
       idPerson,
     );
-
     await this.addressCreateService.run(addressDto);
-
     // 4. Crear documento
     const documentDto = new DocumentDto(
       register_dto.document_number,
@@ -87,7 +81,6 @@ export class Register<T extends FileUpload> {
       register_dto.id_type_document,
       register_dto.active,
     );
-
     await this.documentCreateService.run(documentDto);
 
     // 5. Crear usuario

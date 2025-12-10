@@ -1,9 +1,7 @@
 import { DistrictRepository } from '@/modules/catalogs/domain/repositories/district-repository';
 import { DistrictId } from '@/modules/catalogs/domain/value-objects/district-value-object/district-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class DistrictDelete {
   constructor(protected readonly districtRepository: DistrictRepository) {}
   public async run(id: number): Promise<void> {

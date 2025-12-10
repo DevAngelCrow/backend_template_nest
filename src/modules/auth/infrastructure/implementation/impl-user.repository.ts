@@ -8,6 +8,7 @@ import { Injectable } from '@nestjs/common';
 import { PasswordHasher } from '@/modules/auth/infrastructure/services/password-hasher.service';
 import { mnt_user } from 'generated/prisma/client';
 import { UserId } from '../../domain/value-objects/user-value-object/user-id';
+import { UserAuth } from '../../domain/entities/user-auth';
 
 @Injectable()
 export class ImplUserRepository implements UserRepository {
@@ -15,6 +16,36 @@ export class ImplUserRepository implements UserRepository {
     private readonly prisma: PrismaService,
     private readonly transactionContext: TransactionContextService,
   ) {}
+  public async getOneByIdForAuth(id: UserId): Promise<UserAuth | null> {
+    try {
+      const prisma = this.getPrismaClient();
+      const userDb: mnt_user | null = await prisma.mnt_user.findFirst({
+        where: {
+          id: id.value(),
+        },
+      });
+      if (!userDb) {
+        return null;
+      }
+      const userEntity = UserAuth.create({
+        id: Number(userDb.id),
+        id_people: Number(userDb.id_people),
+        user_name: userDb.user_name,
+        id_status: Number(userDb.id_status),
+        last_access: userDb.last_access,
+        is_validated: userDb.is_validated,
+      });
+      return userEntity;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error getting user by user_name: ${error.message}`);
+      }
+      throw new DatabaseException(
+        'Error getting user by user_name',
+        'getOneByUserName',
+      );
+    }
+  }
   public async getOneById(id: UserId): Promise<User | null> {
     try {
       const prisma = this.getPrismaClient();
@@ -30,7 +61,7 @@ export class ImplUserRepository implements UserRepository {
         id: Number(userDb.id),
         id_people: Number(userDb.id_people),
         user_name: userDb.user_name,
-        password: '',
+        password: '*',
         id_status: Number(userDb.id_status),
         last_access: userDb.last_access,
         is_validated: userDb.is_validated,

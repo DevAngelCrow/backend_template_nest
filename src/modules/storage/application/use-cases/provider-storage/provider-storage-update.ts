@@ -1,10 +1,8 @@
 import { ProviderStorageRepository } from 'src/modules/storage/domain/repositories/provider-storage.repository';
 import { ProviderStorageDto } from '../../dtos/provider-storage.dto';
 import { ProviderStorage } from 'src/modules/storage/domain/entities/provider-storage';
-import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
-@Injectable()
 export class ProviderStorageUpdate {
   constructor(
     protected readonly providerStorageRepository: ProviderStorageRepository,

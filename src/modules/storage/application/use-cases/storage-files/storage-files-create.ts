@@ -1,10 +1,8 @@
 import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
 import { StorageFilesRepository } from '@/modules/storage/domain/repositories/storage-files.repository';
-import { Injectable } from '@nestjs/common';
 import { StorageFilesDto } from '../../dtos/storage-files.dto';
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 
-@Injectable()
 export class StorageFilesCreate<T> {
   constructor(
     private readonly storageFilesRepository: StorageFilesRepository,

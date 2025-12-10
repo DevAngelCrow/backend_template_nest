@@ -30,6 +30,7 @@ import { Country } from '../../domain/entities/country';
 type CountryGetAllResponse =
   | HttpPaginatedResponseDto<CountryHttpDto>
   | CountryHttpDto[];
+
 @Controller('countries')
 export class CountryController {
   constructor(

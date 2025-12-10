@@ -3,8 +3,7 @@ import { PersonRepository } from '@/modules/profile/domain/repositories/person.r
 import { PersonEmail } from '@/modules/profile/domain/value-objects/person-value-object/person-email';
 
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { Injectable } from '@nestjs/common';
-@Injectable()
+
 export class PersonGetOneByEmail {
   constructor(private readonly personRepository: PersonRepository) {}
   public async run(email: string): Promise<Person | null> {

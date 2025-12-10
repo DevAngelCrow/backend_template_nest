@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { Document } from 'src/modules/profile/domain/entities/document';
 import { DocumentRepository } from 'src/modules/profile/domain/repositories/document.repository';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
+
 export class DocumentGetAll {
   constructor(protected readonly documentRepository: DocumentRepository) {}
   public async run(

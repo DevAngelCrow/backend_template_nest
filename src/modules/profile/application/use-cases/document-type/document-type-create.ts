@@ -1,9 +1,7 @@
 import { DocumentTypeRepository } from 'src/modules/profile/domain/repositories/document-type.repository';
 import { DocumentTypeDto } from '../../dtos/document-type.dto';
 import { DocumentType } from 'src/modules/profile/domain/entities/document-type';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class DocumentTypeCreate {
   constructor(
     protected readonly documentTypeRepository: DocumentTypeRepository,

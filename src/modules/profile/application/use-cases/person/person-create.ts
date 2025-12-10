@@ -1,8 +1,7 @@
 import { Person } from '@/modules/profile/domain/entities/person';
 import { PersonRepository } from '@/modules/profile/domain/repositories/person.repository';
 import { PersonDto } from '../../dtos/person.dto';
-import { Injectable } from '@nestjs/common';
-@Injectable()
+
 export class PersonCreate {
   constructor(protected readonly personRepository: PersonRepository) {}
   public async run(person_dto: PersonDto): Promise<Person | void> {

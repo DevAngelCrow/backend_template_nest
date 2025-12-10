@@ -3,10 +3,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserRepository } from '../../domain/repositories/user-repository';
 import { UserId } from '../../domain/value-objects/user-value-object/user-id';
 import { UnauthorizedException } from '@/shared/application/exceptions/unauthorized.exception';
+import { Injectable } from '@nestjs/common';
 interface JwtPayload {
   user_name: string;
   id: number;
 }
+@Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userRepository: UserRepository) {
     super({
@@ -16,7 +18,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
   async validate(payload: JwtPayload) {
-    const user = await this.userRepository.getOneById(new UserId(payload.id));
+    const user = await this.userRepository.getOneByIdForAuth(
+      new UserId(payload.id),
+    );
     if (!user) {
       throw new UnauthorizedException('Invalid token: user does not exist');
     }
