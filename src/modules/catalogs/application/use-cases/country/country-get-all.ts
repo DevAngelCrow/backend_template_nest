@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { Country } from 'src/modules/catalogs/domain/entities/country';
 import { CountryRepository } from 'src/modules/catalogs/domain/repositories/country-repository';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParams } from '@/shared/domain/value-object/pagination-params';
-@Injectable()
 export class CountryGetAll {
   constructor(protected readonly countryRepository: CountryRepository) {}
   public async run(

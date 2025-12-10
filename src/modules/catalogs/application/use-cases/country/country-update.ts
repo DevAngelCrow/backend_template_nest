@@ -1,10 +1,8 @@
 import { CountryRepository } from 'src/modules/catalogs/domain/repositories/country-repository';
 import { CountryDto } from '../../dtos/country.dto';
 import { Country } from 'src/modules/catalogs/domain/entities/country';
-import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 
-@Injectable()
 export class CountryUpdate {
   constructor(protected readonly countryRepository: CountryRepository) {}
   public async run(country_dto: CountryDto): Promise<void> {
