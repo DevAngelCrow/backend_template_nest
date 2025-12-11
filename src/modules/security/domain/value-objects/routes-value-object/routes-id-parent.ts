@@ -1,16 +1,16 @@
 import { InvalidValueObjectException } from 'src/shared/domain/exceptions/invalid-value-object.exception';
 import { Validator } from 'src/shared/domain/validator/validator-value-object';
 
-export class RolIdStatus {
+export class RoutesIdParent {
   private readonly _value: number;
 
   constructor(value: number) {
     this._value = Validator.of(
       value,
-      (msg) => new InvalidValueObjectException('RolIdStatus', msg),
+      (msg) => new InvalidValueObjectException('RoutesIdParent', msg),
     )
-      .required('Rol id status is required')
-      .positiveInteger('Rol id status must be a positive integer')
+      .required('Routes id parent is required')
+      .positiveInteger('Routes id parent must be a positive integer')
       .getValue();
   }
 
@@ -18,7 +18,7 @@ export class RolIdStatus {
     return this._value;
   }
 
-  public equals(other: RolIdStatus): boolean {
+  public equals(other: RoutesIdParent): boolean {
     return this._value === other._value;
   }
 
