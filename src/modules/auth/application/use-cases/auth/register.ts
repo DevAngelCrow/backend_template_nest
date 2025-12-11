@@ -94,7 +94,6 @@ export class Register<T extends FileUpload> {
     );
 
     const userCreated = await this.userCreate.run(userDto);
-
     const idUser = userCreated.getId()?.value();
     if (!idUser) {
       throw new Error('User id is undefined after creation');

@@ -40,8 +40,8 @@ export const useCases: Array<{
     deps: [
       UserCreate,
       PersonCreateService,
-      DocumentCreateService,
       AddressCreateService,
+      DocumentCreateService,
       StorageUploadService,
       SendVerificationEmail,
     ],

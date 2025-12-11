@@ -25,6 +25,6 @@ import { RouterModule } from '@nestjs/core';
   ],
   controllers: [UserController, AuthController],
   providers: [...useCasesProviders, ...serviceProviders, ...repositories],
-  exports: [],
+  exports: [...useCasesProviders, ...serviceProviders],
 })
 export class AuthModule {}
