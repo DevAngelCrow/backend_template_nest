@@ -3,10 +3,8 @@ import { VerificationTokenRepository } from '@/modules/auth/domain/repositories/
 import { UserId } from '@/modules/auth/domain/value-objects/user-value-object/user-id';
 import { UserName } from '@/modules/auth/domain/value-objects/user-value-object/user-name';
 import { PersonEmail } from '@/modules/profile/domain/value-objects/person-value-object/person-email';
-import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 
-@Injectable()
 export class SendVerificationEmail {
   constructor(
     private readonly emailSender: EmailSenderPort,

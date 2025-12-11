@@ -1,8 +1,6 @@
 import { UserRepository } from '@/modules/auth/domain/repositories/user-repository';
 import { UserId } from '@/modules/auth/domain/value-objects/user-value-object/user-id';
-import { Injectable } from '@nestjs/common';
 
-@Injectable()
 export class UserGetOneById {
   constructor(public readonly userRepository: UserRepository) {}
   public async run(id: number) {

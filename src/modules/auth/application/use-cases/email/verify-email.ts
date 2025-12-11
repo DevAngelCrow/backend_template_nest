@@ -1,9 +1,6 @@
 import { UserRepository } from '@/modules/auth/domain/repositories/user-repository';
 import { VerificationTokenRepository } from '@/modules/auth/domain/repositories/verification-token-repository';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
 export class VerifyEmail {
   constructor(
     private readonly tokenRepository: VerificationTokenRepository,
