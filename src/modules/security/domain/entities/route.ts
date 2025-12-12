@@ -23,7 +23,7 @@ export class Route {
   public static create(data: {
     id?: number;
     name: string;
-    title: string;
+    title?: string;
     description: string;
     icon: string;
     uri: string;
