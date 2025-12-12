@@ -2,20 +2,19 @@ import { InvalidValueObjectException } from '@/shared/domain/exceptions/invalid-
 import { Validator } from 'src/shared/domain/validator/validator-value-object';
 
 export class MenuPermissions {
-  private readonly _value: string;
+  private readonly _value: number;
 
-  constructor(value: string) {
+  constructor(value: number) {
     const createException = (msg: string): InvalidValueObjectException =>
       new InvalidValueObjectException('menu permissions', msg);
 
     this._value = Validator.of(value, createException)
       .required('Menu permissions are required')
-      .string('Menu permissions must be a string')
-      .minLength(2, 'Menu permissions must be at least 2 characters long')
-      .maxLength(255, 'Menu permissions must be at most 255 characters long')
+      .number('Menu permissions must be a number')
+      .positiveInteger('Menu permissions must be a positive integer')
       .getValue();
   }
-  public value(): string {
+  public value(): number {
     return this._value;
   }
   public equals(other: MenuPermissions): boolean {
