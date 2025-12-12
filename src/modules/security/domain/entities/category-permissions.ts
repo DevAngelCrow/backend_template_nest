@@ -8,10 +8,10 @@ export class CategoryPermissions {
     private readonly name: CategoryPermissionsName,
     private readonly description: CategoryPermissionsDescription,
     private readonly active: CategoryPermissionsActive,
-    private readonly id: CategoryPermissionsId,
+    private readonly id?: CategoryPermissionsId,
   ) {}
   public static create(data: {
-    id: number;
+    id?: number;
     name: string;
     description: string;
     active: boolean;
@@ -20,7 +20,7 @@ export class CategoryPermissions {
       new CategoryPermissionsName(data.name),
       new CategoryPermissionsDescription(data.description),
       new CategoryPermissionsActive(data.active),
-      new CategoryPermissionsId(data.id),
+      data?.id ? new CategoryPermissionsId(data.id) : undefined,
     );
   }
   getName(): CategoryPermissionsName {
@@ -32,7 +32,7 @@ export class CategoryPermissions {
   getActive(): CategoryPermissionsActive {
     return this.active;
   }
-  getId(): CategoryPermissionsId {
+  getId(): CategoryPermissionsId | undefined {
     return this.id;
   }
 }

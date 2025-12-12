@@ -5,8 +5,6 @@ import { CatalogsModule } from './modules/catalogs/catalogs.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { TransactionInterceptor } from './shared/infrastructure/interceptors/transaction.interceptor';
-import { AuthModule } from './modules/auth/auth.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -18,11 +16,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     CatalogsModule,
     ProfileModule,
     StorageModule,
-    AuthModule,
   ],
   providers: [
     {
-      provide: APP_INTERCEPTOR,
+      provide: 'APP_INTERCEPTOR',
       useClass: TransactionInterceptor,
     },
   ],
