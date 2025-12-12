@@ -7,17 +7,14 @@ import { CategoryPermissionsId } from '../../domain/value-objects/category-permi
 export class ImplCategoryPermissionsRepository implements CategoryPermissionsRepository {
   create(category_permissions: CategoryPermissions): Promise<void> {
     try {
-        
     } catch (error) {
-        throw new Error('Method not implemented.');
+      throw new Error('Method not implemented.');
     }
-    
   }
   update(category_permissions: CategoryPermissions): Promise<void> {
     try {
-        
     } catch (error) {
-        throw new Error('Method not implemented.');
+      throw new Error('Method not implemented.');
     }
   }
   getAll(
@@ -25,23 +22,20 @@ export class ImplCategoryPermissionsRepository implements CategoryPermissionsRep
     filter?: string,
   ): Promise<Pagination<CategoryPermissions> | CategoryPermissions[]> {
     try {
-        
     } catch (error) {
-        throw new Error('Method not implemented.');
+      throw new Error('Method not implemented.');
     }
   }
   getOneById(id: CategoryPermissionsId): Promise<CategoryPermissions | null> {
     try {
-        
     } catch (error) {
-        throw new Error('Method not implemented.');
+      throw new Error('Method not implemented.');
     }
   }
   delete(id: CategoryPermissionsId): Promise<void> {
     try {
-        
     } catch (error) {
-        throw new Error('Method not implemented.');
+      throw new Error('Method not implemented.');
     }
   }
 }
