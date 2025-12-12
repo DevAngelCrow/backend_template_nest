@@ -19,6 +19,8 @@ export class Route {
     private readonly order: RoutesOrder,
     private readonly id?: RoutesId,
     private readonly title?: RoutesTitle,
+    private readonly id_parent?: RoutesId,
+    private readonly required_auth?: boolean,
   ) {}
   public static create(data: {
     id?: number;
@@ -30,6 +32,8 @@ export class Route {
     order: number;
     active: boolean;
     show: boolean;
+    required_auth?: boolean;
+    id_parent?: number;
   }): Route {
     return new Route(
       new RoutesName(data.name),
@@ -41,6 +45,8 @@ export class Route {
       new RoutesOrder(data.order),
       data.id ? new RoutesId(data.id) : undefined,
       data.title ? new RoutesTitle(data.title) : undefined,
+      data.id_parent ? new RoutesId(data.id_parent) : undefined,
+      data.required_auth,
     );
   }
 
