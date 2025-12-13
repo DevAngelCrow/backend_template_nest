@@ -4,6 +4,7 @@ import { RoutesIcon } from '../value-objects/routes-value-object/routes-icon';
 import { RoutesId } from '../value-objects/routes-value-object/routes-id';
 import { RoutesName } from '../value-objects/routes-value-object/routes-name';
 import { RoutesOrder } from '../value-objects/routes-value-object/routes-order';
+import { RoutesRquiredAuth } from '../value-objects/routes-value-object/routes-require-auth';
 import { RoutesShow } from '../value-objects/routes-value-object/routes-show';
 import { RoutesTitle } from '../value-objects/routes-value-object/routes-title';
 import { RoutesUri } from '../value-objects/routes-value-object/routes-uri';
@@ -17,10 +18,10 @@ export class Route {
     private readonly active: RoutesActive,
     private readonly show: RoutesShow,
     private readonly order: RoutesOrder,
+    private readonly required_auth: RoutesRquiredAuth,
     private readonly id?: RoutesId,
     private readonly title?: RoutesTitle,
     private readonly id_parent?: RoutesId,
-    private readonly required_auth?: boolean,
   ) {}
   public static create(data: {
     id?: number;
@@ -32,7 +33,7 @@ export class Route {
     order: number;
     active: boolean;
     show: boolean;
-    required_auth?: boolean;
+    required_auth: boolean;
     id_parent?: number;
   }): Route {
     return new Route(
@@ -43,10 +44,11 @@ export class Route {
       new RoutesActive(data.active),
       new RoutesShow(data.show),
       new RoutesOrder(data.order),
+      new RoutesRquiredAuth(data.required_auth),
       data.id ? new RoutesId(data.id) : undefined,
       data.title ? new RoutesTitle(data.title) : undefined,
       data.id_parent ? new RoutesId(data.id_parent) : undefined,
-      data.required_auth,
+      
     );
   }
 
@@ -76,5 +78,11 @@ export class Route {
   }
   public getOrder(): RoutesOrder {
     return this.order;
+  }
+  public getIdParent(): RoutesId | undefined {
+    return this.id_parent;
+  }
+  public getRequiredAuth(): RoutesRquiredAuth {
+    return this.required_auth;
   }
 }

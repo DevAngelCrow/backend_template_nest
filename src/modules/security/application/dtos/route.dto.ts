@@ -9,6 +9,7 @@ export class RouteDto {
     public readonly active: boolean,
     public readonly show: boolean,
     public readonly order: number,
+    public readonly required_auth: boolean,
     public readonly id?: number,
     public readonly title?: string,
   ) {}
@@ -21,6 +22,7 @@ export class RouteDto {
       route.getActive().value(),
       route.getShow().value(),
       route.getOrder().value(),
+      route.getRequiredAuth().value(),
       route.getId() ? route.getId()?.value() : undefined,
       route.getTitle() ? route.getTitle()?.value() : undefined,
     );

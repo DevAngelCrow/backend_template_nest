@@ -8,6 +8,9 @@ import { RoutesId } from '../../domain/value-objects/routes-value-object/routes-
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { mnt_route } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { EntityList } from '@/shared/domain/value-object/entity-list';
+import { TotalItems } from '@/shared/domain/value-object/total-items';
+import { TotalPages } from '@/shared/domain/value-object/total-page';
 
 export class ImplRouteRepository implements RouteRepository {
   private routes: Route[] = [];
@@ -30,9 +33,9 @@ export class ImplRouteRepository implements RouteRepository {
           uri: route.getUri().value(),
           show: route.getShow().value(),
           order: route.getOrder().value(),
-          required_auth: true, // route?.getRequiredAuth()?.value(),
-          title: '', // route?.getTitle()?.value(),
-          id_parent: 1, // route?.getIdParent()?.value() || null,
+          required_auth: route.getRequiredAuth()?.value(),
+          title: route?.getTitle()?.value() ?? '',
+          id_parent: Number(route.getIdParent()?.value()) || null,
           created_at: new Date(),
         },
       });
@@ -43,7 +46,7 @@ export class ImplRouteRepository implements RouteRepository {
         icon: routeDb.icon,
         uri: routeDb.uri,
         show: routeDb.show,
-        order: routeDb.order || 1,
+        order: Number(routeDb.order),
         required_auth: routeDb.required_auth,
         title: routeDb.title,
         id_parent: Number(routeDb.id_parent) || 1,
@@ -78,8 +81,8 @@ export class ImplRouteRepository implements RouteRepository {
           show: route.getShow().value(),
           order: route.getOrder().value(),
           required_auth: route.getRequiredAuth().value(),
-          title: route.getTitle()?.value() || '',
-          id_parent: route.getIdParent()?.value() || null,
+          title: route.getTitle()?.value(),
+          id_parent: route.getIdParent()?.value(),
           updated_at: new Date(),
         },
       });
@@ -100,14 +103,15 @@ export class ImplRouteRepository implements RouteRepository {
     filter?: string,
   ): Promise<Pagination<Route> | Route[]> {
     try {
+      const prisma = this.getPrismaClient();
       const where = {
         name: {
           contains: filter,
           mode: 'insensitive' as const,
         },
       };
-      const [categoryPermissionsDb, total] = await Promise.all([
-        this.prisma.ctl_category_permissions.findMany({
+      const [routeDb, total] = await Promise.all([
+        prisma.mnt_route.findMany({
           skip:
             pagination_params?.getPage().value() &&
             pagination_params?.getPerPage().value()
@@ -120,29 +124,29 @@ export class ImplRouteRepository implements RouteRepository {
             id: 'asc',
           },
         }),
-        this.prisma.ctl_category_permissions.count({ where }),
+        prisma.mnt_route.count({ where }),
       ]);
 
-      const categoryPermissions =
-        categoryPermissionsDb.length > 0
-          ? categoryPermissionsDb.map(
-              (categoryPermissionsDb: ctl_category_permissions) =>
-                this.mapToDomain(categoryPermissionsDb),
+      const routes =
+        routeDb.length > 0
+          ? routeDb.map(
+              (routeDb: mnt_route) =>
+                this.mapToDomain(routeDb),
             )
           : [];
 
-      this.categoryPermissions = categoryPermissions;
+      this.routes = routes;
 
       if (!pagination_params) {
-        return this.categoryPermissions;
+        return this.routes;
       }
 
-      const entityList: EntityList<CategoryPermissions> =
-        categoryPermissions.length > 0
-          ? new EntityList<CategoryPermissions>(this.categoryPermissions)
-          : new EntityList<CategoryPermissions>([]);
+      const entityList: EntityList<Route> =
+        routes.length > 0
+          ? new EntityList<Route>(this.routes)
+          : new EntityList<Route>([]);
 
-      return new Pagination<CategoryPermissions>(
+      return new Pagination<Route>(
         entityList,
         pagination_params.getPage(),
         pagination_params.getPerPage(),
@@ -157,17 +161,18 @@ export class ImplRouteRepository implements RouteRepository {
   }
   async getOneById(id: RoutesId): Promise<Route | null> {
     try {
-      const categoryPermissionDb: ctl_category_permissions | null =
-        await this.prisma.ctl_category_permissions.findFirst({
+      const prisma = this.getPrismaClient();
+      const routeDb: mnt_route | null =
+        await prisma.mnt_route.findFirst({
           where: {
             id: id.value(),
           },
         });
-      if (!categoryPermissionDb) {
+      if (!routeDb) {
         return null;
       }
-      const categoryPermission = this.mapToDomain(categoryPermissionDb);
-      return categoryPermission;
+      const route = this.mapToDomain(routeDb);
+      return route;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error creating category permission: ${error.message}`);
@@ -177,8 +182,9 @@ export class ImplRouteRepository implements RouteRepository {
   }
   async delete(id: RoutesId): Promise<void> {
     try {
-      const categoryPermissionDb =
-        await this.prisma.ctl_category_permissions.update({
+      const prisma = this.getPrismaClient();
+      const routeDb =
+        await prisma.mnt_route.update({
           where: {
             id: id.value(),
           },
@@ -186,9 +192,9 @@ export class ImplRouteRepository implements RouteRepository {
             active: false,
           },
         });
-      if (!categoryPermissionDb) {
+      if (!routeDb) {
         throw new NotFoundException(
-          'CategoryPermission',
+          'Route',
           id.value().toString(),
         );
       }
@@ -197,7 +203,7 @@ export class ImplRouteRepository implements RouteRepository {
         throw new Error(`Error creating category permission: ${error.message}`);
       }
       throw new DatabaseException(
-        'Error deleting category permission',
+        'Error deleting route',
         'delete',
       );
     }
@@ -206,7 +212,7 @@ export class ImplRouteRepository implements RouteRepository {
     return Route.create({
       id: Number(primsaRoute.id),
       name: primsaRoute.name,
-      description: primsaRoute.description,
+      description: primsaRoute.description || '',
       icon: primsaRoute.icon,
       uri: primsaRoute.uri,
       active: primsaRoute.active,
@@ -214,7 +220,7 @@ export class ImplRouteRepository implements RouteRepository {
       order: primsaRoute.order || 1,
       required_auth: primsaRoute.required_auth,
       title: primsaRoute.title,
-      id_parent: Number(primsaRoute.id_parent) || 1,
+      id_parent: Number(primsaRoute.id_parent),
     });
   }
 }
