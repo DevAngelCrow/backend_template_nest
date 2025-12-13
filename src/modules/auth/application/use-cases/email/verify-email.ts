@@ -1,4 +1,4 @@
-import { UserRepository } from '@/modules/auth/domain/repositories/user-repository';
+import { UserRepository } from '@/modules/identity-access-management/domain/repositories/user-repository';
 import { VerificationTokenRepository } from '@/modules/auth/domain/repositories/verification-token-repository';
 import { BadRequestException } from '@/shared/domain/exceptions/bad-request.exception';
 export class VerifyEmail {

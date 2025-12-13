@@ -1,5 +1,5 @@
-import { UserName } from '../value-objects/user-value-object/user-name';
-import { UserPassword } from '../value-objects/user-value-object/user-password';
+import { UserName } from '../../../identity-access-management/domain/value-objects/user-value-object/user-name';
+import { UserPassword } from '../../../identity-access-management/domain/value-objects/user-value-object/user-password';
 
 export abstract class CredentialsValidationPort {
   abstract validateCredentials(

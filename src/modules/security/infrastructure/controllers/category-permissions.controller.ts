@@ -25,7 +25,9 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { CategoryPermissions } from '../../domain/entities/category-permissions';
 
-type CategoryPermissionsGetAllResponse = HttpPaginatedResponseDto<CategoryPermissionsHttpDto> | CategoryPermissionsHttpDto[];
+type CategoryPermissionsGetAllResponse =
+  | HttpPaginatedResponseDto<CategoryPermissionsHttpDto>
+  | CategoryPermissionsHttpDto[];
 
 @Controller('category-permissions')
 export class CategoryPermissionsController {
@@ -56,7 +58,10 @@ export class CategoryPermissionsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() categoryPermissionsUpdateRequest: CategoryPermissionsRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.categoryPermissionsUpdate.run({ ...categoryPermissionsUpdateRequest, id });
+    await this.categoryPermissionsUpdate.run({
+      ...categoryPermissionsUpdateRequest,
+      id,
+    });
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -73,14 +78,14 @@ export class CategoryPermissionsController {
   ): Promise<SuccessResponseDto<CategoryPermissionsGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const categoryPermissionsPagination = await this.categoryPermissionsGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const categoryPermissionsPagination =
+        await this.categoryPermissionsGetAll.run(paginationParams, filter);
       if (categoryPermissionsPagination instanceof Pagination) {
         const categoryPermissionsHttpDto = categoryPermissionsPagination
           .getEntityList()
-          .map((categoryPermissions: CategoryPermissions) => CategoryPermissionsHttpDto.fromEntity(categoryPermissions));
+          .map((categoryPermissions: CategoryPermissions) =>
+            CategoryPermissionsHttpDto.fromEntity(categoryPermissions),
+          );
         const paginatedCategoryPermissionsResponse =
           new HttpPaginatedResponseDto<CategoryPermissionsHttpDto>(
             categoryPermissionsHttpDto,
@@ -89,7 +94,9 @@ export class CategoryPermissionsController {
             categoryPermissionsPagination.getPage(),
             categoryPermissionsPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<CategoryPermissionsHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<CategoryPermissionsHttpDto>
+        >(
           paginatedCategoryPermissionsResponse,
           HttpStatus.OK,
           'Category-permissions retrieved successfully',
@@ -97,11 +104,16 @@ export class CategoryPermissionsController {
       }
     }
 
-    const categoryPermissions = await this.categoryPermissionsGetAll.run(undefined, filter);
+    const categoryPermissions = await this.categoryPermissionsGetAll.run(
+      undefined,
+      filter,
+    );
 
     const categoryPermissionsHttpDto =
       categoryPermissions instanceof Array
-        ? categoryPermissions.map((categoryPermissions) => CategoryPermissionsHttpDto.fromEntity(categoryPermissions))
+        ? categoryPermissions.map((categoryPermissions) =>
+            CategoryPermissionsHttpDto.fromEntity(categoryPermissions),
+          )
         : [];
     return new SuccessResponseDto<CategoryPermissionsHttpDto[]>(
       categoryPermissionsHttpDto,
@@ -115,11 +127,13 @@ export class CategoryPermissionsController {
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<CategoryPermissionsHttpDto>> {
-    const categoryPermissions = await this.categoryPermissionsGetOneById.run(id);
+    const categoryPermissions =
+      await this.categoryPermissionsGetOneById.run(id);
     if (!categoryPermissions) {
       throw new NotFoundException('Category-permissions', id.toString());
     }
-    const categoryPermissionsDtoHttp = CategoryPermissionsHttpDto.fromEntity(categoryPermissions);
+    const categoryPermissionsDtoHttp =
+      CategoryPermissionsHttpDto.fromEntity(categoryPermissions);
     return new SuccessResponseDto<CategoryPermissionsHttpDto>(
       categoryPermissionsDtoHttp,
       HttpStatus.OK,

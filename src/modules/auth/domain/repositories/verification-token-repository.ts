@@ -1,4 +1,4 @@
-import { UserId } from '../value-objects/user-value-object/user-id';
+import { UserId } from '../../../identity-access-management/domain/value-objects/user-value-object/user-id';
 
 export abstract class VerificationTokenRepository {
   abstract create(

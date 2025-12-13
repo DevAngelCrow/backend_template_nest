@@ -1,6 +1,6 @@
 import { CredentialsValidationPort } from '@/modules/auth/domain/ports/credentials-validation.port';
-import { UserName } from '@/modules/auth/domain/value-objects/user-value-object/user-name';
-import { UserPassword } from '@/modules/auth/domain/value-objects/user-value-object/user-password';
+import { UserName } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-name';
+import { UserPassword } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-password';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { PasswordHasher } from '../../services/password-hasher.service';

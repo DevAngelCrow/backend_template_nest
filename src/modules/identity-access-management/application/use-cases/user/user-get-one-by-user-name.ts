@@ -1,5 +1,5 @@
-import { UserRepository } from '@/modules/auth/domain/repositories/user-repository';
-import { UserName } from '@/modules/auth/domain/value-objects/user-value-object/user-name';
+import { UserRepository } from '@/modules/identity-access-management/domain/repositories/user-repository';
+import { UserName } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-name';
 
 export class UserGetOneByUserName {
   constructor(public readonly userRepository: UserRepository) {}

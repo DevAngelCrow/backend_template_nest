@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { VerificationTokenRepository } from '../../domain/repositories/verification-token-repository';
-import { UserId } from '../../domain/value-objects/user-value-object/user-id';
+import { UserId } from '../../../identity-access-management/domain/value-objects/user-value-object/user-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 

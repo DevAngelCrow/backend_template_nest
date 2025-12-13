@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from '../dtos/validators/user/create-user.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { UserCreate } from '../../application/use-cases/user/user-create';
-import { UserGetOneByUserName } from '../../application/use-cases/user/user-get-one-by-user-name';
+import { UserCreate } from '@/modules/identity-access-management/application/use-cases/user/user-create';
+import { UserGetOneByUserName } from '@/modules/identity-access-management/application/use-cases/user/user-get-one-by-user-name';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
-import { UserHttpDto } from '../dtos/http/user-http-dto/user-http.dto';
+import { UserHttpDto } from '../dtos/http/user-http.dto';
 
 @Controller('users')
 export class UserController {

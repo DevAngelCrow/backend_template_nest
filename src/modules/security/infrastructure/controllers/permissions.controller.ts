@@ -25,7 +25,9 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Permissions } from '../../domain/entities/permissions';
 
-type PermissionsGetAllResponse = HttpPaginatedResponseDto<PermissionsHttpDto> | PermissionsHttpDto[];
+type PermissionsGetAllResponse =
+  | HttpPaginatedResponseDto<PermissionsHttpDto>
+  | PermissionsHttpDto[];
 
 @Controller('permissions')
 export class PermissionsController {
@@ -80,7 +82,9 @@ export class PermissionsController {
       if (permissionsPagination instanceof Pagination) {
         const permissionsHttpDto = permissionsPagination
           .getEntityList()
-          .map((permissions: Permissions) => PermissionsHttpDto.fromEntity(permissions));
+          .map((permissions: Permissions) =>
+            PermissionsHttpDto.fromEntity(permissions),
+          );
         const paginatedPermissionsResponse =
           new HttpPaginatedResponseDto<PermissionsHttpDto>(
             permissionsHttpDto,
@@ -89,7 +93,9 @@ export class PermissionsController {
             permissionsPagination.getPage(),
             permissionsPagination.getPerPage(),
           );
-        return new SuccessResponseDto<HttpPaginatedResponseDto<PermissionsHttpDto>>(
+        return new SuccessResponseDto<
+          HttpPaginatedResponseDto<PermissionsHttpDto>
+        >(
           paginatedPermissionsResponse,
           HttpStatus.OK,
           'Permissions retrieved successfully',
@@ -101,7 +107,9 @@ export class PermissionsController {
 
     const permissionsHttpDto =
       permissions instanceof Array
-        ? permissions.map((permissions) => PermissionsHttpDto.fromEntity(permissions))
+        ? permissions.map((permissions) =>
+            PermissionsHttpDto.fromEntity(permissions),
+          )
         : [];
     return new SuccessResponseDto<PermissionsHttpDto[]>(
       permissionsHttpDto,

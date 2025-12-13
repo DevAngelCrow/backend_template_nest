@@ -1,6 +1,6 @@
 import { CredentialsValidationPort } from '../../domain/ports/credentials-validation.port';
-import { UserName } from '../../domain/value-objects/user-value-object/user-name';
-import { UserPassword } from '../../domain/value-objects/user-value-object/user-password';
+import { UserName } from '../../../identity-access-management/domain/value-objects/user-value-object/user-name';
+import { UserPassword } from '../../../identity-access-management/domain/value-objects/user-value-object/user-password';
 
 export class CredentialsValidationService {
   constructor(

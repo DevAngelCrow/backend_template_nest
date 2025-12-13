@@ -11,7 +11,9 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ImplRouteRepository implements RouteRepository {
   private routes: Route[] = [];
   constructor(
@@ -129,10 +131,7 @@ export class ImplRouteRepository implements RouteRepository {
 
       const routes =
         routeDb.length > 0
-          ? routeDb.map(
-              (routeDb: mnt_route) =>
-                this.mapToDomain(routeDb),
-            )
+          ? routeDb.map((routeDb: mnt_route) => this.mapToDomain(routeDb))
           : [];
 
       this.routes = routes;
@@ -156,18 +155,25 @@ export class ImplRouteRepository implements RouteRepository {
         ),
       );
     } catch (error) {
-      throw new Error('Method not implemented.');
+      if (error instanceof Error) {
+        throw new Error(
+          `Error updating category permissions: ${error.message}`,
+        );
+      }
+      throw new DatabaseException(
+        'Error updating category permissions',
+        'getAll',
+      );
     }
   }
   async getOneById(id: RoutesId): Promise<Route | null> {
     try {
       const prisma = this.getPrismaClient();
-      const routeDb: mnt_route | null =
-        await prisma.mnt_route.findFirst({
-          where: {
-            id: id.value(),
-          },
-        });
+      const routeDb: mnt_route | null = await prisma.mnt_route.findFirst({
+        where: {
+          id: id.value(),
+        },
+      });
       if (!routeDb) {
         return null;
       }
@@ -183,29 +189,22 @@ export class ImplRouteRepository implements RouteRepository {
   async delete(id: RoutesId): Promise<void> {
     try {
       const prisma = this.getPrismaClient();
-      const routeDb =
-        await prisma.mnt_route.update({
-          where: {
-            id: id.value(),
-          },
-          data: {
-            active: false,
-          },
-        });
+      const routeDb = await prisma.mnt_route.update({
+        where: {
+          id: id.value(),
+        },
+        data: {
+          active: false,
+        },
+      });
       if (!routeDb) {
-        throw new NotFoundException(
-          'Route',
-          id.value().toString(),
-        );
+        throw new NotFoundException('Route', id.value().toString());
       }
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error creating category permission: ${error.message}`);
       }
-      throw new DatabaseException(
-        'Error deleting route',
-        'delete',
-      );
+      throw new DatabaseException('Error deleting route', 'delete');
     }
   }
   private mapToDomain(primsaRoute: mnt_route): Route {

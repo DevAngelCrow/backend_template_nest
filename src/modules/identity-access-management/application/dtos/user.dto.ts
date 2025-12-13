@@ -1,4 +1,4 @@
-import { User } from '@/modules/auth/domain/entities/user';
+import { User } from '@/modules/identity-access-management/domain/entities/user';
 
 export class UserDto {
   constructor(

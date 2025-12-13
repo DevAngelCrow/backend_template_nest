@@ -11,7 +11,9 @@ import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { mnt_role } from 'generated/prisma/browser';
 import { RolId } from '../../domain/value-objects/rol-value-object/rol-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ImplRolRepository implements RolRepository {
   private role: Rol[] = [];
   constructor(

@@ -1,6 +1,6 @@
 import { TokenGeneratorPort } from '@/modules/auth/domain/ports/token-generator.port';
-import { UserId } from '@/modules/auth/domain/value-objects/user-value-object/user-id';
-import { UserName } from '@/modules/auth/domain/value-objects/user-value-object/user-name';
+import { UserId } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-id';
+import { UserName } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-name';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 interface JwtPayload {

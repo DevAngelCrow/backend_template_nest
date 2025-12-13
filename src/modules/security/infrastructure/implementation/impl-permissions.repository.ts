@@ -11,7 +11,9 @@ import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { ctl_permissions } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ImplPermissionsRepository implements PermissionsRepository {
   private permissions: Permissions[] = [];
   constructor(

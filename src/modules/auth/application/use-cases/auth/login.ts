@@ -1,8 +1,8 @@
 import { CredentialsValidationPort } from '@/modules/auth/domain/ports/credentials-validation.port';
-import { FinduserService } from '../../services/find-user.service';
+import { FinduserService } from '../../../../identity-access-management/application/services/find-user.service';
 import { TokenGeneratorPort } from '@/modules/auth/domain/ports/token-generator.port';
-import { UserName } from '@/modules/auth/domain/value-objects/user-value-object/user-name';
-import { UserPassword } from '@/modules/auth/domain/value-objects/user-value-object/user-password';
+import { UserName } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-name';
+import { UserPassword } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-password';
 import { AuthenticateDto } from '../../dtos/authenticate.dto';
 import { UnauthorizedException } from '@/shared/application/exceptions/unauthorized.exception';
 export class Login {

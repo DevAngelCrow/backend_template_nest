@@ -73,22 +73,18 @@ export class RolController {
   ): Promise<SuccessResponseDto<RolGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const rolPagination = await this.rolGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const rolPagination = await this.rolGetAll.run(paginationParams, filter);
       if (rolPagination instanceof Pagination) {
         const rolHttpDto = rolPagination
           .getEntityList()
           .map((rol: Rol) => RolHttpDto.fromEntity(rol));
-        const paginatedRolResponse =
-          new HttpPaginatedResponseDto<RolHttpDto>(
-            rolHttpDto,
-            rolPagination.getTotalItems(),
-            rolPagination.getTotalPages(),
-            rolPagination.getPage(),
-            rolPagination.getPerPage(),
-          );
+        const paginatedRolResponse = new HttpPaginatedResponseDto<RolHttpDto>(
+          rolHttpDto,
+          rolPagination.getTotalItems(),
+          rolPagination.getTotalPages(),
+          rolPagination.getPage(),
+          rolPagination.getPerPage(),
+        );
         return new SuccessResponseDto<HttpPaginatedResponseDto<RolHttpDto>>(
           paginatedRolResponse,
           HttpStatus.OK,

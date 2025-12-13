@@ -1,5 +1,4 @@
 import { PersonCreateService } from '@/modules/profile/application/services/person/person-create.service';
-import { UserCreate } from '../user/user-create';
 import { AddressCreateService } from '@/modules/profile/application/services/address/address-create.service';
 import { DocumentCreateService } from '@/modules/profile/application/services/document/document-create.service';
 import { StorageUploadService } from '@/modules/storage/application/services/storage/storage-upload.service';
@@ -8,9 +7,10 @@ import { PersonDto } from '@/modules/profile/application/dtos/person.dto';
 
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
 import { AddressDto } from '@/modules/profile/application/dtos/address.dto';
-import { UserDto } from '../../dtos/user.dto';
+import { UserDto } from '../../../../identity-access-management/application/dtos/user.dto';
 import { DocumentDto } from '@/modules/profile/application/dtos/document.dto';
 import { SendVerificationEmail } from '../email/send-verification-email';
+import { CreateUserService } from '@/modules/identity-access-management/application/services/create-user.service';
 
 interface FileUpload {
   originalname: string;
@@ -19,7 +19,7 @@ interface FileUpload {
 }
 export class Register<T extends FileUpload> {
   constructor(
-    private readonly userCreate: UserCreate,
+    private readonly userCreateService: CreateUserService,
     private readonly personCreateService: PersonCreateService,
     private readonly addressCreateService: AddressCreateService,
     private readonly documentCreateService: DocumentCreateService,
@@ -92,8 +92,7 @@ export class Register<T extends FileUpload> {
       register_dto.last_access,
       register_dto.is_validated,
     );
-
-    const userCreated = await this.userCreate.run(userDto);
+    const userCreated = await this.userCreateService.run(userDto);
     const idUser = userCreated.getId()?.value();
     if (!idUser) {
       throw new Error('User id is undefined after creation');

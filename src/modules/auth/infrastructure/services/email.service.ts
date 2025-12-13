@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EmailSenderPort } from '../../domain/ports/email-sender.port';
 import * as nodemailer from 'nodemailer';
 import { PersonEmail } from '@/modules/profile/domain/value-objects/person-value-object/person-email';
-import { UserName } from '../../domain/value-objects/user-value-object/user-name';
+import { UserName } from '../../../identity-access-management/domain/value-objects/user-value-object/user-name';
 
 @Injectable()
 export class EmailService implements EmailSenderPort {

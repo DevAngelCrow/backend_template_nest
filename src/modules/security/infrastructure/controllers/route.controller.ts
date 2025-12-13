@@ -25,7 +25,9 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Route } from '../../domain/entities/route';
 
-type RouteGetAllResponse = HttpPaginatedResponseDto<RouteHttpDto> | RouteHttpDto[];
+type RouteGetAllResponse =
+  | HttpPaginatedResponseDto<RouteHttpDto>
+  | RouteHttpDto[];
 
 @Controller('routes')
 export class RouteController {
