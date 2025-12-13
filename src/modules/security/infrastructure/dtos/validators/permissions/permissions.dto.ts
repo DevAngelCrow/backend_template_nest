@@ -9,7 +9,7 @@ export class PermissionsRequestDto {
   id_category_permissions!: number;
   @IsString()
   @IsNotEmpty()
-  description!: Date;
+  description!: string;
   @IsBoolean()
   active!: boolean;
 }

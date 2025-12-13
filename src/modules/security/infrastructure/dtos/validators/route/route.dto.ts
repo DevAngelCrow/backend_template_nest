@@ -22,4 +22,6 @@ export class RouteRequestDto {
   order!: number;
   @IsString()
   title!: string;
+  @IsBoolean()
+  required_auth!: boolean;
 }

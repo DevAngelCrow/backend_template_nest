@@ -6,7 +6,7 @@ export class RolRequestDto {
   name!: string;
   @IsString()
   @IsNotEmpty()
-  description!: Date;
+  description!: string;
   @IsNumber()
   @IsNotEmpty()
   id_status!: number;
