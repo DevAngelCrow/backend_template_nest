@@ -1,23 +1,37 @@
 import { UserRoleId } from '../value-objects/user-role-value-object/user-role-id';
-import { Rol } from '../entities/rol';
 import { UserRoleIdUser } from '../value-objects/user-role-value-object/user-role-id-user';
+import { UserRoleIdRol } from '../value-objects/user-role-value-object/user-role-id-rol';
 
 export class UserRoleAggregate {
   constructor(
-    private readonly id: UserRoleId,
     private readonly id_user: UserRoleIdUser,
-    private readonly role: Rol[],
+    private readonly role: UserRoleIdRol[],
+    private readonly id?: UserRoleId,
   ) {}
-  getId(): UserRoleId {
+  getId(): UserRoleId | undefined {
     return this.id;
   }
-  getUser(): UserRoleIdUser {
+  getIdUser(): UserRoleIdUser {
     return this.id_user;
   }
-  addRole(rol: Rol): void {
-    this.role.push(rol);
-  }
-  getRoles(): Rol[] {
+  getIdRole(): UserRoleIdRol[] {
     return this.role;
   }
+  public static create(data: {
+    id?: number;
+    user_id: number;
+    role_id: number[];
+  }): UserRoleAggregate {
+    const userRoleId = data.id ? new UserRoleId(data.id) : undefined;
+    const userRoleIdUser = new UserRoleIdUser(data.user_id);
+    const userRoleIdRol = data.role_id.map((rolId) => new UserRoleIdRol(rolId));
+    return new UserRoleAggregate(userRoleIdUser, userRoleIdRol, userRoleId);
+  }
+  // addRole(rol: Rol): void {
+  //   this.role.push(rol);
+  // }
+  //   getRoles(): Rol[] {
+  //     return this.role;
+  //   }
+  // }
 }

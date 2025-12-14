@@ -7,6 +7,7 @@ import { RouteController } from './infrastructure/controllers/route.controller';
 import { useCasesProviders } from './infrastructure/config/use-cases.config';
 import { repositories } from './infrastructure/config/repositories.config';
 import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
+import { serviceProviders } from './infrastructure/config/services.config';
 
 @Module({
   imports: [
@@ -20,9 +21,10 @@ import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport
   ],
   providers: [
     ...useCasesProviders,
+    ...serviceProviders,
     ...repositories,
     { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
-  exports: [...useCasesProviders],
+  exports: [...useCasesProviders, ...serviceProviders],
 })
 export class SecurityModule {}

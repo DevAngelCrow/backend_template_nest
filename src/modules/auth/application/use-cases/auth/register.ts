@@ -11,6 +11,8 @@ import { UserDto } from '../../../../identity-access-management/application/dtos
 import { DocumentDto } from '@/modules/profile/application/dtos/document.dto';
 import { SendVerificationEmail } from '../email/send-verification-email';
 import { CreateUserService } from '@/modules/identity-access-management/application/services/create-user.service';
+import { UserRolDto } from '@/modules/security/application/dtos/user-rol.dto';
+import { CreateUserRoleService } from '@/modules/security/application/services/user-role/create-user-role.service';
 
 interface FileUpload {
   originalname: string;
@@ -25,6 +27,7 @@ export class Register<T extends FileUpload> {
     private readonly documentCreateService: DocumentCreateService,
     private readonly storageUploadService: StorageUploadService<T>,
     private readonly sendVerificationEmail: SendVerificationEmail,
+    private readonly userRoleCreateService: CreateUserRoleService,
   ) {}
 
   async run(
@@ -103,8 +106,8 @@ export class Register<T extends FileUpload> {
       register_dto.user_name,
     );
     // 6. Asignar rol
-    //const userRoleDto = new UserRoleDto(user.getId().value(), [2]);
+    const userRoleDto = new UserRolDto(idUser, [2]);
 
-    //await this.userRoleCreateService.userRoleCreateForUser(userRoleDto);
+    await this.userRoleCreateService.run(userRoleDto);
   }
 }

@@ -11,6 +11,7 @@ import { repositories } from './infrastructure/config/repositories.config';
 import { serviceProviders } from './infrastructure/config/services.config';
 import { RouterModule } from '@nestjs/core';
 import { IdentityAccessManagementModule } from '../identity-access-management/identity-access-management.module';
+import { SecurityModule } from '../security/security.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { IdentityAccessManagementModule } from '../identity-access-management/id
     StorageModule,
     IdentityAccessManagementModule,
     PassportModule,
+    SecurityModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

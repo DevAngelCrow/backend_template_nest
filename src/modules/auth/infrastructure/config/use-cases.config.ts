@@ -16,6 +16,7 @@ import { VerifyEmail } from '../../application/use-cases/email/verify-email';
 import { registerUseCase } from '@/shared/infrastructure/factories/register-use-case.factory';
 import { AddressCreateService } from '@/modules/profile/application/services/address/address-create.service';
 import { CreateUserService } from '@/modules/identity-access-management/application/services/create-user.service';
+import { CreateUserRoleService } from '@/modules/security/application/services/user-role/create-user-role.service';
 
 export const useCases: Array<{
   useCase: Type<unknown>;
@@ -30,6 +31,7 @@ export const useCases: Array<{
       DocumentCreateService,
       StorageUploadService,
       SendVerificationEmail,
+      CreateUserRoleService,
     ],
   },
   {

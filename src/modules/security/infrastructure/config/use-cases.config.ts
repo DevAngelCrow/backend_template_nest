@@ -24,6 +24,8 @@ import { RouteGetAll } from '../../application/use-cases/route/route-get-all';
 import { RouteGetOneById } from '../../application/use-cases/route/route-get-one-by-id';
 import { RouteDelete } from '../../application/use-cases/route/route-delete';
 import { registerUseCase } from '@/shared/infrastructure/factories/register-use-case.factory';
+import { UserRoleCreate } from '../../application/use-cases/user-rol/user-role-create';
+import { UserRoleRepository } from '../../domain/repositories/user-rol-repository';
 
 export const useCases: Array<{
   useCase: Type<unknown>;
@@ -113,6 +115,10 @@ export const useCases: Array<{
   {
     useCase: RouteDelete,
     deps: [RouteRepository],
+  },
+  {
+    useCase: UserRoleCreate,
+    deps: [UserRoleRepository],
   },
 ];
 

@@ -12,6 +12,8 @@ import { StorageUploadService } from '@/modules/storage/application/services/sto
 import { StorageFilesUploadFlow } from '@/modules/storage/application/use-cases/storage-files/storage-files-upload-flow';
 import { CreateUserService } from '@/modules/identity-access-management/application/services/create-user.service';
 import { UserCreate } from '@/modules/identity-access-management/application/use-cases/user/user-create';
+import { CreateUserRoleService } from '@/modules/security/application/services/user-role/create-user-role.service';
+import { UserRoleCreate } from '@/modules/security/application/use-cases/user-rol/user-role-create';
 
 export const services: Array<{
   service: Type<unknown>;
@@ -40,6 +42,10 @@ export const services: Array<{
   {
     service: CreateUserService,
     deps: [UserCreate],
+  },
+  {
+    service: CreateUserRoleService,
+    deps: [UserRoleCreate],
   },
 ];
 
