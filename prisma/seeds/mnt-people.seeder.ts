@@ -12,20 +12,23 @@ export const seedMntPeople = async (tx: PrismaClient) => {
     where: { table_header: 'mnt_people', id: 1 },
   });
 
-  if (gender && maritalStatus && status) {
-    await tx.mnt_people.create({
-      data: {
-        first_name: 'test',
-        middle_name: 'test',
-        last_name: 'test',
-        birthdate: new Date('2025-01-01'),
-        id_gender: gender.id,
-        email: 'test@mail.com',
-        id_marital_status: maritalStatus.id,
-        img_path: 'test/test',
-        phone: '22222222',
-        id_status: status.id,
-      },
-    });
+  if (!gender || !maritalStatus || !status) {
+    throw new Error(
+      'Required foreign key data not found. Please seed ctl_gender, ctl_marital_status, and ctl_status first.',
+    );
   }
+  await tx.mnt_people.create({
+    data: {
+      first_name: 'test',
+      middle_name: 'test',
+      last_name: 'test',
+      birthdate: new Date('2025-01-01'),
+      id_gender: gender.id,
+      email: 'test@mail.com',
+      id_marital_status: maritalStatus.id,
+      img_path: 'test/test',
+      phone: '22222222',
+      id_status: status.id,
+    },
+  });
 };

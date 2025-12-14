@@ -21,14 +21,14 @@ import { PrismaClient } from 'generated/prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-export const mainSeeder = async () => {
+const connectionString = `${process.env.DB_PROVIDER}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?schema=public`;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+const mainSeeder = async () => {
   console.log('Starting main seeder...');
-  const connectionString = process.env.DATABASE_URL!;
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaPg(pool);
 
-  const prisma = new PrismaClient({ adapter });
-
+  console.log('Database connected.');
   try {
     await seedCtlStatus(prisma);
     await seedCtlCountry(prisma);
@@ -54,13 +54,13 @@ export const mainSeeder = async () => {
     console.error('Error during main seeder execution:', error);
     throw error;
   }
-  mainSeeder()
-    .catch((e) => {
-      console.error(e);
-      process.exit(1);
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-      await pool.end();
-    });
 };
+mainSeeder()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+    await pool.end();
+  });

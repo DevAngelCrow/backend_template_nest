@@ -3,7 +3,7 @@ import { PrismaClient } from 'generated/prisma/client';
 export const seedMntRol = async (tx: PrismaClient) => {
   console.log('Seeding mnt_rol data ...');
   const status = await tx.ctl_status.findFirst({
-    where: { id: 3, table_header: 'mnt_rol' },
+    where: { id: 3, table_header: 'mnt_role' },
   });
   if (!status) {
     throw new Error('Please seed ctl_status for mnt_rol first.');

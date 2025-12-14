@@ -6,7 +6,7 @@ export const seedMntuser = async (tx: PrismaClient) => {
     where: { id: 1 },
   });
   const status = await tx.ctl_status.findFirst({
-    where: { table_header: 'mnt_user', id: 1 },
+    where: { table_header: 'mnt_user', id: 2 },
   });
   if (!people || !status) {
     throw new Error('Please seed mnt_people and ctl_status first.');

@@ -317,11 +317,31 @@ CREATE TABLE "rol_permissions" (
     CONSTRAINT "rol_permissions_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "mnt_email_verification_tokens" (
+    "id" BIGSERIAL NOT NULL,
+    "id_user" BIGINT NOT NULL,
+    "token" VARCHAR(255) NOT NULL,
+    "expires_at" TIMESTAMP(0) NOT NULL,
+    "created_at" TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "mnt_email_verification_tokens_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "mnt_people_email_unique" ON "mnt_people"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "mnt_user_id_people_unique" ON "mnt_user"("id_people");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "mnt_email_verification_tokens_token_key" ON "mnt_email_verification_tokens"("token");
+
+-- CreateIndex
+CREATE INDEX "mnt_email_verification_tokens_id_user_idx" ON "mnt_email_verification_tokens"("id_user");
+
+-- CreateIndex
+CREATE INDEX "mnt_email_verification_tokens_token_idx" ON "mnt_email_verification_tokens"("token");
 
 -- AddForeignKey
 ALTER TABLE "ctl_department" ADD CONSTRAINT "ctl_department_id_country_foreign" FOREIGN KEY ("id_country") REFERENCES "ctl_country"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
