@@ -20,7 +20,6 @@ export class StorageFilesUploadFlow<T extends FileUpload> {
     storage_file_content: T,
     provider_storage_code: string,
   ): Promise<StorageFiles<T>> {
-    console.log(provider_storage_code, 'provider en use case flow upload');
     const storageFileUpload = new StorageFilesContentFile<T>(
       storage_file_content,
     );
@@ -31,7 +30,6 @@ export class StorageFilesUploadFlow<T extends FileUpload> {
     if (!providerStorage) {
       throw new NotFoundException('ProviderStorage', provider_storage_code);
     }
-    console.log(providerStorage, 'provider storage encontrado');
     const providerId = providerStorage.getId();
     if (!providerId?.value()) {
       throw new Error(`ProviderStorage id is undefined`);

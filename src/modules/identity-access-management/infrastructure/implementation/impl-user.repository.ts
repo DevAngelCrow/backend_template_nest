@@ -16,17 +16,41 @@ export class ImplUserRepository implements UserRepository {
     private readonly prisma: PrismaService,
     private readonly transactionContext: TransactionContextService,
   ) {}
-  public async getOneByIdForAuth(id: UserId): Promise<UserAuth | null> {
+  public async getOneByUserNameForAuth(
+    user_name: UserName,
+  ): Promise<UserAuth | null> {
     try {
       const prisma = this.getPrismaClient();
-      const userDb: mnt_user | null = await prisma.mnt_user.findFirst({
+      const userDb = await prisma.mnt_user.findFirst({
         where: {
-          id: id.value(),
+          user_name: user_name.value(),
+        },
+        include: {
+          mnt_user_rol: {
+            include: {
+              mnt_role: {
+                include: {
+                  rol_permissions: {
+                    include: {
+                      ctl_permissions: {
+                        select: { name: true },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
       if (!userDb) {
         return null;
       }
+      const permissions = userDb.mnt_user_rol
+        .flatMap((userRol) => userRol.mnt_role.rol_permissions)
+        .flatMap((rolPermission) => rolPermission.ctl_permissions)
+        .map((permission) => permission.name);
+
       const userEntity = UserAuth.create({
         id: Number(userDb.id),
         id_people: Number(userDb.id_people),
@@ -34,6 +58,60 @@ export class ImplUserRepository implements UserRepository {
         id_status: Number(userDb.id_status),
         last_access: userDb.last_access,
         is_validated: userDb.is_validated,
+        permissions,
+      });
+      return userEntity;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error getting user by user_name: ${error.message}`);
+      }
+      throw new DatabaseException(
+        'Error getting user by user_name',
+        'getOneByUserName',
+      );
+    }
+  }
+  public async getOneByIdForAuth(id: UserId): Promise<UserAuth | null> {
+    try {
+      const prisma = this.getPrismaClient();
+      const userDb = await prisma.mnt_user.findFirst({
+        where: {
+          id: id.value(),
+        },
+        include: {
+          mnt_user_rol: {
+            include: {
+              mnt_role: {
+                include: {
+                  rol_permissions: {
+                    include: {
+                      ctl_permissions: {
+                        select: { name: true },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!userDb) {
+        return null;
+      }
+      const permissions = userDb.mnt_user_rol
+        .flatMap((userRol) => userRol.mnt_role.rol_permissions)
+        .flatMap((rolPermission) => rolPermission.ctl_permissions)
+        .map((permission) => permission.name);
+
+      const userEntity = UserAuth.create({
+        id: Number(userDb.id),
+        id_people: Number(userDb.id_people),
+        user_name: userDb.user_name,
+        id_status: Number(userDb.id_status),
+        last_access: userDb.last_access,
+        is_validated: userDb.is_validated,
+        permissions,
       });
       return userEntity;
     } catch (error) {
@@ -135,17 +213,40 @@ export class ImplUserRepository implements UserRepository {
   //   public getOneById(id: UserId): Promise<User | null> {
   //     throw new Error('Method not implemented.');
   //   }
-  async getOneByUserName(user_name: UserName): Promise<User | null> {
+  async getOneByUserName(
+    user_name: UserName,
+  ): Promise<{ user: User; permissions: string[] } | null> {
     try {
       const prisma = this.getPrismaClient();
-      const userDb: mnt_user | null = await prisma.mnt_user.findFirst({
+      const userDb = await prisma.mnt_user.findFirst({
         where: {
           user_name: user_name.value(),
+        },
+        include: {
+          mnt_user_rol: {
+            include: {
+              mnt_role: {
+                include: {
+                  rol_permissions: {
+                    include: {
+                      ctl_permissions: {
+                        select: { name: true },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
       if (!userDb) {
         return null;
       }
+      const permissions = userDb.mnt_user_rol
+        .flatMap((userRol) => userRol.mnt_role.rol_permissions)
+        .flatMap((rolPermission) => rolPermission.ctl_permissions)
+        .map((permission) => permission.name);
       const userEntity = User.create({
         id: Number(userDb.id),
         id_people: Number(userDb.id_people),
@@ -155,7 +256,10 @@ export class ImplUserRepository implements UserRepository {
         last_access: userDb.last_access,
         is_validated: userDb.is_validated,
       });
-      return userEntity;
+      return {
+        user: userEntity,
+        permissions,
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error getting user by user_name: ${error.message}`);

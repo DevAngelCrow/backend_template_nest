@@ -41,7 +41,7 @@ export class UserController {
     if (!user) {
       throw new NotFoundException('User', user_name.toString());
     }
-    const userHttpDto = UserHttpDto.fromEntity(user);
+    const userHttpDto = UserHttpDto.fromEntity(user.user);
     return new SuccessResponseDto<UserHttpDto>(
       userHttpDto,
       HttpStatus.OK,

@@ -147,14 +147,12 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
     code: ProviderStorageCode,
   ): Promise<ProviderStorage | null> {
     try {
-      console.log(code.value(), 'codigo en repo');
       const prisma = this.getPrismaClient();
       const providerStorageDb = await prisma.ctl_provider_storage.findFirst({
         where: {
           code: code.value(),
         },
       });
-      console.log(providerStorageDb, 'providerStorageDb en repo');
       if (!providerStorageDb) {
         return null;
       }

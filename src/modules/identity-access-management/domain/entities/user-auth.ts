@@ -12,6 +12,7 @@ export class UserAuth {
     private readonly id_status: UserIdStatus,
     private readonly last_access: UserLastAccess,
     private readonly is_validated: UserIsValidated,
+    private readonly permissions: string[],
     private readonly id?: UserId,
   ) {}
   static create(data: {
@@ -20,6 +21,7 @@ export class UserAuth {
     id_status: number;
     last_access: Date;
     is_validated: boolean;
+    permissions: string[];
     id?: number;
   }): UserAuth {
     return new UserAuth(
@@ -28,6 +30,7 @@ export class UserAuth {
       new UserIdStatus(data.id_status),
       new UserLastAccess(data.last_access),
       new UserIsValidated(data.is_validated),
+      data.permissions,
       data.id ? new UserId(data.id) : undefined,
     );
   }
@@ -48,5 +51,8 @@ export class UserAuth {
   }
   public getIsValidated(): UserIsValidated {
     return this.is_validated;
+  }
+  public getPermissions(): string[] {
+    return this.permissions;
   }
 }

@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 interface JwtPayload {
   user_name: string;
   id: number;
+  permissions: string[];
 }
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -27,6 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       user_name: payload.user_name,
       id: payload.id,
+      permissions: user.getPermissions(),
     };
   }
 }

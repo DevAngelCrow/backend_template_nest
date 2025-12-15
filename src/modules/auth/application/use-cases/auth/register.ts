@@ -34,7 +34,6 @@ export class Register<T extends FileUpload> {
     register_dto: RegisterDto<T>,
     provider_storage_code: string,
   ): Promise<void> {
-    console.log(provider_storage_code, 'provider en use case');
     // 1. Cargar storage file
     const storageFileDto = new StorageFilesContentFile<T>(
       register_dto.file_img,

@@ -1,13 +1,11 @@
 import { TokenGeneratorPort } from '../../domain/ports/token-generator.port';
-import { UserId } from '../../../identity-access-management/domain/value-objects/user-value-object/user-id';
-import { UserName } from '../../../identity-access-management/domain/value-objects/user-value-object/user-name';
+import { UserAuthDto } from '../dtos/user-auth.dto';
+import { UserAuth } from '@/modules/identity-access-management/domain/entities/user-auth';
 
 export class TokenGeneratorService {
   constructor(private readonly tokenGeneratorPort: TokenGeneratorPort) {}
-  async run(user_name: string, id: number): Promise<string> {
-    return await this.tokenGeneratorPort.generateToken(
-      new UserName(user_name),
-      new UserId(id),
-    );
+  async run(user: UserAuthDto): Promise<string> {
+    const userEntity = UserAuth.create({ ...user });
+    return await this.tokenGeneratorPort.generateToken(userEntity);
   }
 }

@@ -4,6 +4,8 @@ import { FinduserService } from '../../application/services/find-user.service';
 import { registerService } from '@/shared/infrastructure/factories/register-service.factory';
 import { CreateUserService } from '../../application/services/create-user.service';
 import { UserCreate } from '../../application/use-cases/user/user-create';
+import { FindUserAuthByNameService } from '../../application/services/find-user-auth-by-user-name.service';
+import { UserAuthGetOneByUserName } from '../../application/use-cases/user/user-auth-get-one-by-user-name';
 
 export const services: Array<{
   service: Type<unknown>;
@@ -16,6 +18,10 @@ export const services: Array<{
   {
     service: CreateUserService,
     deps: [UserCreate],
+  },
+  {
+    service: FindUserAuthByNameService,
+    deps: [UserAuthGetOneByUserName],
   },
 ];
 export const serviceProviders = services.map((uc) => {

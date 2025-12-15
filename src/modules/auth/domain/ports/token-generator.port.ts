@@ -1,6 +1,5 @@
-import { UserId } from '../../../identity-access-management/domain/value-objects/user-value-object/user-id';
-import { UserName } from '../../../identity-access-management/domain/value-objects/user-value-object/user-name';
+import { UserAuth } from '@/modules/identity-access-management/domain/entities/user-auth';
 
 export abstract class TokenGeneratorPort {
-  abstract generateToken(user_name: UserName, id: UserId): Promise<string>;
+  abstract generateToken(user: UserAuth): Promise<string>;
 }
