@@ -187,7 +187,6 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
             new MenuId(Number(route.id)),
           ),
         }
-          
       );
       return routeMapped;
 
