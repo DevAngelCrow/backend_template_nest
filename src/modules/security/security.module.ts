@@ -8,6 +8,7 @@ import { useCasesProviders } from './infrastructure/config/use-cases.config';
 import { repositories } from './infrastructure/config/repositories.config';
 import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
 import { serviceProviders } from './infrastructure/config/services.config';
+import { MenuController } from './infrastructure/controllers/menu.controller';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { serviceProviders } from './infrastructure/config/services.config';
     PermissionsController,
     RolController,
     RouteController,
+    MenuController,
   ],
   providers: [
     ...useCasesProviders,

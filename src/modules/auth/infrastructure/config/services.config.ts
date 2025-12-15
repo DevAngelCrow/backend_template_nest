@@ -14,6 +14,8 @@ import { CreateUserService } from '@/modules/identity-access-management/applicat
 import { UserCreate } from '@/modules/identity-access-management/application/use-cases/user/user-create';
 import { CreateUserRoleService } from '@/modules/security/application/services/user-role/create-user-role.service';
 import { UserRoleCreate } from '@/modules/security/application/use-cases/user-rol/user-role-create';
+import { TokenDedecoderService } from '../../application/services/token-decoder.service';
+import { DecodeTokenPort } from '../../domain/ports/decode-token.port';
 
 export const services: Array<{
   service: Type<unknown>;
@@ -46,6 +48,10 @@ export const services: Array<{
   {
     service: CreateUserRoleService,
     deps: [UserRoleCreate],
+  },
+  {
+    service: TokenDedecoderService,
+    deps: [DecodeTokenPort],
   },
 ];
 

@@ -26,6 +26,10 @@ import { RouteDelete } from '../../application/use-cases/route/route-delete';
 import { registerUseCase } from '@/shared/infrastructure/factories/register-use-case.factory';
 import { UserRoleCreate } from '../../application/use-cases/user-rol/user-role-create';
 import { UserRoleRepository } from '../../domain/repositories/user-rol-repository';
+import { GetMenuUser } from '../../application/use-cases/menu/get-menu-user';
+import { SecurityAuthorizationPort } from '../../domain/ports/security-authorization.port';
+import { TokenDedecoderService } from '@/modules/auth/application/services/token-decoder.service';
+import { FilterRoutesUser } from '../../application/use-cases/security-authorization-port/filter-routes-user';
 
 export const useCases: Array<{
   useCase: Type<unknown>;
@@ -119,6 +123,14 @@ export const useCases: Array<{
   {
     useCase: UserRoleCreate,
     deps: [UserRoleRepository],
+  },
+  {
+    useCase: FilterRoutesUser,
+    deps: [SecurityAuthorizationPort],
+  },
+  {
+    useCase: GetMenuUser,
+    deps: [FilterRoutesUser, TokenDedecoderService],
   },
 ];
 

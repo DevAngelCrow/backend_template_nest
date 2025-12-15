@@ -10,8 +10,6 @@ export class MenuPermissions<T> {
 
     this._value = Validator.of(value, createException)
       .required('Menu permissions are required')
-      .number('Menu permissions must be a number')
-      .positiveInteger('Menu permissions must be a positive integer')
       .getValue();
   }
   public value(): T {

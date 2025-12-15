@@ -16,28 +16,9 @@ import { MenuTitle } from '../../domain/value-objects/menu-value-object/menu-tit
 import { MenuUri } from '../../domain/value-objects/menu-value-object/menu-uri';
 import { MenuPermissions } from '../../domain/value-objects/menu-value-object/menu-permissions';
 import { MenuId } from '../../domain/value-objects/menu-value-object/menu-id';
-
-interface menu {
-  active: boolean;
-  description: string;
-  icon: string;
-  name: string;
-  order: number;
-  parent: menu | null;
-  required_auth: boolean;
-  show: boolean;
-  title: string;
-  uri: string;
-  permissions: permission[];
-  children: menu[];
-}
-interface permission {
-id: number;
-    name: string;
-    description: string;
-    id_category_permission: number;
-    active: boolean;
-}
+import { menu, permission } from '../interfaces/menu.interface';
+import { Injectable } from '@nestjs/common';
+@Injectable()
 export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort {
   constructor(
     private readonly prisma: PrismaService,
@@ -106,10 +87,14 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
       throw new Error(String(error));
     }
   }
-  async filterRoutesForUser<T, P>(id_user: number): Promise<Menu<T, P>[]> {
+  async filterRoutesForUser<T = menu, P = permission>(
+    id_user: number,
+  ): Promise<Menu<T, P>[]> {
     try {
       const prisma = this.getPrismaClient();
-      const user = await prisma.mnt_user.findUnique({
+
+      // 1. Obtener IDs de permisos del usuario
+      const user = await prisma.mnt_user.findFirst({
         where: { id: id_user },
         include: {
           mnt_user_rol: {
@@ -129,76 +114,134 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
           },
         },
       });
+
       if (!user) {
         return Promise.resolve([]);
       }
+
       const permissionIds = user.mnt_user_rol
         .flatMap((userRol) => userRol.mnt_role.rol_permissions)
         .flatMap((rolPermission) => rolPermission.ctl_permissions)
-        .map((permission) => permission.id);
+        .map((permission) => Number(permission.id));
+
+      // 2. Obtener rutas que tienen permisos que el usuario posee
       const routes = await prisma.mnt_route.findMany({
         where: {
           mnt_route_permissions: {
-            some: { id: { in: permissionIds } },
+            some: {
+              id_permission: { in: permissionIds },
+            },
           },
         },
         include: {
-          mnt_route_permissions: {
-            select: { id: true },
+          children: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              icon: true,
+              uri: true,
+              active: true,
+              id_parent: true,
+              order: true,
+              required_auth: true,
+              show: true,
+              title: true,
+            },
           },
-          children: true,
-          parent: true,
+          parent: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              icon: true,
+              uri: true,
+              active: true,
+              order: true,
+              required_auth: true,
+              show: true,
+              title: true,
+            },
+          },
+          mnt_route_permissions: {
+            include: {
+              ctl_permissions: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                  id_category_permissions: true,
+                  active: true,
+                },
+              },
+            },
+          },
         },
       });
 
-      const routeMapped = routes.map(
-        (route) => {
-            const children = route.children.map((child) => {
-                return {
-                active: child.active,
-                description: child.description,
-                icon: child.icon,
-                name: child.name,
-                order: child.order,
-                parent: child.id_parent,
-                required_auth: child.required_auth,
-                show: child.show,
-                title: child.title,
-                uri: child.uri,
-                permissions: child || [],
-                children: [],
-                id: Number(child.id),
-                }
-                
-            });
-            return new Menu<T, P>(
-            new MenuActive(route.active),
-            children,
-            new MenuDescription(route.description ?? ''),
-            new MenuIcon(route.icon),
-            new MenuName(route.name),
-            new MenuOrder(Number(route.order)),
-            new MenuParent(route.parent),
-            new MenuRequiredAuth(route.required_auth),
-            new MenuShow(route.show),
-            new MenuTitle(route.title),
-            new MenuUri(route.uri),
-            new MenuPermissions(route.mnt_route_permissions.map((perm) => perm)),
-            new MenuId(Number(route.id)),
-          ),
-        }
+      // 3. Eliminar duplicados (equivalente a ->unique('id')->values() en Laravel)
+      const uniqueRoutes = Array.from(
+        new Map(routes.map((route) => [Number(route.id), route])).values(),
       );
-      return routeMapped;
 
-      //   return routes.mnt_user_rol
-      //     .flatMap((userRol) => userRol.mnt_role.rol_permissions)
-      //     .flatMap((rolPermission) => rolPermission.ctl_permissions)
-      //     .flatMap((permission) =>
-      //       permission.mnt_route_permissions.map(
-      //         (routePermission) => routePermission.mnt_route.uri,
-      //       ),
-      //     )
-      //     .filter((uri, index, self) => uri && self.indexOf(uri) === index);
+      // 4. Mapear a entidades de dominio
+      const routeMapped = uniqueRoutes.map((route) => {
+        // Mapear children
+        const children = route.children.map(
+          (child) =>
+            new MenuChildren<T>({
+              active: child.active,
+              description: child.description || '',
+              icon: child.icon,
+              name: child.name,
+              order: Number(child.order),
+              required_auth: child.required_auth,
+              show: child.show,
+              title: child.title,
+              uri: child.uri,
+              id: Number(child.id),
+            } as T),
+        );
+
+        // Mapear permissions
+        const permissions = route.mnt_route_permissions.map(
+          (rp) =>
+            new MenuPermissions<P>({
+              id: Number(rp.ctl_permissions.id),
+              name: rp.ctl_permissions.name,
+              description: rp.ctl_permissions.description,
+              id_category_permissions: Number(
+                rp.ctl_permissions.id_category_permissions,
+              ),
+              active: rp.ctl_permissions.active,
+            } as P),
+        );
+
+        const parentData = route.parent
+          ? {
+              ...route.parent,
+              id: Number(route.parent.id),
+              order: Number(route.parent.order),
+            }
+          : null;
+        return new Menu<T, P>(
+          new MenuActive(route.active),
+          children,
+          permissions,
+          new MenuDescription(route.description ?? ''),
+          new MenuIcon(route.icon),
+          new MenuName(route.name),
+          new MenuOrder(Number(route.order)),
+          new MenuParent<T>(parentData as T),
+          new MenuRequiredAuth(route.required_auth),
+          new MenuShow(route.show),
+          new MenuTitle(route.title),
+          new MenuUri(route.uri),
+          new MenuId(Number(route.id)),
+        );
+      });
+
+      return routeMapped;
     } catch (error) {
       throw new Error(String(error));
     }

@@ -1,10 +1,10 @@
 import { Menu } from '@/modules/security/domain/entities/menu';
 
-export class MenuHttpDto<T> {
+export class MenuHttpDto<T, P> {
   constructor(
     public readonly active: boolean,
     public readonly children: T[],
-    public readonly permissions: number[],
+    public readonly permissions: P[],
     public readonly decription: string,
     public readonly icon: string,
     public readonly name: string,
@@ -16,7 +16,7 @@ export class MenuHttpDto<T> {
     public readonly uri: string,
     public readonly id?: number,
   ) {}
-  public static fromEntity<T>(menu: Menu<T>): MenuHttpDto<T> {
+  public static fromEntity<T, P>(menu: Menu<T, P>): MenuHttpDto<T, P> {
     const permissions = menu
       .getPermissions()
       .map((permission) => permission.value());

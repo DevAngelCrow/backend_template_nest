@@ -11,7 +11,7 @@ export class MenuUri {
     this._value = Validator.of(value, createException)
       .required('Menu uri is required')
       .string('Menu uri must be a string')
-      .minLength(2, 'Menu uri must be at least 2 characters long')
+      //.minLength(2, 'Menu uri must be at least 2 characters long')
       .maxLength(255, 'Menu uri must be at most 255 characters long')
       .getValue();
   }

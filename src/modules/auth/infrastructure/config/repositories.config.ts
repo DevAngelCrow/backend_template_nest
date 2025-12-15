@@ -12,6 +12,8 @@ import { EmailService } from '../services/email.service';
 import { JwtPassportAuthGuard } from '../guards/jwt-passport-auth.guard';
 import { HasVerifiedEmailPort } from '../../domain/ports/has-verified-email.port';
 import { ImplHasVerifiedEmailPort } from '../implementation/auth-port-implementation/impl-has-verified-email.port';
+import { DecodeTokenPort } from '../../domain/ports/decode-token.port';
+import { ImplDecodeTokenPort } from '../implementation/auth-port-implementation/impl-decode-token.port';
 
 export const repositories = [
   { provide: EmailSenderPort, useClass: EmailService },
@@ -28,6 +30,10 @@ export const repositories = [
   {
     provide: HasVerifiedEmailPort,
     useClass: ImplHasVerifiedEmailPort,
+  },
+  {
+    provide: DecodeTokenPort,
+    useClass: ImplDecodeTokenPort,
   },
   {
     provide: APP_GUARD,
