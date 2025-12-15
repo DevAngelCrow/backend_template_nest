@@ -5,16 +5,18 @@ import { UserName } from '@/modules/identity-access-management/domain/value-obje
 import { UserPassword } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-password';
 import { AuthenticateDto } from '../../dtos/authenticate.dto';
 import { UnauthorizedException } from '@/shared/application/exceptions/unauthorized.exception';
+import { HasVerifiedEmailPort } from '@/modules/auth/domain/ports/has-verified-email.port';
 export class Login {
   constructor(
     private readonly credentialsValidationPort: CredentialsValidationPort,
     private readonly tokenGenerator: TokenGeneratorPort,
     private readonly findUserService: FinduserService,
+    private readonly userEmailVerification: HasVerifiedEmailPort,
   ) {}
   async run(user_name: string, passsword: string): Promise<AuthenticateDto> {
     const userExists = await this.findUserService.run(user_name);
     if (!userExists) {
-      new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
     const userId = userExists?.getId();
     const userPassword = userExists?.getPassword();
@@ -29,6 +31,11 @@ export class Login {
       );
     if (!credentialsValid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+    const emailVerified =
+      await this.userEmailVerification.hasVerifiedEmail(userExists);
+    if (!emailVerified) {
+      throw new UnauthorizedException('Email not verified');
     }
     const token = await this.tokenGenerator.generateToken(
       new UserName(user_name),

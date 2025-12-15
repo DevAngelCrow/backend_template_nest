@@ -76,6 +76,7 @@ export class AuthController {
       true,
       undefined,
     );
+    console.log(process.env.PROVIDER_STORAGE_CODE, 'provider');
     await this.register.run(registerDto, process.env.PROVIDER_STORAGE_CODE!);
     return new SuccessResponseDto<null>(
       null,

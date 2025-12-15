@@ -6,7 +6,9 @@ import { UserRoleIdUser } from '../../domain/value-objects/user-role-value-objec
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ImplUserRoleRepository implements UserRoleRepository {
   constructor(
     private readonly prisma: PrismaService,

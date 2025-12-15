@@ -234,8 +234,8 @@ model mnt_route {
   created_at            DateTime?               @db.Timestamp(0)
   updated_at            DateTime?               @db.Timestamp(0)
   deleted_at            DateTime?               @db.Timestamp(0)
-  mnt_route             mnt_route?              @relation("mnt_routeTomnt_route", fields: [id_parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_route_id_parent_foreign")
-  other_mnt_route       mnt_route[]             @relation("mnt_routeTomnt_route")
+  parent                mnt_route?              @relation("mnt_routeTomnt_route", fields: [id_parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_route_id_parent_foreign")
+  children              mnt_route[]             @relation("mnt_routeTomnt_route")
   mnt_route_permissions mnt_route_permissions[]
 }
 

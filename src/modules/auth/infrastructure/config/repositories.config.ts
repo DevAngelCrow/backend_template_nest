@@ -10,6 +10,8 @@ import { ImplUserRepository } from '../../../identity-access-management/infrastr
 import { ImplVerificationTokenRepository } from '../implementation/impl-verification-token.repository';
 import { EmailService } from '../services/email.service';
 import { JwtPassportAuthGuard } from '../guards/jwt-passport-auth.guard';
+import { HasVerifiedEmailPort } from '../../domain/ports/has-verified-email.port';
+import { ImplHasVerifiedEmailPort } from '../implementation/auth-port-implementation/impl-has-verified-email.port';
 
 export const repositories = [
   { provide: EmailSenderPort, useClass: EmailService },
@@ -22,6 +24,10 @@ export const repositories = [
   {
     provide: CredentialsValidationPort,
     useClass: ImplCredentialsValidatorPort,
+  },
+  {
+    provide: HasVerifiedEmailPort,
+    useClass: ImplHasVerifiedEmailPort,
   },
   {
     provide: APP_GUARD,

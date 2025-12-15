@@ -17,6 +17,7 @@ import { registerUseCase } from '@/shared/infrastructure/factories/register-use-
 import { AddressCreateService } from '@/modules/profile/application/services/address/address-create.service';
 import { CreateUserService } from '@/modules/identity-access-management/application/services/create-user.service';
 import { CreateUserRoleService } from '@/modules/security/application/services/user-role/create-user-role.service';
+import { HasVerifiedEmailPort } from '../../domain/ports/has-verified-email.port';
 
 export const useCases: Array<{
   useCase: Type<unknown>;
@@ -36,7 +37,12 @@ export const useCases: Array<{
   },
   {
     useCase: Login,
-    deps: [CredentialsValidationPort, TokenGeneratorPort, FinduserService],
+    deps: [
+      CredentialsValidationPort,
+      TokenGeneratorPort,
+      FinduserService,
+      HasVerifiedEmailPort,
+    ],
   },
   {
     useCase: SendVerificationEmail,

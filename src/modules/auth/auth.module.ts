@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { UserController } from '../identity-access-management/infrastructure/controllers/user.controller';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { ProfileModule } from '../profile/profile.module';
 import { StorageModule } from '../storage/storage.module';
@@ -27,7 +26,7 @@ import { SecurityModule } from '../security/security.module';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [UserController, AuthController],
+  controllers: [AuthController],
   providers: [...useCasesProviders, ...serviceProviders, ...repositories],
   exports: [...useCasesProviders, ...serviceProviders],
 })

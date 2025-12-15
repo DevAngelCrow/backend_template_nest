@@ -12,14 +12,22 @@ import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { ProviderStorageCode } from '../../domain/value-objects/provider-storage-value-object/provider-storage-code';
+import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 
 @Injectable()
 export class ImplProviderStorageRepository implements ProviderStorageRepository {
   private providerStorages: ProviderStorage[] = [];
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly transactionContext: TransactionContextService,
+  ) {}
+  private getPrismaClient() {
+    return this.transactionContext.getTransaction() ?? this.prisma;
+  }
   async create(providerStorage: ProviderStorage): Promise<void> {
     try {
-      await this.prisma.ctl_provider_storage.create({
+      const prisma = this.getPrismaClient();
+      await prisma.ctl_provider_storage.create({
         data: {
           name: providerStorage.getName().value(),
           code: providerStorage.getCode().value(),
@@ -36,7 +44,8 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
   }
   async update(providerStorage: ProviderStorage): Promise<void> {
     try {
-      await this.prisma.ctl_provider_storage.update({
+      const prisma = this.getPrismaClient();
+      await prisma.ctl_provider_storage.update({
         where: {
           id: providerStorage.getId()?.value(),
         },
@@ -59,6 +68,7 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
     filter?: string,
   ): Promise<Pagination<ProviderStorage> | ProviderStorage[]> {
     try {
+      const prisma = this.getPrismaClient();
       const where = {
         name: {
           contains: filter,
@@ -66,7 +76,7 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
         },
       };
       const [providerStoragesDb, total] = await Promise.all([
-        this.prisma.ctl_provider_storage.findMany({
+        prisma.ctl_provider_storage.findMany({
           skip:
             pagination_params?.getPage().value() &&
             pagination_params?.getPerPage().value()
@@ -79,7 +89,7 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
             id: 'asc',
           },
         }),
-        this.prisma.ctl_provider_storage.count({ where }),
+        prisma.ctl_provider_storage.count({ where }),
       ]);
 
       const providerStorages = providerStoragesDb.map((providerStorageDb) =>
@@ -115,12 +125,12 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
   }
   async getOneById(id: ProviderStorageId): Promise<ProviderStorage | null> {
     try {
-      const providerStorageDb =
-        await this.prisma.ctl_provider_storage.findFirst({
-          where: {
-            id: id.value(),
-          },
-        });
+      const prisma = this.getPrismaClient();
+      const providerStorageDb = await prisma.ctl_provider_storage.findFirst({
+        where: {
+          id: id.value(),
+        },
+      });
       if (!providerStorageDb) {
         return null;
       }
@@ -137,12 +147,14 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
     code: ProviderStorageCode,
   ): Promise<ProviderStorage | null> {
     try {
-      const providerStorageDb =
-        await this.prisma.ctl_provider_storage.findFirst({
-          where: {
-            code: code.value(),
-          },
-        });
+      console.log(code.value(), 'codigo en repo');
+      const prisma = this.getPrismaClient();
+      const providerStorageDb = await prisma.ctl_provider_storage.findFirst({
+        where: {
+          code: code.value(),
+        },
+      });
+      console.log(providerStorageDb, 'providerStorageDb en repo');
       if (!providerStorageDb) {
         return null;
       }
@@ -157,7 +169,8 @@ export class ImplProviderStorageRepository implements ProviderStorageRepository 
   }
   async delete(id: ProviderStorageId): Promise<void> {
     try {
-      const providerStorageDb = await this.prisma.ctl_provider_storage.update({
+      const prisma = this.getPrismaClient();
+      const providerStorageDb = await prisma.ctl_provider_storage.update({
         where: {
           id: id.value(),
         },

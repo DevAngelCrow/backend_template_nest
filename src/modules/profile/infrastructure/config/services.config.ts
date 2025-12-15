@@ -6,6 +6,8 @@ import { AddressCreate } from '../../application/use-cases/address/address-creat
 import { PersonCreateService } from '../../application/services/person/person-create.service';
 import { PersonCreate } from '../../application/use-cases/person/person-create';
 import { registerService } from '@/shared/infrastructure/factories/register-service.factory';
+import { PersonGetOneByEmailService } from '../../application/services/person/person-get-one-by-email.service';
+import { PersonGetOneByEmail } from '../../application/use-cases/person/person-get-one-by-email';
 
 export const services: Array<{
   service: Type<unknown>;
@@ -22,6 +24,10 @@ export const services: Array<{
   {
     service: PersonCreateService,
     deps: [PersonCreate],
+  },
+  {
+    service: PersonGetOneByEmailService,
+    deps: [PersonGetOneByEmail],
   },
 ];
 

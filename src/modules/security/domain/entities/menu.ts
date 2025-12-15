@@ -12,11 +12,11 @@ import { MenuShow } from '../value-objects/menu-value-object/menu-show';
 import { MenuTitle } from '../value-objects/menu-value-object/menu-title';
 import { MenuUri } from '../value-objects/menu-value-object/menu-uri';
 
-export class Menu<T> {
+export class Menu<T, P> {
   constructor(
     private readonly active: MenuActive,
     private readonly children: MenuChildren<T>[],
-    private readonly permissions: MenuPermissions[],
+    private readonly permissions: MenuPermissions<P>[],
     private readonly description: MenuDescription,
     private readonly icon: MenuIcon,
     private readonly name: MenuName,
@@ -28,7 +28,7 @@ export class Menu<T> {
     private readonly uri: MenuUri,
     private readonly id?: MenuId,
   ) {}
-  public static create<T>(data: {
+  public static create<T, P>(data: {
     id?: number;
     name: string;
     title: string;
@@ -39,13 +39,13 @@ export class Menu<T> {
     active: boolean;
     show: boolean;
     required_auth: boolean;
-    permissions: number[];
+    permissions: P[];
     parent: T;
     children: T[];
-  }): Menu<T> {
-    const permissions = data.permissions.map((p) => new MenuPermissions(p));
+  }): Menu<T, P> {
+    const permissions = data.permissions.map((p) => new MenuPermissions<P>(p));
     const childrens = data.children.map((c) => new MenuChildren<T>(c));
-    return new Menu<T>(
+    return new Menu<T, P>(
       new MenuActive(data.active),
       childrens,
       permissions,
@@ -67,7 +67,7 @@ export class Menu<T> {
   getChildren(): MenuChildren<T>[] {
     return this.children;
   }
-  getPermissions(): MenuPermissions[] {
+  getPermissions(): MenuPermissions<P>[] {
     return this.permissions;
   }
   getDescription(): MenuDescription {
