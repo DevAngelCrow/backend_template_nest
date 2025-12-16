@@ -16,9 +16,11 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "jest --coverage --passWithNoTests",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "sonar": "sonar-scanner -Dsonar.token=${SONAR_TOKEN}",
+    "test:sonar": "npm run test:cov && npm run sonar",
     "prisma:generate": "prisma generate --schema=src/shared/infrastructure/persistence/prisma/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema=src/shared/infrastructure/persistence/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema=src/shared/infrastructure/persistence/prisma/schema.prisma"
@@ -64,6 +66,7 @@
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
     "prisma": "^7.0.1",
+    "sonarqube-scanner": "^4.3.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -86,7 +89,14 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "**/*.ts",
+      "!**/*.spec.ts",
+      "!**/*.module.ts",
+      "!**/*.interface.ts",
+      "!**/main.ts",
+      "!**/node_modules/**",
+      "!**/dist/**"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
