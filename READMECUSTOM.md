@@ -248,7 +248,17 @@ npm run start:dev
 	    - ##### 📂 decorators
 			- src/modules/module/infrastructure/decorators: Define los decoradores que el módulo posee, estos pueden ser reutilizados en otros módulos como adaptadores del mundo exterior.
 		 - ##### 📂 controllers
-			- src/modules/module/infrastructure/controllers: Define los controlladores del módulo que interactuan con el cliente.
+			- src/modules/module/infrastructure/controllers: Define los controlladores que orquestan los casos de uso del módulo que interactuan con el cliente.
+		 - ##### 📂 dtos
+			- src/modules/module/infrastructure/dtos: Define los object para transferencia de datos entre capa y los validadores de las peticiones http que el cliente realiza al momento del consumo de enpoints.
+		  - ##### 📂 guards
+			- src/modules/module/infrastructure/guards: Define los componentes que deciden si una solicitud puede continuar o no, ejecutándose antes del controlador.
+		  - ##### 📂 strategies
+			- src/modules/module/infrastructure/strategies: Define las clases que establecen cómo se autentica un usuario, encapsulando la lógica para validar credenciales (JWT, local, OAuth, etc.), generalmente se integran con los guards de autenticación.
+		 - ##### 📂 implementation
+			- src/modules/module/infrastructure/implementation: Define la implementación de los repositorios y puertos definidos en el dominio, aca utilizan las tecnologias del mundo exterior, por lo tanto la implementación sera el adaptador primario.
+		 - ##### 📂 services
+			- src/modules/module/infrastructure/servicios: Define los servicios de infraestructura que envuelven tecnologias del mundo exterior sin requerir de contratos definidos en el dominio.
 ### Shared
 - 📂 src/shared/: Contiene y define valores globales y generales que pueden ser reutilizables en los diferentes módulos que contendrá la aplicación, igualmente sigue los lineamientos de la arquitectura hexagonal.
 ### App.module.ts
@@ -256,32 +266,12 @@ npm run start:dev
 - 📂 router/: Define las rutas de la aplicacion con la tecnologia de Vue Router.
 ### main.ts
 src/main.ts: Este archivo corresponde al iniciador del servidor de nest el cual inicia posterior a la ejecución del script utilizado para iniciar el servidor. 
-##  
-
-- 📂 services/: Contiene las funciones responsables para le ejecucion de peticiones http hacia API's internas o externas.
-
-  
-
-- 📂 store/: Implementa la gestión del estado global con Pinia.
-
-  
-
-- 📂 utils/: Contiene e incluye funciones de uso general, validadores, etc.
-
   
 ## Archivos de directorio raiz.
-- 📄 App.vue: Componente raíz que define la estructura base de la aplicación.
-
-- 📄 main.ts: Archivo principal que inicializa Vue, configura plugins y monta la aplicacion.
-
 - 📄 env.example: Archivo de ejemplo para definir variables de entorno necesarias para el proyecto.
 
 - 📄 .git.ignore: Archivo el cual contiene las extensiones que se omiten al momento de realizar un commit del repositorio local y externo.
 
-- 📄 index.html: Archivo que es el punto de entrada principal de la aplicacion en tiempo de desarrollo y sirve como plantilla para la generacion del HTML final durante la compilacion.
-
 - 📄 package.json: Archivo que define la configuracion principal del proyecto(nombre, version, scripts, dependencias y configuraciones especificas del ecosistema JS)
 
-- 📄 tsconfig.app.json, tsconfig.json, tsconfig.node.json: Archivos de configuracion de TypeScript el cual define las opciones del compilador global
-
-- vite.config.ts: Archivo que define cómo se comporta Vite durante el desarrollo, build y preview. Es donde puedes extender funcionalidades, configurar plugins, establecer alias de rutas, entre otros.
+- 📄 tsconfig.json: Archivos de configuracion de TypeScript el cual define las opciones del compilador global
