@@ -8,7 +8,7 @@ type TransactionClient = Omit<
 >;
 @Injectable()
 export class TransactionContextService {
-  private storage = new AsyncLocalStorage<TransactionClient>();
+  private readonly storage = new AsyncLocalStorage<TransactionClient>();
   getTransaction(): TransactionClient | undefined {
     return this.storage.getStore();
   }

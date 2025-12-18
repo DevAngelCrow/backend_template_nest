@@ -25,7 +25,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "prisma generate --schema=src/shared/infrastructure/persistence/prisma/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema=src/shared/infrastructure/persistence/prisma/schema.prisma",
-    "prisma:studio": "prisma studio --schema=src/shared/infrastructure/persistence/prisma/schema.prisma"
+    "prisma:studio": "prisma studio --schema=src/shared/infrastructure/persistence/prisma/schema.prisma",
+    "sonar:scanner": "sonar-scanner.bat "
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

@@ -15,7 +15,32 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app_network
-
+  # Aplicación NestJS
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: nest_app
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: ${DB_HOST}
+      DATABASE_PROVIDER: ${DB_PROVIDER}
+      DATABASE_HOST: ${DB_PROVIDER}
+      DATABASE_PORT: ${DB_PORT}
+      DATABASE_USER: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_NAME: ${DB_NAME}
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app_network
+    command: npm run start:dev
   # Base de datos para SonarQube
   sonarqube_db:
     image: postgres:latest

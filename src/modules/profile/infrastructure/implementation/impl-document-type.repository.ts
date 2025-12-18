@@ -22,7 +22,7 @@ export class ImplDocumentTypeRepository implements DocumentTypeRepository {
         data: {
           name: documentType.getName().value(),
           description: documentType.getDescription().value(),
-          mask: documentType.getMask()?.value() || '',
+          mask: documentType.getMask()?.value() ?? '',
           active: documentType.getActive().value(),
         },
       });
@@ -42,7 +42,7 @@ export class ImplDocumentTypeRepository implements DocumentTypeRepository {
         data: {
           name: documentType.getName().value(),
           description: documentType.getDescription().value(),
-          mask: documentType.getMask()?.value() || '',
+          mask: documentType.getMask()?.value() ?? '',
           active: documentType.getActive().value(),
         },
       });

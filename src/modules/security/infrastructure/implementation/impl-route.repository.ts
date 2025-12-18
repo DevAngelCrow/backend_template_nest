@@ -43,7 +43,7 @@ export class ImplRouteRepository implements RouteRepository {
       });
       const routeEntity = Route.create({
         name: routeDb.name,
-        description: routeDb.description || '',
+        description: routeDb.description ?? '',
         active: routeDb.active,
         icon: routeDb.icon,
         uri: routeDb.uri,
@@ -211,12 +211,12 @@ export class ImplRouteRepository implements RouteRepository {
     return Route.create({
       id: Number(primsaRoute.id),
       name: primsaRoute.name,
-      description: primsaRoute.description || '',
+      description: primsaRoute.description ?? '',
       icon: primsaRoute.icon,
       uri: primsaRoute.uri,
       active: primsaRoute.active,
       show: primsaRoute.show,
-      order: primsaRoute.order || 1,
+      order: primsaRoute.order ?? 1,
       required_auth: primsaRoute.required_auth,
       title: primsaRoute.title,
       id_parent: Number(primsaRoute.id_parent),

@@ -9,7 +9,7 @@ export class MaritalStatusDto {
   public static fromEntity(maritalStatus: MaritalStatus): MaritalStatusDto {
     return new MaritalStatusDto(
       maritalStatus.getName().value(),
-      maritalStatus.getDescription()?.value() || '',
+      maritalStatus.getDescription()?.value() ?? '',
       maritalStatus.getId() ? maritalStatus.getId()!.value() : undefined,
     );
   }

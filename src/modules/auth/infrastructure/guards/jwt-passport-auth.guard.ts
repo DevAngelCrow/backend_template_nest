@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { SKIP_AUTH_KEY } from '../decorators/public-route.decorator';
 @Injectable()
 export class JwtPassportAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
+  constructor(private readonly reflector: Reflector) {
     super();
   }
   canActivate(

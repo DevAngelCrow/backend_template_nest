@@ -2,7 +2,6 @@ import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma
 import { SecurityAuthorizationPort } from '../../domain/ports/security-authorization.port';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { Menu } from '../../domain/entities/menu';
-import { Permissions } from '../../domain/entities/permissions';
 import { MenuActive } from '../../domain/value-objects/menu-value-object/menu-active';
 import { MenuChildren } from '../../domain/value-objects/menu-value-object/menu-children';
 import { MenuDescription } from '../../domain/value-objects/menu-value-object/menu-description';
@@ -16,7 +15,10 @@ import { MenuTitle } from '../../domain/value-objects/menu-value-object/menu-tit
 import { MenuUri } from '../../domain/value-objects/menu-value-object/menu-uri';
 import { MenuPermissions } from '../../domain/value-objects/menu-value-object/menu-permissions';
 import { MenuId } from '../../domain/value-objects/menu-value-object/menu-id';
-import { menu, permission } from '../interfaces/menu.interface';
+import {
+  Menu as MenuInterface,
+  Permission,
+} from '../interfaces/menu.interface';
 import { Injectable } from '@nestjs/common';
 @Injectable()
 export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort {
@@ -87,7 +89,7 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
       throw new Error(String(error));
     }
   }
-  async filterRoutesForUser<T = menu, P = permission>(
+  async filterRoutesForUser<T = MenuInterface, P = Permission>(
     id_user: number,
   ): Promise<Menu<T, P>[]> {
     try {
@@ -191,7 +193,7 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
           (child) =>
             new MenuChildren<T>({
               active: child.active,
-              description: child.description || '',
+              description: child.description ?? '',
               icon: child.icon,
               name: child.name,
               order: Number(child.order),

@@ -52,7 +52,7 @@ export class ExceptionMapper {
     path?: string,
   ): HttpException {
     const status =
-      this.DOMAIN_STATUS_MAP.get(error.constructor.name) ||
+      this.DOMAIN_STATUS_MAP.get(error.constructor.name) ??
       HttpStatus.BAD_REQUEST;
 
     const response = new ErrorResponseDto(
@@ -71,7 +71,7 @@ export class ExceptionMapper {
     path?: string,
   ): HttpException {
     const status =
-      this.APPLICATION_STATUS_MAP.get(error.constructor.name) ||
+      this.APPLICATION_STATUS_MAP.get(error.constructor.name) ??
       HttpStatus.BAD_REQUEST;
 
     const response = new ErrorResponseDto(
@@ -90,7 +90,7 @@ export class ExceptionMapper {
     path?: string,
   ): HttpException {
     const status =
-      this.INFRASTRUCTURE_STATUS_MAP.get(error.constructor.name) ||
+      this.INFRASTRUCTURE_STATUS_MAP.get(error.constructor.name) ??
       HttpStatus.INTERNAL_SERVER_ERROR;
 
     const response = new ErrorResponseDto(

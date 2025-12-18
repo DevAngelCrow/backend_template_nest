@@ -87,7 +87,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       errorName: exception.name,
       errorMessage: exception.message,
       user:
-        (request as Request & { user?: { id: string } }).user?.id ||
+        (request as Request & { user?: { id: string } }).user?.id ??
         'anonymous',
       ip: request.ip,
       userAgent: request.headers['user-agent'],

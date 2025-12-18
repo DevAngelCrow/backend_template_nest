@@ -124,7 +124,7 @@ export class ImplPersonRepository implements PersonRepository {
           id_gender: person.getIdGender().value(),
           id_marital_status: person.getIdMaritalStatus().value(),
           id_status: person.getIdStatus().value(),
-          middle_name: person.getMiddleName()?.value() || '',
+          middle_name: person.getMiddleName()?.value() ?? '',
           img_path: person.getImgPath()?.value(),
           people_country: {
             createMany: {
@@ -158,8 +158,8 @@ export class ImplPersonRepository implements PersonRepository {
           id_gender: person.getIdGender().value(),
           id_marital_status: person.getIdMaritalStatus().value(),
           id_status: person.getIdStatus().value(),
-          middle_name: person.getMiddleName()?.value() || '',
-          img_path: person.getImgPath()?.value(),
+          middle_name: person.getMiddleName()?.value() ?? '',
+          img_path: person.getImgPath()?.value() ?? '',
           people_country: {
             deleteMany: {},
             createMany: {

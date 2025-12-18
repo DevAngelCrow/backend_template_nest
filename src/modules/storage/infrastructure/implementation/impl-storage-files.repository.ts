@@ -13,8 +13,8 @@ import { StorageFilesPath } from '../../domain/value-objects/storage-files-value
 
 @Injectable()
 export class ImplStorageFilesRepository implements StorageFilesRepository {
-  private diskPath = join(process.cwd(), 'storage');
-  private basePath = 'profile_img';
+  private readonly diskPath = join(process.cwd(), 'storage');
+  private readonly basePath = 'profile_img';
   constructor(
     private readonly prisma: PrismaService,
     private readonly transactionContext: TransactionContextService,

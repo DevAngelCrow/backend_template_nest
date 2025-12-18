@@ -9,8 +9,8 @@ export class Pagination<T> {
     private readonly entity_list: EntityList<T>,
     private readonly page: Page,
     private readonly per_page: PerPage,
-    private total_items: TotalItems,
-    private total_pages: TotalPages = new TotalPages(
+    private readonly total_items: TotalItems,
+    private readonly total_pages: TotalPages = new TotalPages(
       Math.ceil(this.total_items.value() / this.per_page.value()),
     ),
   ) {}

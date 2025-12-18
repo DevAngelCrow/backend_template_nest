@@ -1,19 +1,19 @@
-export interface menu {
+export interface Menu {
   active: boolean;
   description: string;
   icon: string;
   name: string;
   order: number;
-  parent: menu | null;
+  parent: Menu | null;
   required_auth: boolean;
   show: boolean;
   title: string;
   uri: string;
-  permissions: permission[];
-  children: child[];
+  permissions: Permission[];
+  children: Child[];
   id: number;
 }
-export interface permission {
+export interface Permission {
   id: number;
   name: string;
   description: string;
@@ -21,7 +21,7 @@ export interface permission {
   active: boolean;
 }
 
-export interface child {
+export interface Child {
   active: boolean;
   description: string;
   icon: string;
@@ -32,6 +32,6 @@ export interface child {
   show: boolean;
   title: string;
   uri: string;
-  children: child[];
+  children: Child[];
   id: number;
 }

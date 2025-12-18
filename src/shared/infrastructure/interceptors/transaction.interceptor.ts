@@ -13,9 +13,9 @@ import { TRANSACTIONAL_KEY } from '../decorators/transactional.decorator';
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
   constructor(
-    private reflector: Reflector,
-    private prisma: PrismaService,
-    private transactionContext: TransactionContextService,
+    private readonly reflector: Reflector,
+    private readonly prisma: PrismaService,
+    private readonly transactionContext: TransactionContextService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
