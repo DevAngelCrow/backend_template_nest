@@ -247,7 +247,7 @@ npm run start:dev
   - 📂 src/modules/module/infrastructure: La capa de infraestructura contendrá, e implementará los contratos definidos en los repositorios y puertos, todos los elementos de implementación serán conocidos como los adaptadores del mundo exterior.
 	   - ##### 📂 config
 		 - src/modules/module/infrastructure/config: Define los contenedores de casos de usos, servicios y repositorios a utilizar para registrarlos en el contenedor de inyección de dependencias que maneja nest js.
-	    - ##### 📂 decorators
+	     - ##### 📂 decorators
 			- src/modules/module/infrastructure/decorators: Define los decoradores que el módulo posee, estos pueden ser reutilizados en otros módulos como adaptadores del mundo exterior.
 		 - ##### 📂 controllers
 			- src/modules/module/infrastructure/controllers: Define los controlladores que orquestan los casos de uso del módulo que interactuan con el cliente.
