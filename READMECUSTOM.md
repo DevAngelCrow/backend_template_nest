@@ -41,83 +41,48 @@ Esta plantilla cuenta con las tecnologias descritas para poder iniciar con un de
   
 
 1 - Clonar el repositorio.
-
-  
-
 ```
-
 git clone https://github.com/DevAngelCrow/backend_template_nest.git
 
 cd backend_template_nest
-
 ```
-
-  
-
 2 - Configurar el .env
-
-  
-
 ```
-
-cp .env.example .env.local
-
+cp .env.example .env
 ```
-
-  
-
 Configura las variables de entorno del archivo .env.local de acuerdo a tu necesidad.
 
-  
-
-3 - Procedemos a instalar dependencias, ejecutamos en consola dentro del directorio del repositorio el comando siguiente
-
-  
-
+3 - Configurar el archivo sonar-project.properties.
+```
+cp sonar-project.example.properties sonar-project.properties
+```
+4 - Dockerización del proyecto, para ello ejecutaremos el siguiente comando. (previamente debe tener ya instalado su configuración de docker)
+```
+docker compose up -d
 ```
 
-npm install
-
+5 - Una vez finalizado el proceso de dockerización comprobando que los contenedores se crearon de manera satisfactoria, ejecutaremos el siguiente script.
 ```
-
-  
-
-4 - Dar permisos de superusuario a la carpeta husky si estas utilizando Linux
-
-  
-
+docker exec -it nest_app npm run dev:setup
 ```
-
-sudo chmod +x .husky/*
-
-```
-
-  
-
-5 - Puede utilizar los siguientes scripts para iniciar el servidor según el modo de su convención:
+6 - Puede utilizar los siguientes scripts para iniciar el servidor según el modo de su convención:
 
 ###### development
 
 ```
-
-npm run start
-
+docker exec -it nest_app npm run start
 ```
 
 ###### watch mode
 
 ```
-
-npm run start:dev
-
+docker exec -it nest_app npm run start:dev
 ```
 
 ###### production mode
 
 ```
-
-npm run start:dev
-
+docker exec -it nest_app npm run start:dev
 ```
 
 # Estructura general del directorio de carpetas y archivos del proyecto

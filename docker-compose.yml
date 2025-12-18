@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Base de datos del proyecto principal
   postgres:
@@ -25,9 +23,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DB_HOST: ${DB_HOST}
-      DATABASE_PROVIDER: ${DB_PROVIDER}
-      DATABASE_HOST: ${DB_PROVIDER}
+      DATABASE_HOST: ${DB_HOST}
       DATABASE_PORT: ${DB_PORT}
       DATABASE_USER: ${DB_USER}
       DATABASE_PASSWORD: ${DB_PASSWORD}
