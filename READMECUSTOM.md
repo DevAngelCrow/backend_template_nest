@@ -127,9 +127,9 @@ npm run start:dev
 ```
 📦 backend_template_nest
 ├── 📁 prisma
-|		├── 📁 migrations
-|		├── 📁 seeds
-|		└── 📄 schema.prisma
+|	├── 📁 migrations
+|	├── 📁 seeds
+|	└── 📄 schema.prisma
 ├── 📁 src
 │ 	├── 📦 modules
 │ 	│ 	└── 📁 module
@@ -150,8 +150,8 @@ npm run start:dev
 | 	| 		|	 ├── 📁 controllers
 | 	| 		|	 ├── 📁 decorators
 | 	| 		|	 ├── 📁 dtos
-| 	| 		|	 | 	├── 📁 http
-| 	| 		|	 | 	└── 📁 validators
+| 	| 		|	 | 	  ├── 📁 http
+| 	| 		|	 | 	  └── 📁 validators
 | 	| 		|	 ├── 📁 guards
 | 	| 		|	 ├── 📁 implementation
 | 	| 		|	 ├── 📁 services
@@ -159,27 +159,27 @@ npm run start:dev
 │ 	│		└── 📄 name.module.ts
 │ 	├── 📦 shared
 |	|		├── 📁 domain
-|	|		|		├── 📁 exceptions
-|	|		|		├── 📁 repositories
-|	|		|		├── 📁 validator
-|	|		|		└── 📁 value-object
+|	|		|	 ├── 📁 exceptions
+|	|		|	 ├── 📁 repositories
+|	|		|	 ├── 📁 validator
+|	|		|	 └── 📁 value-object
 |	|		├── 📁 application
-|	|		|		├── 📁 dtos
-|	|		|		└── 📁 exceptions
+|	|		|	 ├── 📁 dtos
+|	|		|	 └── 📁 exceptions
 │	|		└───📁 infrastructure
-|	|				├── 📁 dtos
-|	|				├── 📁 config
-|	|				├── 📁 decorators
-|	|				├── 📁 exceptions
-|	|				├── 📁 factories
-|	|				├── 📁 http
-|	|				|	├── 📁 dtos
-|	|				|	├── 📁 filters
-|	|				|	└── 📁 mappers
-|	|				├── 📁 interceptors
-|	|				├── 📁 middlewares
-|	|				├── 📁 persistence
-|	|				└── 📁 services
+|	|			 ├── 📁 dtos
+|	|			 ├── 📁 config
+|	|			 ├── 📁 decorators
+|	|			 ├── 📁 exceptions
+|	|			 ├── 📁 factories
+|	|			 ├── 📁 http
+|	|			 |	  ├── 📁 dtos
+|	|			 |	  ├── 📁 filters
+|	|			 |	  └── 📁 mappers
+|	|			 ├── 📁 interceptors
+|	|			 ├── 📁 middlewares
+|	|			 ├── 📁 persistence
+|	|			 └── 📁 services
 │	|
 │	└── 📄 app.module.ts
 │
@@ -206,8 +206,7 @@ npm run start:dev
   
 
 ## Carpeta prisma
-
-  
+ 
 
 - 📂 prisma/schema.prisma/: Contiene la configuración del schema de los modelos de la base de datos que utilizará el orm para poder mapear sus acciones de lectura y escritura de la base de datos.
 
