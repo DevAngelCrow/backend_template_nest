@@ -173,6 +173,9 @@ npm run start:dev
 |	|				├── 📁 exceptions
 |	|				├── 📁 factories
 |	|				├── 📁 http
+|	|				|	├── 📁 dtos
+|	|				|	├── 📁 filters
+|	|				|	└── 📁 mappers
 |	|				├── 📁 interceptors
 |	|				├── 📁 middlewares
 |	|				├── 📁 persistence
@@ -261,6 +264,42 @@ npm run start:dev
 			- src/modules/module/infrastructure/servicios: Define los servicios de infraestructura que envuelven tecnologias del mundo exterior sin requerir de contratos definidos en el dominio.
 ### Shared
 - 📂 src/shared/: Contiene y define valores globales y generales que pueden ser reutilizables en los diferentes módulos que contendrá la aplicación, igualmente sigue los lineamientos de la arquitectura hexagonal.
+- ##### 📂 Domain
+  - 📂 src/shared/domain: La capa de dominio contendrá las reglas de negocio compartidas de la aplicación
+    - ##### 📂 exceptions
+	    -  src/shared/domain/exceptions: Define el tipo de excepciones globales a reutilizar en los diferentes módulos de la aplicación.
+	 - ##### 📂 repositories
+	    -  src/shared/domain/repositories: Define los repositorios globales.
+	 - ##### 📂 validator
+	    -  src/shared/domain/validator: Define validadores globales reutilizables para los value-objects de cada modulo de la aplicación.
+	  - ##### 📂 value-objects
+	    -  src/shared/domain/exceptions: Define value-objects globales reutilizables en los módulos de la aplicación.
+- ##### 📂 Application
+  - 📂 src/shared/domain: La capa de aplicación contendrá, definirá y orquestará las acciones de la aplicación coordinando el dominio compartido con el mundo exterior.
+    - ##### 📂 exceptions
+	    -  src/shared/application/exceptions: Define el tipo de excepciones globales a reutilizar en los diferentes módulos de la aplicación.
+	 - ##### 📂 dtos
+	    -  src/shared/domain/exceptions: Define los dto generales a reutilizar en los módulos de la aplicación.
+- ##### 📂 Infraestructure
+  - 📂 src/shared/infrastructure: La capa de aplicación contendrá, definirá y orquestará las acciones de la aplicación coordinando el dominio compartido con el mundo exterior.
+    - ##### 📂 exceptions
+	    -  src/shared/infrastructure/exceptions: Define el tipo de excepciones globales a reutilizar en los diferentes módulos de la aplicación.
+	- ##### 📂 decorators
+	    -  src/shared/infrastructure/decorators: Define los decoradores que el módulo posee, estos pueden ser reutilizados en otros módulos como adaptadores del mundo exterior.
+	 - ##### 📂 factories
+	    -  src/shared/infrastructure/factories: Define elementos encargados de generar/crear instancias de objetos a utilizar.
+	  - ##### 📂 http
+	    -  src/shared/infrastructure/factories: Define elementos encargados de generar/crear instancias de objetos a utilizar.
+			  - ##### 📂 dtos
+				   -  src/shared/infrastructure/http/dtos: Define objetos para las respuestas que el cliente recibirá en formato JSON.
+			  - ##### 📂 filters
+				   -  src/shared/infrastructure/http/filters: Encargados de adaptar/limpiar las entradas y salidas del sistema.
+			  - ##### 📂 mappers
+				   -  src/shared/infrastructure/http/mappers: Encargados de convertir datos de modelos de distintas capas.
+	- ##### 📂 interceptors
+	    -  src/shared/infrastructure/interceptors: Define las envolturas que envuelven y controlan la ejecución de acciones transversales tales como los casos de uso y el uso de transacciones por ejemplo las del ORM que manipula la base de datos.
+	 - ##### 📂 persistence
+	    -  src/shared/infrastructure/persistence: Adaptador para la interaccion con la base de datos del sistema.
 ### App.module.ts
 - 📂 src/app.module.ts: Este archivo corresponde e implementa el contenedor de inyección de depencias con el cual trabaja el framework de nest.
 - 📂 router/: Define las rutas de la aplicacion con la tecnologia de Vue Router.
@@ -272,6 +311,12 @@ src/main.ts: Este archivo corresponde al iniciador del servidor de nest el cual 
 
 - 📄 .git.ignore: Archivo el cual contiene las extensiones que se omiten al momento de realizar un commit del repositorio local y externo.
 
-- 📄 package.json: Archivo que define la configuracion principal del proyecto(nombre, version, scripts, dependencias y configuraciones especificas del ecosistema JS)
+- 📄 package.json: Archivo que define la configuracion principal del proyecto(nombre, version, scripts, dependencias y configuraciones especificas del ecosistema JS).
 
-- 📄 tsconfig.json: Archivos de configuracion de TypeScript el cual define las opciones del compilador global
+- 📄 tsconfig.json: Archivos de configuracion de TypeScript el cual define las opciones del compilador global.
+
+- 📄 .prettierrc: Archivo de configuración para el formateo del estilo consistente del codigo.
+- 📄 docker-compose.yml: Archivo que define y orquesta varios contenedores Docker como un solo sistema.
+- 📄 eslint.config.mjs: Archivo de configuración que define las reglas y permite la deteccion de errores del formato del codigo.
+- 📄 nest-cli.json: Archivo de configuración de la CLI de Nest.
+- 📄 prisma.config.json: Archivo de configuración de prisma.
