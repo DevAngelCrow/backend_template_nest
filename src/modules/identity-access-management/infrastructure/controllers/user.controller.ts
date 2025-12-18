@@ -13,8 +13,10 @@ import { UserCreate } from '@/modules/identity-access-management/application/use
 import { UserGetOneByUserName } from '@/modules/identity-access-management/application/use-cases/user/user-get-one-by-user-name';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { UserHttpDto } from '../dtos/http/user-http.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiBearerAuth('JWT-auth')
 export class UserController {
   constructor(
     private readonly userCreate: UserCreate,

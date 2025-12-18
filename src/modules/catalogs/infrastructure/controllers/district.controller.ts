@@ -25,11 +25,13 @@ import { DistrictGetOneById } from '../../application/use-cases/district/distric
 import { DistrictDelete } from '../../application/use-cases/district/district-delete';
 import { CreateDistrictDto } from '../dtos/validators/district/create-district.dto';
 import { UpdateDistrictDto } from '../dtos/validators/district/update-district.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type DistrictGetAllResponse =
   | HttpPaginatedResponseDto<DistrictHttpDto>
   | DistrictHttpDto[];
 @Controller('districts')
+@ApiBearerAuth('JWT-auth')
 export class DistrictController {
   constructor(
     private readonly districtCreate: DistrictCreate,

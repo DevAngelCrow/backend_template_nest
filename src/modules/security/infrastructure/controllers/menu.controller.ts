@@ -12,8 +12,10 @@ import { GetMenuUser } from '../../application/use-cases/menu/get-menu-user';
 import { MenuHttpDto } from '../dtos/http/menu-http-dto/menu-http.dto';
 import { PermissionsGuard } from '../guards/permissions.guard';
 import { Permissions } from '../decorators/permissions.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('menus')
+@ApiBearerAuth('JWT-auth')
 export class MenuController {
   constructor(private readonly getMenu: GetMenuUser<Menu, Permission>) {}
   @UseGuards(PermissionsGuard)

@@ -25,11 +25,13 @@ import { DepartmentGetOneById } from '../../application/use-cases/department/dep
 import { DepartmentDelete } from '../../application/use-cases/department/department-delete';
 import { CreateDepartmentDto } from '../dtos/validators/department/create-department.dto';
 import { UpdateDepartmentDto } from '../dtos/validators/department/update-department.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type DepartmentGetAllResponse =
   | HttpPaginatedResponseDto<DepartmentHttpDto>
   | DepartmentHttpDto[];
 @Controller('departments')
+@ApiBearerAuth('JWT-auth')
 export class DepartmentController {
   constructor(
     private readonly departmentCreate: DepartmentCreate,

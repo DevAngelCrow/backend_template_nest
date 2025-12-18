@@ -19,10 +19,21 @@ async function bootstrap() {
     .setTitle('Backend template api')
     .setDescription('API Docs')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        in: 'header',
+        description: 'Ingrese el JWT',
+      },
+      'JWT-auth',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('/', app, document);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap().catch((err) => {

@@ -25,11 +25,13 @@ import { MaritalStatusGetOneById } from '../../application/use-cases/marital-sta
 import { MaritalStatusDelete } from '../../application/use-cases/marital-status/marital-status-delete';
 import { CreateMaritalStatusDto } from '../dtos/validators/marital-status/create-marital-status.dto';
 import { UpdateMaritalStatusDto } from '../dtos/validators/marital-status/update-marital-status.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type MaritalStatusGetAllResponse =
   | HttpPaginatedResponseDto<MaritalStatusHttpDto>
   | MaritalStatusHttpDto[];
 @Controller('marital-statuses')
+@ApiBearerAuth('JWT-auth')
 export class MaritalStatusController {
   constructor(
     private readonly maritalStatusCreate: MaritalStatusCreate,

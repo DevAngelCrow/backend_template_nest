@@ -25,11 +25,13 @@ import { GlobalStatusGetOneById } from '../../application/use-cases/global-statu
 import { GlobalStatusDelete } from '../../application/use-cases/global-status/global-status-delete';
 import { CreateGlobalStatusDto } from '../dtos/validators/global-status/create-global-status.dto';
 import { UpdateGlobalStatusDto } from '../dtos/validators/global-status/update-global-status.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type GlobalStatusGetAllResponse =
   | HttpPaginatedResponseDto<GlobalStatusHttpDto>
   | GlobalStatusHttpDto[];
 @Controller('global-statuses')
+@ApiBearerAuth('JWT-auth')
 export class GlobalStatusController {
   constructor(
     private readonly globalStatusCreate: GlobalStatusCreate,

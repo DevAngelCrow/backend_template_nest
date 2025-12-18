@@ -25,11 +25,13 @@ import { MunicipalityGetOneById } from '../../application/use-cases/municipality
 import { MunicipalityDelete } from '../../application/use-cases/municipality/municipality-delete';
 import { CreateMunicipalityDto } from '../dtos/validators/municipality/create-municipality.dto';
 import { UpdateMunicipalityDto } from '../dtos/validators/municipality/update-municipality.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type MunicipalityGetAllResponse =
   | HttpPaginatedResponseDto<MunicipalityHttpDto>
   | MunicipalityHttpDto[];
 @Controller('municipalities')
+@ApiBearerAuth('JWT-auth')
 export class MunicipalityController {
   constructor(
     private readonly municipalityCreate: MunicipalityCreate,

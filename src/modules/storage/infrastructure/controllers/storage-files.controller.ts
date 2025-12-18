@@ -9,8 +9,10 @@ import {
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { StorageFilesUploadFlow } from '../../application/use-cases/storage-files/storage-files-upload-flow';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 type FileType = Express.Multer.File;
 @Controller('storage-files')
+@ApiBearerAuth('JWT-auth')
 export class StorageFilesController {
   constructor(
     private readonly storageFileUploadFlow: StorageFilesUploadFlow<FileType>,

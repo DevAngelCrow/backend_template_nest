@@ -25,11 +25,13 @@ import { DocumentHttpDto } from '../dtos/http/document-http-dto/document-http.dt
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type DocumentGetAllResponse =
   | HttpPaginatedResponseDto<DocumentHttpDto>
   | DocumentHttpDto[];
 @Controller('documents')
+@ApiBearerAuth('JWT-auth')
 export class DocumentController {
   constructor(
     private readonly documentCreate: DocumentCreate,

@@ -22,11 +22,13 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type PersonGetAllResponse =
   | HttpPaginatedResponseDto<PersonHttpDto>
   | PersonHttpDto[];
 @Controller('people')
+@ApiBearerAuth('JWT-auth')
 export class PersonController {
   constructor(
     private readonly personCreate: PersonCreate,

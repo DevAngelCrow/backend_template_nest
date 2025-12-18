@@ -25,11 +25,13 @@ import { AddressHttpDto } from '../dtos/http/address-http-dto/address-http.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type AddressGetAllResponse =
   | HttpPaginatedResponseDto<AddressHttpDto>
   | AddressHttpDto[];
 @Controller('addresses')
+@ApiBearerAuth('JWT-auth')
 export class AddressController {
   constructor(
     private readonly addressCreate: AddressCreate,

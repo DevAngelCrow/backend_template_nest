@@ -26,12 +26,14 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Country } from '../../domain/entities/country';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 type CountryGetAllResponse =
   | HttpPaginatedResponseDto<CountryHttpDto>
   | CountryHttpDto[];
 
 @Controller('countries')
+@ApiBearerAuth('JWT-auth')
 export class CountryController {
   constructor(
     private readonly countryCreate: CountryCreate,
@@ -67,6 +69,9 @@ export class CountryController {
   }
   @Get()
   @HttpCode(200)
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
+  @ApiQuery({ name: 'filter', required: false, type: String })
   async getAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,

@@ -26,11 +26,13 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { ProviderStorageGetOneByCode } from '../../application/use-cases/provider-storage/provider-storage-get-one-by-code';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type ProviderStorageGetAllResponse =
   | HttpPaginatedResponseDto<ProviderStorageHttpDto>
   | ProviderStorageHttpDto[];
 @Controller('provider-storages')
+@ApiBearerAuth('JWT-auth')
 export class ProviderStorageController {
   constructor(
     private readonly providerStorageCreate: ProviderStorageCreate,

@@ -24,12 +24,14 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Route } from '../../domain/entities/route';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type RouteGetAllResponse =
   | HttpPaginatedResponseDto<RouteHttpDto>
   | RouteHttpDto[];
 
 @Controller('routes')
+@ApiBearerAuth('JWT-auth')
 export class RouteController {
   constructor(
     private readonly routeCreate: RouteCreate,

@@ -24,12 +24,14 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { CategoryPermissions } from '../../domain/entities/category-permissions';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type CategoryPermissionsGetAllResponse =
   | HttpPaginatedResponseDto<CategoryPermissionsHttpDto>
   | CategoryPermissionsHttpDto[];
 
 @Controller('category-permissions')
+@ApiBearerAuth('JWT-auth')
 export class CategoryPermissionsController {
   constructor(
     private readonly categoryPermissionsCreate: CategoryPermissionsCreate,

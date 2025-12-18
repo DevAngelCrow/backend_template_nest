@@ -24,10 +24,12 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Rol } from '../../domain/entities/rol';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type RolGetAllResponse = HttpPaginatedResponseDto<RolHttpDto> | RolHttpDto[];
 
 @Controller('rols')
+@ApiBearerAuth('JWT-auth')
 export class RolController {
   constructor(
     private readonly rolCreate: RolCreate,
