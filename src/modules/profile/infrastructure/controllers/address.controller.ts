@@ -12,10 +12,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { AddressCreate } from '../../application/use-cases/address/address-create';
-import { CreateAddressDto } from '../dtos/validators/address/create-addres.dto';
+import { AddressDto } from '../dtos/validators/address/addres.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { AddressUpdate } from '../../application/use-cases/address/address-update';
-import { UpdateAddressDto } from '../dtos/validators/address/update-address.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 
 import { AddressGetAll } from '../../application/use-cases/address/address-get-all';
@@ -43,7 +42,7 @@ export class AddressController {
   @Post()
   @HttpCode(201)
   async create(
-    @Body() addressCreateRequest: CreateAddressDto,
+    @Body() addressCreateRequest: AddressDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.addressCreate.run(addressCreateRequest);
     return new SuccessResponseDto<null>(
@@ -56,7 +55,7 @@ export class AddressController {
   @HttpCode(200)
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() addressUpdateRequest: UpdateAddressDto,
+    @Body() addressUpdateRequest: AddressDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.addressUpdate.run({ ...addressUpdateRequest, id });
     return new SuccessResponseDto<null>(

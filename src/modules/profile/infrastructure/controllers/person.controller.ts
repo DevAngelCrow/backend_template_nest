@@ -12,12 +12,11 @@ import {
 import { PersonCreate } from '../../application/use-cases/person/person-create';
 import { SuccessResponseDto } from '@/shared/infrastructure/http/dtos/http-success-response.dto';
 import { PersonHttpDto } from '../dtos/http/person-http-dto/person-http.dto';
-import { CreatePersonDto } from '../dtos/validators/person/create-person.dto';
+import { PersonDto } from '../dtos/validators/person/person.dto';
 import PersonUpdate from '../../application/use-cases/person/person-update';
 import { PersonGetOneById } from '../../application/use-cases/person/person-get-one-by-id';
 import { PersonGetAll } from '../../application/use-cases/person/person-get-all';
 import { PersonGetOneByEmail } from '../../application/use-cases/person/person-get-one-by-email';
-import { UpdatePersonDto } from '../dtos/validators/person/update-person.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { HttpPaginatedResponseDto } from '@/shared/infrastructure/http/dtos/http-paginated-response.dto';
 import { Pagination } from '@/shared/domain/value-object/pagination';
@@ -40,7 +39,7 @@ export class PersonController {
   @Post()
   @HttpCode(201)
   async create(
-    @Body() personCreateRequest: CreatePersonDto,
+    @Body() personCreateRequest: PersonDto,
   ): Promise<SuccessResponseDto<PersonHttpDto | null>> {
     const person = await this.personCreate.run(personCreateRequest);
     let personHttpDto: PersonHttpDto | null;
@@ -62,7 +61,7 @@ export class PersonController {
   @HttpCode(200)
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updatePersonRequest: UpdatePersonDto,
+    @Body() updatePersonRequest: PersonDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.personUpdate.run({ id, ...updatePersonRequest });
     return new SuccessResponseDto<null>(

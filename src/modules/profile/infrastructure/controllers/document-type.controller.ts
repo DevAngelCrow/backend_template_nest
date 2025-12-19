@@ -12,12 +12,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { DocumentTypeCreate } from '../../application/use-cases/document-type/document-type-create';
-import { CreateDocumentTypeDto } from '../dtos/validators/document-type/create-document-type.dto';
+import { DocumentTypeDto } from '../dtos/validators/document-type/document-type.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { DocumentTypeUpdate } from '../../application/use-cases/document-type/document-type-update';
-import { UpdateDocumentTypeDto } from '../dtos/validators/document-type/update-document-type.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
-
 import { DocumentTypeGetAll } from '../../application/use-cases/document-type/document-type-get-all';
 import { DocumentTypeGetOneById } from '../../application/use-cases/document-type/document-type-get-one-by-id';
 import { DocumentTypeDelete } from '../../application/use-cases/document-type/document-type-delete';
@@ -43,7 +41,7 @@ export class DocumentTypeController {
   @Post()
   @HttpCode(201)
   async create(
-    @Body() documentTypeCreateRequest: CreateDocumentTypeDto,
+    @Body() documentTypeCreateRequest: DocumentTypeDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.documentTypeCreate.run(documentTypeCreateRequest);
     return new SuccessResponseDto<null>(
@@ -56,7 +54,7 @@ export class DocumentTypeController {
   @HttpCode(200)
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() documentTypeUpdateRequest: UpdateDocumentTypeDto,
+    @Body() documentTypeUpdateRequest: DocumentTypeDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.documentTypeUpdate.run({ ...documentTypeUpdateRequest, id });
     return new SuccessResponseDto<null>(

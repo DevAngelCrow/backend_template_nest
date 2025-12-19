@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdateDocumentDto {
+export class DocumentDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'AB1234567' })

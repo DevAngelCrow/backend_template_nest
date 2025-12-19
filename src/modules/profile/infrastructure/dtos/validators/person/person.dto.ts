@@ -9,7 +9,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdatePersonDto {
+export class PersonDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'John' })

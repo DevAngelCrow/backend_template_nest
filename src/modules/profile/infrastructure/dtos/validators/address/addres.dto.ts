@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdateAddressDto {
+export class AddressDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'Main St' })

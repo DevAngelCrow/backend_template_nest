@@ -12,10 +12,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { DocumentCreate } from '../../application/use-cases/document/document-create';
-import { CreateDocumentDto } from '../dtos/validators/document/create-document.dto';
+import { DocumentDto } from '../dtos/validators/document/document.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { DocumentUpdate } from '../../application/use-cases/document/document-update';
-import { UpdateDocumentDto } from '../dtos/validators/document/update-document.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 
 import { DocumentGetAll } from '../../application/use-cases/document/document-get-all';
@@ -43,7 +42,7 @@ export class DocumentController {
   @Post()
   @HttpCode(201)
   async create(
-    @Body() documentCreateRequest: CreateDocumentDto,
+    @Body() documentCreateRequest: DocumentDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.documentCreate.run(documentCreateRequest);
     return new SuccessResponseDto<null>(
@@ -56,7 +55,7 @@ export class DocumentController {
   @HttpCode(200)
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() documentUpdateRequest: UpdateDocumentDto,
+    @Body() documentUpdateRequest: DocumentDto,
   ): Promise<SuccessResponseDto<null>> {
     await this.documentUpdate.run({ ...documentUpdateRequest, id });
     return new SuccessResponseDto<null>(

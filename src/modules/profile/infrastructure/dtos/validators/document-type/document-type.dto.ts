@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class UpdateDocumentTypeDto {
+export class DocumentTypeDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'Passport' })
