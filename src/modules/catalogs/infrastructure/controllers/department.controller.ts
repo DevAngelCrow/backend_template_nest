@@ -107,7 +107,7 @@ export class DepartmentController {
     const departments = await this.departmentGetAll.run(undefined, filter);
 
     const departmentsHttpDto =
-      departments instanceof Array
+      Array.isArray(departments)
         ? departments.map((department) =>
             DepartmentHttpDto.fromEntity(department),
           )
