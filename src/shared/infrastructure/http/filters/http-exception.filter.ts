@@ -40,6 +40,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    if (request.url?.includes('/.well-known/')) {
+      return response.status(404).send();
+    }
+
     let httpException: HttpException;
     if (exception instanceof HttpException) {
       httpException = exception;

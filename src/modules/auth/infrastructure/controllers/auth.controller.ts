@@ -20,6 +20,7 @@ import { AuthLoginHttpDto } from '../dtos/http/user-http-dto/auth-login-http.dto
 import { Login } from '../../application/use-cases/auth/login';
 import { SkipAuth } from '../decorators/public-route.decorator';
 import { VerifyEmail } from '../../application/use-cases/email/verify-email';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 type FileUpload = Express.Multer.File;
 
 @Controller('/')
@@ -34,6 +35,8 @@ export class AuthController {
   @HttpCode(201)
   @UseInterceptors(FileInterceptor('file_img'))
   @Transactional()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: RegisterValidatorDto })
   async create(
     @Body() request: RegisterValidatorDto,
     @UploadedFile() file_img: FileUpload,

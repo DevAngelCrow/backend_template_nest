@@ -161,4 +161,7 @@ export class RegisterValidatorDto {
   @IsOptional()
   @ApiProperty({ example: true })
   active?: boolean;
+
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  file_img?: BinaryType;
 }
