@@ -34,7 +34,13 @@ Esta plantilla cuenta con las tecnologias descritas para poder iniciar con un de
 
 - npm versión >= 9.0.0
 
-  
+- sonar-scanner (establecerlo como variable de entorno del SO)
+
+- Docker
+
+- Visual Studio code (o cualquier editor de su preferencia)
+
+- Extensión SonarQube for IDE
 
 ### Instalación
 
@@ -82,7 +88,13 @@ docker exec -it nest_app npm run start:dev
 ###### production mode
 
 ```
-docker exec -it nest_app npm run start:dev
+docker exec -it nest_app npm run start:prod
+```
+
+* Puede utilizar el siguiente script para ejecutar el escaneo del sonarqube
+
+```
+sonar-scanner.bat
 ```
 
 # Estructura general del directorio de carpetas y archivos del proyecto

@@ -29,14 +29,17 @@ services:
       DATABASE_PASSWORD: ${DB_PASSWORD}
       DATABASE_NAME: ${DB_NAME}
       NODE_ENV: development
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
     ports:
       - "3000:3000"
     volumes:
       - .:/app
       - /app/node_modules
+#      - /app/dist
     networks:
       - app_network
-    command: npm run start:dev
+#    command: npm run start:dev
   # Base de datos para SonarQube
   sonarqube_db:
     image: postgres:latest
