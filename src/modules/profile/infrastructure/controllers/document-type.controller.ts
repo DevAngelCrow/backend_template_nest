@@ -102,12 +102,11 @@ export class DocumentTypeController {
 
     const documentTypes = await this.documentTypeGetAll.run(undefined, filter);
 
-    const documentTypesHttpDto =
-      documentTypes instanceof Array
-        ? documentTypes.map((documentType) =>
-            DocumentTypeHttpDto.fromEntity(documentType),
-          )
-        : [];
+    const documentTypesHttpDto = Array.isArray(documentTypes)
+      ? documentTypes.map((documentType) =>
+          DocumentTypeHttpDto.fromEntity(documentType),
+        )
+      : [];
     return new SuccessResponseDto<DocumentTypeHttpDto[]>(
       documentTypesHttpDto,
       HttpStatus.OK,

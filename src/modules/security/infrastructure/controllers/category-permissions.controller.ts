@@ -111,12 +111,11 @@ export class CategoryPermissionsController {
       filter,
     );
 
-    const categoryPermissionsHttpDto =
-      categoryPermissions instanceof Array
-        ? categoryPermissions.map((categoryPermissions) =>
-            CategoryPermissionsHttpDto.fromEntity(categoryPermissions),
-          )
-        : [];
+    const categoryPermissionsHttpDto = Array.isArray(categoryPermissions)
+      ? categoryPermissions.map((categoryPermissions) =>
+          CategoryPermissionsHttpDto.fromEntity(categoryPermissions),
+        )
+      : [];
     return new SuccessResponseDto<CategoryPermissionsHttpDto[]>(
       categoryPermissionsHttpDto,
       HttpStatus.OK,

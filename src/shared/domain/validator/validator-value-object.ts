@@ -45,7 +45,7 @@ export class Validator<T> {
   }
 
   number(message: string = 'Invalid number format'): this {
-    if (typeof this.value !== 'number' || isNaN(this.value)) {
+    if (typeof this.value !== 'number' || Number.isNaN(this.value)) {
       throw this.exceptionFactory(message);
     }
 
@@ -84,9 +84,8 @@ export class Validator<T> {
   }
 
   ip(message: string = 'Invalid IP address format'): this {
-    const ipv4Regex =
-      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+    const ipv4Regex = /^(?:\d{1,3}\.){3}\d{1,3}$/;
+    const ipv6Regex = /^(?:[\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$/;
 
     const strValue = String(this.value);
     if (!ipv4Regex.test(strValue) && !ipv6Regex.test(strValue)) {
@@ -174,7 +173,7 @@ export class Validator<T> {
 
   date(message: string = 'Invalid date format'): this {
     const date = new Date(this.value as unknown as string | number | Date);
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       throw this.exceptionFactory(message);
     }
 

@@ -103,10 +103,9 @@ export class RouteController {
 
     const routes = await this.routeGetAll.run(undefined, filter);
 
-    const routesHttpDto =
-      routes instanceof Array
-        ? routes.map((route) => RouteHttpDto.fromEntity(route))
-        : [];
+    const routesHttpDto = Array.isArray(routes)
+      ? routes.map((route) => RouteHttpDto.fromEntity(route))
+      : [];
     return new SuccessResponseDto<RouteHttpDto[]>(
       routesHttpDto,
       HttpStatus.OK,

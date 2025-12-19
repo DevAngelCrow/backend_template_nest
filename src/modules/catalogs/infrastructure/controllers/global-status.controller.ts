@@ -102,12 +102,11 @@ export class GlobalStatusController {
 
     const globalStatuses = await this.globalStatusGetAll.run(undefined, filter);
 
-    const globalStatusesHttpDto =
-      globalStatuses instanceof Array
-        ? globalStatuses.map((globalStatus) =>
-            GlobalStatusHttpDto.fromEntity(globalStatus),
-          )
-        : [];
+    const globalStatusesHttpDto = Array.isArray(globalStatuses)
+      ? globalStatuses.map((globalStatus) =>
+          GlobalStatusHttpDto.fromEntity(globalStatus),
+        )
+      : [];
     return new SuccessResponseDto<GlobalStatusHttpDto[]>(
       globalStatusesHttpDto,
       HttpStatus.OK,

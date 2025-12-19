@@ -107,12 +107,11 @@ export class PermissionsController {
 
     const permissions = await this.permissionsGetAll.run(undefined, filter);
 
-    const permissionsHttpDto =
-      permissions instanceof Array
-        ? permissions.map((permissions) =>
-            PermissionsHttpDto.fromEntity(permissions),
-          )
-        : [];
+    const permissionsHttpDto = Array.isArray(permissions)
+      ? permissions.map((permissions) =>
+          PermissionsHttpDto.fromEntity(permissions),
+        )
+      : [];
     return new SuccessResponseDto<PermissionsHttpDto[]>(
       permissionsHttpDto,
       HttpStatus.OK,

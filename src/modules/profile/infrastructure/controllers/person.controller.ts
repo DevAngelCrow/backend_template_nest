@@ -120,10 +120,9 @@ export class PersonController {
 
     const people = await this.personGetAll.run(undefined, filter);
 
-    const peopleHttpDto =
-      people instanceof Array
-        ? people.map((person) => PersonHttpDto.fromEntity(person))
-        : [];
+    const peopleHttpDto = Array.isArray(people)
+      ? people.map((person) => PersonHttpDto.fromEntity(person))
+      : [];
     return new SuccessResponseDto<PersonHttpDto[]>(peopleHttpDto);
   }
 }

@@ -1,7 +1,6 @@
 import { User } from '../entities/user';
 import { UserAuth } from '../entities/user-auth';
 import { UserId } from '../value-objects/user-value-object/user-id';
-// import { UserId } from '../value-objects/user-value-object/user-id';
 import { UserName } from '../value-objects/user-value-object/user-name';
 
 export abstract class UserRepository {

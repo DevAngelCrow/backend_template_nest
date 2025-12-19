@@ -107,12 +107,11 @@ export class MaritalStatusController {
       filter,
     );
 
-    const maritalStatusesHttpDto =
-      maritalStatuses instanceof Array
-        ? maritalStatuses.map((maritalStatus) =>
-            MaritalStatusHttpDto.fromEntity(maritalStatus),
-          )
-        : [];
+    const maritalStatusesHttpDto = Array.isArray(maritalStatuses)
+      ? maritalStatuses.map((maritalStatus) =>
+          MaritalStatusHttpDto.fromEntity(maritalStatus),
+        )
+      : [];
     return new SuccessResponseDto<MaritalStatusHttpDto[]>(
       maritalStatusesHttpDto,
       HttpStatus.OK,

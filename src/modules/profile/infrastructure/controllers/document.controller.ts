@@ -102,10 +102,9 @@ export class DocumentController {
 
     const documents = await this.documentGetAll.run(undefined, filter);
 
-    const documentsHttpDto =
-      documents instanceof Array
-        ? documents.map((document) => DocumentHttpDto.fromEntity(document))
-        : [];
+    const documentsHttpDto = Array.isArray(documents)
+      ? documents.map((document) => DocumentHttpDto.fromEntity(document))
+      : [];
     return new SuccessResponseDto<DocumentHttpDto[]>(
       documentsHttpDto,
       HttpStatus.OK,

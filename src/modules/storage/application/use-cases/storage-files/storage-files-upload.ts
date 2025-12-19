@@ -1,6 +1,5 @@
 import { StorageFilesRepository } from '@/modules/storage/domain/repositories/storage-files.repository';
 import { StorageFilesContentFile } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-content-file';
-//import { StorageFiles } from '@/modules/storage/domain/entities/storage-files';
 import { StorageFilesPath } from '@/modules/storage/domain/value-objects/storage-files-value-object/storage-files-path';
 
 export class StorageFilesUpload<T> {

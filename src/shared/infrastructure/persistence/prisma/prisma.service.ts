@@ -18,14 +18,13 @@ export class PrismaService
 {
   private readonly logger = new Logger('template-project:prisma');
   // private prisma: PrismaClient;
-  constructor(private transactionContext: TransactionContextService) {
+  constructor(private readonly transactionContext: TransactionContextService) {
     const connectionString = `${process.env.DB_PROVIDER}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?schema=public`;
     const pool = new Pool({
       connectionString,
     });
     const adapter = new PrismaPg(pool);
     super({ adapter });
-    //this.prisma = new PrismaClient({ adapter });
   }
 
   async onModuleInit(): Promise<void> {

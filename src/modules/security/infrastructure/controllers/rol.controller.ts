@@ -97,10 +97,9 @@ export class RolController {
 
     const rols = await this.rolGetAll.run(undefined, filter);
 
-    const rolHttpDto =
-      rols instanceof Array
-        ? rols.map((rol) => RolHttpDto.fromEntity(rol))
-        : [];
+    const rolHttpDto = Array.isArray(rols)
+      ? rols.map((rol) => RolHttpDto.fromEntity(rol))
+      : [];
     return new SuccessResponseDto<RolHttpDto[]>(
       rolHttpDto,
       HttpStatus.OK,

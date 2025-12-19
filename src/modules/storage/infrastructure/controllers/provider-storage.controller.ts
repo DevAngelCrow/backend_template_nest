@@ -112,12 +112,11 @@ export class ProviderStorageController {
       filter,
     );
 
-    const providerStoragesHttpDto =
-      providerStorages instanceof Array
-        ? providerStorages.map((providerStorage) =>
-            ProviderStorageHttpDto.fromEntity(providerStorage),
-          )
-        : [];
+    const providerStoragesHttpDto = Array.isArray(providerStorages)
+      ? providerStorages.map((providerStorage) =>
+          ProviderStorageHttpDto.fromEntity(providerStorage),
+        )
+      : [];
     return new SuccessResponseDto<ProviderStorageHttpDto[]>(
       providerStoragesHttpDto,
       HttpStatus.OK,

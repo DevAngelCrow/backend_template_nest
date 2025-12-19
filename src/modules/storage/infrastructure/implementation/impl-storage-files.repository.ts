@@ -1,11 +1,10 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { StorageFiles } from '../../domain/entities/storage-files';
 import { StorageFilesRepository } from '../../domain/repositories/storage-files.repository';
 import { StorageFilesContentFile } from '../../domain/value-objects/storage-files-value-object/storage-files-content-file';
-//import { StorageFilesId } from '../../domain/value-objects/storage-files-value-object/storage-files-id';
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { mkdir, writeFile } from 'fs/promises';
+import { randomUUID } from 'node:crypto';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { TransactionContextService } from '@/shared/infrastructure/services/transaction-context.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';

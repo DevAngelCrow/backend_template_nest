@@ -6,9 +6,9 @@ import { UserName } from '../../../identity-access-management/domain/value-objec
 
 @Injectable()
 export class EmailService implements EmailSenderPort {
-  private tranporter: nodemailer.Transporter;
+  private readonly transporter: nodemailer.Transporter;
   constructor() {
-    this.tranporter = nodemailer.createTransport({
+    this.transporter = nodemailer.createTransport({
       service: process.env.EMAIL_HOST,
       port: Number(process.env.EMAIL_PORT) || 587,
       secure: false,
@@ -24,7 +24,7 @@ export class EmailService implements EmailSenderPort {
     verificationToken: string,
   ): Promise<void> {
     const verificationUrl = `${process.env.APP_URL}/auth/verify-email?token=${verificationToken}`;
-    await this.tranporter.sendMail({
+    await this.transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: email.value(),
       subject: `Verifica tu cuenta`,

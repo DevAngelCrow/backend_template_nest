@@ -43,7 +43,7 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
         },
       });
       if (!user) {
-        return Promise.resolve(false);
+        return false;
       }
       return user.mnt_user_rol.some((rol) => role.includes(rol.mnt_role.name));
     } catch (error) {
@@ -78,8 +78,9 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
         },
       });
       if (!user) {
-        return Promise.resolve(false);
+        return false;
       }
+
       const permissions = user.mnt_user_rol
         .flatMap((userRol) => userRol.mnt_role.rol_permissions)
         .flatMap((rolPermission) => rolPermission.ctl_permissions)
@@ -118,7 +119,7 @@ export class ImplSecurityAuthorizationPort implements SecurityAuthorizationPort 
       });
 
       if (!user) {
-        return Promise.resolve([]);
+        return [];
       }
 
       const permissionIds = user.mnt_user_rol

@@ -106,10 +106,9 @@ export class CountryController {
 
     const countries = await this.countryGetAll.run(undefined, filter);
 
-    const countriesHttpDto =
-      countries instanceof Array
-        ? countries.map((country) => CountryHttpDto.fromEntity(country))
-        : [];
+    const countriesHttpDto = Array.isArray(countries)
+      ? countries.map((country) => CountryHttpDto.fromEntity(country))
+      : [];
     return new SuccessResponseDto<CountryHttpDto[]>(
       countriesHttpDto,
       HttpStatus.OK,

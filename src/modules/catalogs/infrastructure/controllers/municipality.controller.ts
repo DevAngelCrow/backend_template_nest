@@ -102,12 +102,11 @@ export class MunicipalityController {
 
     const municipalities = await this.municipalityGetAll.run(undefined, filter);
 
-    const municipalitiesHttpDto =
-      municipalities instanceof Array
-        ? municipalities.map((municipality) =>
-            MunicipalityHttpDto.fromEntity(municipality),
-          )
-        : [];
+    const municipalitiesHttpDto = Array.isArray(municipalities)
+      ? municipalities.map((municipality) =>
+          MunicipalityHttpDto.fromEntity(municipality),
+        )
+      : [];
     return new SuccessResponseDto<MunicipalityHttpDto[]>(
       municipalitiesHttpDto,
       HttpStatus.OK,

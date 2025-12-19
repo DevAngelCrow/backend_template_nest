@@ -102,10 +102,9 @@ export class DistrictController {
 
     const districts = await this.districtGetAll.run(undefined, filter);
 
-    const districtsHttpDto =
-      districts instanceof Array
-        ? districts.map((district) => DistrictHttpDto.fromEntity(district))
-        : [];
+    const districtsHttpDto = Array.isArray(districts)
+      ? districts.map((district) => DistrictHttpDto.fromEntity(district))
+      : [];
     return new SuccessResponseDto<DistrictHttpDto[]>(
       districtsHttpDto,
       HttpStatus.OK,

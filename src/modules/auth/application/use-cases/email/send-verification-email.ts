@@ -3,7 +3,7 @@ import { VerificationTokenRepository } from '@/modules/auth/domain/repositories/
 import { UserId } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-id';
 import { UserName } from '@/modules/identity-access-management/domain/value-objects/user-value-object/user-name';
 import { PersonEmail } from '@/modules/profile/domain/value-objects/person-value-object/person-email';
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 
 export class SendVerificationEmail {
   constructor(

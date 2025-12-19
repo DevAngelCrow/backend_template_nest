@@ -48,7 +48,6 @@ export class Route {
       data.id ? new RoutesId(data.id) : undefined,
       data.title ? new RoutesTitle(data.title) : undefined,
       data.id_parent ? new RoutesId(data.id_parent) : undefined,
-      
     );
   }
 

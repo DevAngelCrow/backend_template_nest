@@ -100,10 +100,9 @@ export class AddressController {
 
     const addresses = await this.addressGetAll.run(undefined, filter);
 
-    const addressesHttpDto =
-      addresses instanceof Array
-        ? addresses.map((address) => AddressHttpDto.fromEntity(address))
-        : [];
+    const addressesHttpDto = Array.isArray(addresses)
+      ? addresses.map((address) => AddressHttpDto.fromEntity(address))
+      : [];
     return new SuccessResponseDto<AddressHttpDto[]>(
       addressesHttpDto,
       HttpStatus.OK,

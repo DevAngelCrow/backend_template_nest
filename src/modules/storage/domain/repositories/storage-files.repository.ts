@@ -1,7 +1,6 @@
 import { StorageFiles } from '../entities/storage-files';
 import { StorageFilesContentFile } from '../value-objects/storage-files-value-object/storage-files-content-file';
 import { StorageFilesPath } from '../value-objects/storage-files-value-object/storage-files-path';
-//import { StorageFilesId } from '../value-objects/storage-files-value-object/storage-files-id';
 
 export abstract class StorageFilesRepository {
   abstract upload<T>(
