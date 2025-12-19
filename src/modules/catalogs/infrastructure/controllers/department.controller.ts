@@ -106,12 +106,11 @@ export class DepartmentController {
 
     const departments = await this.departmentGetAll.run(undefined, filter);
 
-    const departmentsHttpDto =
-      Array.isArray(departments)
-        ? departments.map((department) =>
-            DepartmentHttpDto.fromEntity(department),
-          )
-        : [];
+    const departmentsHttpDto = Array.isArray(departments)
+      ? departments.map((department) =>
+          DepartmentHttpDto.fromEntity(department),
+        )
+      : [];
     return new SuccessResponseDto<DepartmentHttpDto[]>(
       departmentsHttpDto,
       HttpStatus.OK,
