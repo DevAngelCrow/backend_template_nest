@@ -27,7 +27,7 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:seed" : "npx prisma db seed",
     "prisma:studio": "npx prisma studio",
-    "sonar:scanner": "sonar-scanner.bat ",
+    "sonar:scanner": "sonar-scanner",
     "dev:setup": "npm run prisma:migrate && npm run prisma:generate && npm run prisma:seed"
   },
   "dependencies": {
