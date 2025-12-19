@@ -25,7 +25,7 @@ import { DepartmentGetOneById } from '../../application/use-cases/department/dep
 import { DepartmentDelete } from '../../application/use-cases/department/department-delete';
 import { CreateDepartmentDto } from '../dtos/validators/department/create-department.dto';
 import { UpdateDepartmentDto } from '../dtos/validators/department/update-department.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiProperty, ApiQuery } from '@nestjs/swagger';
 
 type DepartmentGetAllResponse =
   | HttpPaginatedResponseDto<DepartmentHttpDto>
@@ -54,6 +54,7 @@ export class DepartmentController {
   }
   @Put(':id')
   @HttpCode(200)
+  @ApiProperty({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() departmentUpdateRequest: UpdateDepartmentDto,
@@ -67,6 +68,9 @@ export class DepartmentController {
   }
   @Get()
   @HttpCode(200)
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
+  @ApiQuery({ name: 'filter', required: false, type: String })
   async getAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
@@ -116,6 +120,7 @@ export class DepartmentController {
   }
   @Get(':id')
   @HttpCode(200)
+  @ApiProperty({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<DepartmentHttpDto>> {
@@ -132,6 +137,7 @@ export class DepartmentController {
   }
   @Delete(':id')
   @HttpCode(200)
+  @ApiProperty({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {

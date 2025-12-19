@@ -4,6 +4,7 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Menu, Permission } from '../interfaces/menu.interface';
@@ -13,6 +14,7 @@ import { MenuHttpDto } from '../dtos/http/menu-http-dto/menu-http.dto';
 import { PermissionsGuard } from '../guards/permissions.guard';
 import { Permissions } from '../decorators/permissions.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @Controller('menus')
 @ApiBearerAuth('JWT-auth')
@@ -23,8 +25,9 @@ export class MenuController {
   @Get()
   @HttpCode(200)
   async menu(
-    @Headers('authorization') token: string,
+    @Req() request: Request<{ headers: { authorization: string } }>,
   ): Promise<SuccessResponseDto<MenuHttpDto<Menu, Permission>[]>> {
+    const token = request.headers.authorization?.replace('Bearer ', '') || '';
     const menus = await this.getMenu.run(token);
     const menuDto = menus.map((menu) =>
       MenuHttpDto.fromEntity<Menu, Permission>(menu),

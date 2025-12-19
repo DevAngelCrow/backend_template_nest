@@ -56,6 +56,7 @@ export class CountryController {
   }
   @Put(':id')
   @HttpCode(200)
+  @ApiQuery({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() countryUpdateRequest: UpdateCountryDto,
@@ -117,6 +118,7 @@ export class CountryController {
   }
   @Get(':id')
   @HttpCode(200)
+  @ApiQuery({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<CountryHttpDto>> {
@@ -133,6 +135,7 @@ export class CountryController {
   }
   @Delete(':id')
   @HttpCode(200)
+  @ApiQuery({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
