@@ -1,0 +1,10 @@
+import { User } from '../../domain/entities/user';
+import { UserGetOneByUserName } from '@/modules/identity-access-management/application/use-cases/user/user-get-one-by-user-name';
+export class FinduserService {
+  constructor(private readonly findUserByName: UserGetOneByUserName) {}
+  async run(
+    user_name: string,
+  ): Promise<{ user: User; permissions: string[] } | null> {
+    return await this.findUserByName.run(user_name);
+  }
+}
