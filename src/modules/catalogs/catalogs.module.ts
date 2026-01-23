@@ -9,6 +9,7 @@ import { MaritalStatusController } from './infrastructure/controllers/marital-st
 import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
 import { useCasesProviders } from './infrastructure/config/use-cases.config';
 import { repositories } from './infrastructure/config/repositories.config';
+import { commandHandlerProviders } from './infrastructure/config/commands-handlers.config';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { repositories } from './infrastructure/config/repositories.config';
   providers: [
     ...useCasesProviders,
     ...repositories,
+    ...commandHandlerProviders,
     { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
-  exports: [...useCasesProviders],
+  exports: [...useCasesProviders, ...commandHandlerProviders],
 })
 export class CatalogsModule {}

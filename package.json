@@ -25,7 +25,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:seed" : "npx prisma db seed",
+    "prisma:seed": "npx prisma db seed",
     "prisma:studio": "npx prisma studio",
     "sonar:scanner": "sonar-scanner",
     "dev:setup": "npm run prisma:migrate && npm run prisma:generate && npm run prisma:seed"
