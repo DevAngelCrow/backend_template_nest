@@ -4,7 +4,7 @@ import { DistrictRepository } from '../../domain/repositories/district-repositor
 import { GlobalStatsusRepository } from '../../domain/repositories/global-status-repository';
 import { MaritalStatusRepository } from '../../domain/repositories/marital-status-repository';
 import { MunicipalityRespository } from '../../domain/repositories/municipality-repository';
-import { ImplCountryRepository } from '../implementation/impl-country.repository';
+import { ImplCountryRepository } from '../implementation/country/impl-country.repository';
 import { ImplDepartmentRepository } from '../implementation/impl-department.repository';
 import { ImplDistrictRepository } from '../implementation/impl-district.repository';
 import { ImplGlobalStatusRepository } from '../implementation/impl-global-status.repository';

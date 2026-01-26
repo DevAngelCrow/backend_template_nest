@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Country } from '../../domain/entities/country';
-import { CountryRepository } from '../../domain/repositories/country-repository';
-import { CountryId } from '../../domain/value-objects/country-value-object/country-id';
+import { Country } from '../../../domain/entities/country';
+import { CountryRepository } from '../../../domain/repositories/country-repository';
+import { CountryId } from '../../../domain/value-objects/country-value-object/country-id';
 import { PrismaService } from 'src/shared/infrastructure/persistence/prisma/prisma.service';
 import { ctl_country } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
@@ -11,9 +11,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { CountryQueriesRepository } from '@/modules/catalogs/application/repositories/country-read.repository';
 
 @Injectable()
-export class ImplCountryRepository implements CountryRepository {
+export class ImplCountryRepository
+  implements CountryRepository, CountryQueriesRepository
+{
   private countries: Country[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(country: Country): Promise<void> {
