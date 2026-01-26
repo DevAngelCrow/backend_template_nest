@@ -9,11 +9,13 @@ import { MaritalStatusController } from './infrastructure/controllers/marital-st
 import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
 import { useCasesProviders } from './infrastructure/config/use-cases.config';
 import { repositories } from './infrastructure/config/repositories.config';
-import { commandHandlerProviders } from './infrastructure/config/commands-handlers.config';
+import { commandAdapters, commandHandlerProviders } from './infrastructure/config/commands-handlers.config';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
     RouterModule.register([{ path: 'catalogs', module: CatalogsModule }]),
+    CqrsModule
   ],
   controllers: [
     CountryController,
@@ -27,6 +29,7 @@ import { commandHandlerProviders } from './infrastructure/config/commands-handle
     ...useCasesProviders,
     ...repositories,
     ...commandHandlerProviders,
+    ...commandAdapters,
     { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
   exports: [...useCasesProviders, ...commandHandlerProviders],

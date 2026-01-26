@@ -29,6 +29,7 @@ import { Country } from '../../domain/entities/country';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { CreateCountryCommand } from '../../application/country/commands/create-country/create-country.command';
 import { CreateCountryHandler } from '../../application/country/commands/create-country/create-country.handler';
+import { CommandBus } from '@nestjs/cqrs';
 
 type CountryGetAllResponse =
   | HttpPaginatedResponseDto<CountryHttpDto>
@@ -38,7 +39,7 @@ type CountryGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class CountryController {
   constructor(
-    private readonly countryCreate: CreateCountryHandler,
+    private readonly commandBus: CommandBus,
     private readonly countryUpdate: CountryUpdate,
     private readonly countryGetAll: CountryGetAll,
     private readonly countryGetOneById: CountryGetOneById,
@@ -56,7 +57,7 @@ export class CountryController {
     //   'Country created successfully',
     // );
     const command = new CreateCountryCommand(countryCreateRequest);
-    await this.countryCreate.execute(command);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
