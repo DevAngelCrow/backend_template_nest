@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DepartmentRepository } from '../../domain/repositories/department-repository';
-import { Department } from '../../domain/entities/department';
-import { DepartmentId } from '../../domain/value-objects/department-value-object/department-id';
+import { DepartmentRepository } from '../../../domain/repositories/department-repository';
+import { Department } from '../../../domain/entities/department';
+import { DepartmentId } from '../../../domain/value-objects/department-value-object/department-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_department } from 'generated/prisma/client';
@@ -10,9 +10,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { DepartmentQueriesRepository } from '@/modules/catalogs/application/repositories/department-read.repository';
 
 @Injectable()
-export class ImplDepartmentRepository implements DepartmentRepository {
+export class ImplDepartmentRepository
+  implements DepartmentRepository, DepartmentQueriesRepository
+{
   private departments: Department[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(department: Department): Promise<void> {

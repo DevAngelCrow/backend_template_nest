@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MaritalStatusRepository } from '../../domain/repositories/marital-status-repository';
-import { MaritalStatus } from '../../domain/entities/marital-status';
-import { MaritalStatusId } from '../../domain/value-objects/marital-status-value-object/marital-status-id';
+import { MaritalStatusRepository } from '../../../domain/repositories/marital-status-repository';
+import { MaritalStatus } from '../../../domain/entities/marital-status';
+import { MaritalStatusId } from '../../../domain/value-objects/marital-status-value-object/marital-status-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_marital_status } from 'generated/prisma/client';
@@ -10,9 +10,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { MaritalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/marital-status-read.repository';
 
 @Injectable()
-export class ImplMaritalStatusRepository implements MaritalStatusRepository {
+export class ImplMaritalStatusRepository
+  implements MaritalStatusRepository, MaritalStatusQueriesRepository
+{
   private maritalStatuses: MaritalStatus[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(marital_status: MaritalStatus): Promise<void> {

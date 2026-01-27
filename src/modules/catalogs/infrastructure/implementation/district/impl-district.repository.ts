@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DistrictRepository } from '../../domain/repositories/district-repository';
-import { District } from '../../domain/entities/district';
-import { DistrictId } from '../../domain/value-objects/district-value-object/district-id';
+import { DistrictRepository } from '../../../domain/repositories/district-repository';
+import { District } from '../../../domain/entities/district';
+import { DistrictId } from '../../../domain/value-objects/district-value-object/district-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_district } from 'generated/prisma/client';
@@ -10,9 +10,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { DistrictQueriesRepository } from '@/modules/catalogs/application/repositories/district-read.repository';
 
 @Injectable()
-export class ImplDistrictRepository implements DistrictRepository {
+export class ImplDistrictRepository
+  implements DistrictRepository, DistrictQueriesRepository
+{
   private districts: District[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(district: District): Promise<void> {

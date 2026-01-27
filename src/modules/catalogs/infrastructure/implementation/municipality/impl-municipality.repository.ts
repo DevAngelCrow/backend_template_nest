@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MunicipalityRespository } from '../../domain/repositories/municipality-repository';
-import { Municipality } from '../../domain/entities/municipality';
-import { MunicipalityId } from '../../domain/value-objects/municipality-value-object/municipality-id';
+import { MunicipalityRespository } from '../../../domain/repositories/municipality-repository';
+import { Municipality } from '../../../domain/entities/municipality';
+import { MunicipalityId } from '../../../domain/value-objects/municipality-value-object/municipality-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_municipality } from 'generated/prisma/client';
@@ -10,9 +10,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { MunicipalityQueriesRepository } from '@/modules/catalogs/application/repositories/municipality-read.repository';
 
 @Injectable()
-export class ImplMunicipalityRepository implements MunicipalityRespository {
+export class ImplMunicipalityRepository
+  implements MunicipalityRespository, MunicipalityQueriesRepository
+{
   private municipalities: Municipality[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(municipality: Municipality): Promise<void> {

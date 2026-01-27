@@ -71,12 +71,12 @@ export class CountryController {
   }
   @Put(':id')
   @HttpCode(200)
-  @ApiQuery({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() countryUpdateRequest: UpdateCountryDto,
   ): Promise<SuccessResponseDto<null>> {
-    const command = new UpdateCountryCommand(countryUpdateRequest);
+    const command = new UpdateCountryCommand({ ...countryUpdateRequest, id });
     await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
@@ -151,7 +151,7 @@ export class CountryController {
   }
   @Delete(':id')
   @HttpCode(200)
-  @ApiQuery({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {

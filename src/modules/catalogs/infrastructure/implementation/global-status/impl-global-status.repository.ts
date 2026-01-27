@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { GlobalStatsusRepository } from '../../domain/repositories/global-status-repository';
-import { GlobalStatus } from '../../domain/entities/global-status';
-import { GlobalStatusId } from '../../domain/value-objects/goblal-status-value-object/global-status-id';
+import { GlobalStatsusRepository } from '../../../domain/repositories/global-status-repository';
+import { GlobalStatus } from '../../../domain/entities/global-status';
+import { GlobalStatusId } from '../../../domain/value-objects/goblal-status-value-object/global-status-id';
 import { PrismaService } from '@/shared/infrastructure/persistence/prisma/prisma.service';
 import { DatabaseException } from '@/shared/infrastructure/exceptions/database.exception';
 import { ctl_status } from 'generated/prisma/client';
@@ -10,9 +10,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { GlobalStatusQueriesRepository } from '@/modules/catalogs/application/repositories/global-status-read.repository';
 
 @Injectable()
-export class ImplGlobalStatusRepository implements GlobalStatsusRepository {
+export class ImplGlobalStatusRepository
+  implements GlobalStatsusRepository, GlobalStatusQueriesRepository
+{
   private globalStatuses: GlobalStatus[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(global_status: GlobalStatus): Promise<void> {

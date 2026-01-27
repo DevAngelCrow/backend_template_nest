@@ -41,10 +41,6 @@ import {
     ...queryAdapters,
     { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
-  exports: [
-    ...useCasesProviders,
-    ...commandHandlerProviders,
-    ...queryHandlerProviders,
-  ],
+  exports: [...commandHandlerProviders, ...queryHandlerProviders],
 })
 export class CatalogsModule {}

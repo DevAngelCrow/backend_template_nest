@@ -18,14 +18,16 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { DepartmentHttpDto } from '../dtos/http/department-http-dto/department-http.dto';
-import { DepartmentCreate } from '../../application/use-cases/department/department-create';
-import { DepartmentUpdate } from '../../application/use-cases/department/department-update';
-import { DepartmentGetAll } from '../../application/use-cases/department/department-get-all';
-import { DepartmentGetOneById } from '../../application/use-cases/department/department-get-one-by-id';
-import { DepartmentDelete } from '../../application/use-cases/department/department-delete';
 import { CreateDepartmentDto } from '../dtos/validators/department/create-department.dto';
 import { UpdateDepartmentDto } from '../dtos/validators/department/update-department.dto';
-import { ApiBearerAuth, ApiProperty, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateDepartmentCommand } from '../../application/department/commands/create-department/create-department.command';
+import { UpdateDepartmentCommand } from '../../application/department/commands/update-department/update-department.command';
+import { DeleteDepartmentCommand } from '../../application/department/commands/delete-department/delete-department.command';
+import { GetDepartmentsQuery } from '../../application/department/queries/get-departments/get-departments.query';
+import { GetDepartmentQuery } from '../../application/department/queries/get-department/get-department.query';
+import { Department } from '../../domain/entities/department';
 
 type DepartmentGetAllResponse =
   | HttpPaginatedResponseDto<DepartmentHttpDto>
@@ -34,18 +36,16 @@ type DepartmentGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class DepartmentController {
   constructor(
-    private readonly departmentCreate: DepartmentCreate,
-    private readonly departmentUpdate: DepartmentUpdate,
-    private readonly departmentGetAll: DepartmentGetAll,
-    private readonly departmentGetOneById: DepartmentGetOneById,
-    private readonly departmentDelete: DepartmentDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
   @Post()
   @HttpCode(201)
   async create(
     @Body() departmentCreateRequest: CreateDepartmentDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.departmentCreate.run(departmentCreateRequest);
+    const command = new CreateDepartmentCommand(departmentCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -54,12 +54,16 @@ export class DepartmentController {
   }
   @Put(':id')
   @HttpCode(200)
-  @ApiProperty({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() departmentUpdateRequest: UpdateDepartmentDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.departmentUpdate.run({ ...departmentUpdateRequest, id });
+    const command = new UpdateDepartmentCommand({
+      ...departmentUpdateRequest,
+      id,
+    });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -78,14 +82,16 @@ export class DepartmentController {
   ): Promise<SuccessResponseDto<DepartmentGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const departmentsPagination = await this.departmentGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetDepartmentsQuery(paginationParams, filter);
+
+      const departmentsPagination = await this.queryBus.execute(query);
+
       if (departmentsPagination instanceof Pagination) {
         const departmentsHttpDto = departmentsPagination
           .getEntityList()
-          .map((department) => DepartmentHttpDto.fromEntity(department));
+          .map((department: Department) =>
+            DepartmentHttpDto.fromEntity(department),
+          );
         const paginatedDepartmentsResponse =
           new HttpPaginatedResponseDto<DepartmentHttpDto>(
             departmentsHttpDto,
@@ -103,8 +109,8 @@ export class DepartmentController {
         );
       }
     }
-
-    const departments = await this.departmentGetAll.run(undefined, filter);
+    const query = new GetDepartmentsQuery();
+    const departments = await this.queryBus.execute(query);
 
     const departmentsHttpDto = Array.isArray(departments)
       ? departments.map((department) =>
@@ -119,11 +125,12 @@ export class DepartmentController {
   }
   @Get(':id')
   @HttpCode(200)
-  @ApiProperty({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<DepartmentHttpDto>> {
-    const department = await this.departmentGetOneById.run(id);
+    const query = new GetDepartmentQuery(id);
+    const department = await this.queryBus.execute(query);
     if (!department) {
       throw new NotFoundException('Department', id.toString());
     }
@@ -136,11 +143,12 @@ export class DepartmentController {
   }
   @Delete(':id')
   @HttpCode(200)
-  @ApiProperty({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.departmentDelete.run(id);
+    const command = new DeleteDepartmentCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,

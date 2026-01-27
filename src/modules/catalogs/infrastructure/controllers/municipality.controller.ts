@@ -18,14 +18,16 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { MunicipalityHttpDto } from '../dtos/http/municipality-http-dto/municipality-http.dto';
-import { MunicipalityCreate } from '../../application/use-cases/municipality/municipality-create';
-import { MunicipalityUpdate } from '../../application/use-cases/municipality/municipality-update';
-import { MunicipalityGetAll } from '../../application/use-cases/municipality/municipality-get-all';
-import { MunicipalityGetOneById } from '../../application/use-cases/municipality/municipality-get-one-by-id';
-import { MunicipalityDelete } from '../../application/use-cases/municipality/municipality-delete';
 import { CreateMunicipalityDto } from '../dtos/validators/municipality/create-municipality.dto';
 import { UpdateMunicipalityDto } from '../dtos/validators/municipality/update-municipality.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateMunicipalityCommand } from '../../application/municipality/commands/create-municipality/create-municipality.command';
+import { UpdateMunicipalityCommand } from '../../application/municipality/commands/update-municipality/update-municipality.command';
+import { DeleteMunicipalityCommand } from '../../application/municipality/commands/delete-municipality/delete-municipality.command';
+import { GetMunicipalitiesQuery } from '../../application/municipality/queries/get-municipalities/get-municipalities.query';
+import { GetMunicipalityQuery } from '../../application/municipality/queries/get-municipality/get-municipality.query';
+import { Municipality } from '../../domain/entities/municipality';
 
 type MunicipalityGetAllResponse =
   | HttpPaginatedResponseDto<MunicipalityHttpDto>
@@ -34,18 +36,16 @@ type MunicipalityGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class MunicipalityController {
   constructor(
-    private readonly municipalityCreate: MunicipalityCreate,
-    private readonly municipalityUpdate: MunicipalityUpdate,
-    private readonly municipalityGetAll: MunicipalityGetAll,
-    private readonly municipalityGetOneById: MunicipalityGetOneById,
-    private readonly municipalityDelete: MunicipalityDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
   @Post()
   @HttpCode(201)
   async create(
     @Body() municipalityCreateRequest: CreateMunicipalityDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.municipalityCreate.run(municipalityCreateRequest);
+    const command = new CreateMunicipalityCommand(municipalityCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -54,11 +54,16 @@ export class MunicipalityController {
   }
   @Put(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() municipalityUpdateRequest: UpdateMunicipalityDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.municipalityUpdate.run({ ...municipalityUpdateRequest, id });
+    const command = new UpdateMunicipalityCommand({
+      ...municipalityUpdateRequest,
+      id,
+    });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -67,6 +72,9 @@ export class MunicipalityController {
   }
   @Get()
   @HttpCode(200)
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
+  @ApiQuery({ name: 'filter', required: false, type: String })
   async getAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
@@ -74,14 +82,16 @@ export class MunicipalityController {
   ): Promise<SuccessResponseDto<MunicipalityGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const municipalitiesPagination = await this.municipalityGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetMunicipalitiesQuery(paginationParams, filter);
+
+      const municipalitiesPagination = await this.queryBus.execute(query);
+
       if (municipalitiesPagination instanceof Pagination) {
         const municipalitiesHttpDto = municipalitiesPagination
           .getEntityList()
-          .map((municipality) => MunicipalityHttpDto.fromEntity(municipality));
+          .map((municipality: Municipality) =>
+            MunicipalityHttpDto.fromEntity(municipality),
+          );
         const paginatedMunicipalitiesResponse =
           new HttpPaginatedResponseDto<MunicipalityHttpDto>(
             municipalitiesHttpDto,
@@ -100,7 +110,8 @@ export class MunicipalityController {
       }
     }
 
-    const municipalities = await this.municipalityGetAll.run(undefined, filter);
+    const query = new GetMunicipalitiesQuery();
+    const municipalities = await this.queryBus.execute(query);
 
     const municipalitiesHttpDto = Array.isArray(municipalities)
       ? municipalities.map((municipality) =>
@@ -115,10 +126,12 @@ export class MunicipalityController {
   }
   @Get(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<MunicipalityHttpDto>> {
-    const municipality = await this.municipalityGetOneById.run(id);
+    const query = new GetMunicipalityQuery(id);
+    const municipality = await this.queryBus.execute(query);
     if (!municipality) {
       throw new NotFoundException('Municipality', id.toString());
     }
@@ -131,10 +144,12 @@ export class MunicipalityController {
   }
   @Delete(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.municipalityDelete.run(id);
+    const command = new DeleteMunicipalityCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,

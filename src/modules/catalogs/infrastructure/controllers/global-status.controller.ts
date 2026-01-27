@@ -18,14 +18,16 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { GlobalStatusHttpDto } from '../dtos/http/global-status-http-dto/global-status-http.dto';
-import { GlobalStatusCreate } from '../../application/use-cases/global-status/global-status-create';
-import { GlobalStatusUpdate } from '../../application/use-cases/global-status/global-status-update';
-import { GlobalStatusGetAll } from '../../application/use-cases/global-status/global-status-get-all';
-import { GlobalStatusGetOneById } from '../../application/use-cases/global-status/global-status-get-one-by-id';
-import { GlobalStatusDelete } from '../../application/use-cases/global-status/global-status-delete';
 import { CreateGlobalStatusDto } from '../dtos/validators/global-status/create-global-status.dto';
 import { UpdateGlobalStatusDto } from '../dtos/validators/global-status/update-global-status.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateGlobalStatusCommand } from '../../application/global-status/commands/create-global-status/create-global-status.command';
+import { UpdateGlobalStatusCommand } from '../../application/global-status/commands/update-global-status/update-global-status.command';
+import { DeleteGlobalStatusCommand } from '../../application/global-status/commands/delete-global-status/delete-global-status.command';
+import { GetGlobalStatusesQuery } from '../../application/global-status/queries/get-global-statuses/get-global-statuses.query';
+import { GetGlobalStatusQuery } from '../../application/global-status/queries/get-global-status/get-global-status.query';
+import { GlobalStatus } from '../../domain/entities/global-status';
 
 type GlobalStatusGetAllResponse =
   | HttpPaginatedResponseDto<GlobalStatusHttpDto>
@@ -34,18 +36,16 @@ type GlobalStatusGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class GlobalStatusController {
   constructor(
-    private readonly globalStatusCreate: GlobalStatusCreate,
-    private readonly globalStatusUpdate: GlobalStatusUpdate,
-    private readonly globalStatusGetAll: GlobalStatusGetAll,
-    private readonly globalStatusGetOneById: GlobalStatusGetOneById,
-    private readonly globalStatusDelete: GlobalStatusDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
   @Post()
   @HttpCode(201)
   async create(
     @Body() globalStatusCreateRequest: CreateGlobalStatusDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.globalStatusCreate.run(globalStatusCreateRequest);
+    const command = new CreateGlobalStatusCommand(globalStatusCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -54,11 +54,16 @@ export class GlobalStatusController {
   }
   @Put(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() globalStatusUpdateRequest: UpdateGlobalStatusDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.globalStatusUpdate.run({ ...globalStatusUpdateRequest, id });
+    const command = new UpdateGlobalStatusCommand({
+      ...globalStatusUpdateRequest,
+      id,
+    });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -67,6 +72,9 @@ export class GlobalStatusController {
   }
   @Get()
   @HttpCode(200)
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
+  @ApiQuery({ name: 'filter', required: false, type: String })
   async getAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
@@ -74,14 +82,16 @@ export class GlobalStatusController {
   ): Promise<SuccessResponseDto<GlobalStatusGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const globalStatusesPagination = await this.globalStatusGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetGlobalStatusesQuery(paginationParams, filter);
+
+      const globalStatusesPagination = await this.queryBus.execute(query);
+
       if (globalStatusesPagination instanceof Pagination) {
         const globalStatusesHttpDto = globalStatusesPagination
           .getEntityList()
-          .map((globalStatus) => GlobalStatusHttpDto.fromEntity(globalStatus));
+          .map((globalStatus: GlobalStatus) =>
+            GlobalStatusHttpDto.fromEntity(globalStatus),
+          );
         const paginatedGlobalStatusesResponse =
           new HttpPaginatedResponseDto<GlobalStatusHttpDto>(
             globalStatusesHttpDto,
@@ -100,7 +110,8 @@ export class GlobalStatusController {
       }
     }
 
-    const globalStatuses = await this.globalStatusGetAll.run(undefined, filter);
+    const query = new GetGlobalStatusesQuery();
+    const globalStatuses = await this.queryBus.execute(query);
 
     const globalStatusesHttpDto = Array.isArray(globalStatuses)
       ? globalStatuses.map((globalStatus) =>
@@ -115,10 +126,12 @@ export class GlobalStatusController {
   }
   @Get(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<GlobalStatusHttpDto>> {
-    const globalStatus = await this.globalStatusGetOneById.run(id);
+    const query = new GetGlobalStatusQuery(id);
+    const globalStatus = await this.queryBus.execute(query);
     if (!globalStatus) {
       throw new NotFoundException('GlobalStatus', id.toString());
     }
@@ -131,10 +144,12 @@ export class GlobalStatusController {
   }
   @Delete(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.globalStatusDelete.run(id);
+    const command = new DeleteGlobalStatusCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,

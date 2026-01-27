@@ -18,14 +18,16 @@ import { NotFoundException } from '@/shared/domain/exceptions/not-found.exceptio
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { DistrictHttpDto } from '../dtos/http/district-http-dto/district-http.dto';
-import { DistrictCreate } from '../../application/use-cases/district/district-create';
-import { DistrictUpdate } from '../../application/use-cases/district/district-update';
-import { DistrictGetAll } from '../../application/use-cases/district/district-get-all';
-import { DistrictGetOneById } from '../../application/use-cases/district/district-get-one-by-id';
-import { DistrictDelete } from '../../application/use-cases/district/district-delete';
 import { CreateDistrictDto } from '../dtos/validators/district/create-district.dto';
 import { UpdateDistrictDto } from '../dtos/validators/district/update-district.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateDistrictCommand } from '../../application/district/commands/create-district/create-district.command';
+import { UpdateDistrictCommand } from '../../application/district/commands/update-district/update-district.command';
+import { DeleteDistrictCommand } from '../../application/district/commands/delete-district/delete-district.command';
+import { GetDistrictsQuery } from '../../application/district/queries/get-districts/get-districts.query';
+import { GetDistrictQuery } from '../../application/district/queries/get-district/get-district.query';
+import { District } from '../../domain/entities/district';
 
 type DistrictGetAllResponse =
   | HttpPaginatedResponseDto<DistrictHttpDto>
@@ -34,18 +36,16 @@ type DistrictGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class DistrictController {
   constructor(
-    private readonly districtCreate: DistrictCreate,
-    private readonly districtUpdate: DistrictUpdate,
-    private readonly districtGetAll: DistrictGetAll,
-    private readonly districtGetOneById: DistrictGetOneById,
-    private readonly districtDelete: DistrictDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
   @Post()
   @HttpCode(201)
   async create(
     @Body() districtCreateRequest: CreateDistrictDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.districtCreate.run(districtCreateRequest);
+    const command = new CreateDistrictCommand(districtCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -54,11 +54,13 @@ export class DistrictController {
   }
   @Put(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() districtUpdateRequest: UpdateDistrictDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.districtUpdate.run({ ...districtUpdateRequest, id });
+    const command = new UpdateDistrictCommand({ ...districtUpdateRequest, id });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -67,6 +69,9 @@ export class DistrictController {
   }
   @Get()
   @HttpCode(200)
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
+  @ApiQuery({ name: 'filter', required: false, type: String })
   async getAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('per_page', new ParseIntPipe({ optional: true })) per_page?: number,
@@ -74,14 +79,14 @@ export class DistrictController {
   ): Promise<SuccessResponseDto<DistrictGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const districtsPagination = await this.districtGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetDistrictsQuery(paginationParams, filter);
+
+      const districtsPagination = await this.queryBus.execute(query);
+
       if (districtsPagination instanceof Pagination) {
         const districtsHttpDto = districtsPagination
           .getEntityList()
-          .map((district) => DistrictHttpDto.fromEntity(district));
+          .map((district: District) => DistrictHttpDto.fromEntity(district));
         const paginatedDistrictsResponse =
           new HttpPaginatedResponseDto<DistrictHttpDto>(
             districtsHttpDto,
@@ -100,7 +105,8 @@ export class DistrictController {
       }
     }
 
-    const districts = await this.districtGetAll.run(undefined, filter);
+    const query = new GetDistrictsQuery();
+    const districts = await this.queryBus.execute(query);
 
     const districtsHttpDto = Array.isArray(districts)
       ? districts.map((district) => DistrictHttpDto.fromEntity(district))
@@ -113,10 +119,12 @@ export class DistrictController {
   }
   @Get(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<DistrictHttpDto>> {
-    const district = await this.districtGetOneById.run(id);
+    const query = new GetDistrictQuery(id);
+    const district = await this.queryBus.execute(query);
     if (!district) {
       throw new NotFoundException('District', id.toString());
     }
@@ -129,10 +137,12 @@ export class DistrictController {
   }
   @Delete(':id')
   @HttpCode(200)
+  @ApiParam({ name: 'id', required: true, type: Number })
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.districtDelete.run(id);
+    const command = new DeleteDistrictCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
