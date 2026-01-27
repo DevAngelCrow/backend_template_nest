@@ -11,11 +11,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { PermissionsCreate } from '../../application/use-cases/permissions/permissions-create';
-import { PermissionsUpdate } from '../../application/use-cases/permissions/permissions-update';
-import { PermissionsGetAll } from '../../application/use-cases/permissions/permissions-get-all';
-import { PermissionsGetOneById } from '../../application/use-cases/permissions/permissions-get-one-by-id';
-import { PermissionsDelete } from '../../application/use-cases/permissions/permissions-delete';
 import { PermissionsRequestDto } from '../dtos/validators/permissions/permissions.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
@@ -25,6 +20,12 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Permissions } from '../../domain/entities/permissions';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreatePermissionsCommand } from '../../application/permissions/commands/create-permissions/create-permissions.command';
+import { UpdatePermissionsCommand } from '../../application/permissions/commands/update-permissions/update-permissions.command';
+import { DeletePermissionsCommand } from '../../application/permissions/commands/delete-permissions/delete-permissions.command';
+import { GetPermissionsQuery } from '../../application/permissions/queries/get-permissions/get-permissions.query';
+import { GetPermissionsByIdQuery } from '../../application/permissions/queries/get-permissions-by-id/get-permissions-by-id.query';
 
 type PermissionsGetAllResponse =
   | HttpPaginatedResponseDto<PermissionsHttpDto>
@@ -34,11 +35,8 @@ type PermissionsGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class PermissionsController {
   constructor(
-    private readonly permissionsCreate: PermissionsCreate,
-    private readonly permissionsUpdate: PermissionsUpdate,
-    private readonly permissionsGetAll: PermissionsGetAll,
-    private readonly permissionsGetOneById: PermissionsGetOneById,
-    private readonly permissionsDelete: PermissionsDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post()
@@ -46,7 +44,8 @@ export class PermissionsController {
   async create(
     @Body() permissionsCreateRequest: PermissionsRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.permissionsCreate.run(permissionsCreateRequest);
+    const command = new CreatePermissionsCommand(permissionsCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -60,7 +59,11 @@ export class PermissionsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() permissionsUpdateRequest: PermissionsRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.permissionsUpdate.run({ ...permissionsUpdateRequest, id });
+    const command = new UpdatePermissionsCommand({
+      ...permissionsUpdateRequest,
+      id,
+    });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -77,10 +80,8 @@ export class PermissionsController {
   ): Promise<SuccessResponseDto<PermissionsGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const permissionsPagination = await this.permissionsGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetPermissionsQuery(paginationParams, filter);
+      const permissionsPagination = await this.queryBus.execute(query);
       if (permissionsPagination instanceof Pagination) {
         const permissionsHttpDto = permissionsPagination
           .getEntityList()
@@ -105,7 +106,8 @@ export class PermissionsController {
       }
     }
 
-    const permissions = await this.permissionsGetAll.run(undefined, filter);
+    const query = new GetPermissionsQuery(undefined, filter);
+    const permissions = await this.queryBus.execute(query);
 
     const permissionsHttpDto = Array.isArray(permissions)
       ? permissions.map((permissions) =>
@@ -124,7 +126,8 @@ export class PermissionsController {
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<PermissionsHttpDto>> {
-    const permissions = await this.permissionsGetOneById.run(id);
+    const query = new GetPermissionsByIdQuery(id);
+    const permissions = await this.queryBus.execute(query);
     if (!permissions) {
       throw new NotFoundException('Permissions', id.toString());
     }
@@ -141,7 +144,8 @@ export class PermissionsController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.permissionsDelete.run(id);
+    const command = new DeletePermissionsCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,

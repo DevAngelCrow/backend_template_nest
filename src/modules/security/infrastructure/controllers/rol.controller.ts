@@ -11,11 +11,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { RolCreate } from '../../application/use-cases/rol/rol-create';
-import { RolUpdate } from '../../application/use-cases/rol/rol-update';
-import { RolGetAll } from '../../application/use-cases/rol/rol-get-all';
-import { RolGetOneById } from '../../application/use-cases/rol/rol-get-one-by-id';
-import { RolDelete } from '../../application/use-cases/rol/rol-delete';
 import { RolRequestDto } from '../dtos/validators/rol/rol.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
@@ -25,6 +20,12 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Rol } from '../../domain/entities/rol';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateRolCommand } from '../../application/rol/commands/create-rol/create-rol.command';
+import { UpdateRolCommand } from '../../application/rol/commands/update-rol/update-rol.command';
+import { DeleteRolCommand } from '../../application/rol/commands/delete-rol/delete-rol.command';
+import { GetRolesQuery } from '../../application/rol/queries/get-roles/get-roles.query';
+import { GetRolByIdQuery } from '../../application/rol/queries/get-rol-by-id/get-rol-by-id.query';
 
 type RolGetAllResponse = HttpPaginatedResponseDto<RolHttpDto> | RolHttpDto[];
 
@@ -32,11 +33,8 @@ type RolGetAllResponse = HttpPaginatedResponseDto<RolHttpDto> | RolHttpDto[];
 @ApiBearerAuth('JWT-auth')
 export class RolController {
   constructor(
-    private readonly rolCreate: RolCreate,
-    private readonly rolUpdate: RolUpdate,
-    private readonly rolGetAll: RolGetAll,
-    private readonly rolGetOneById: RolGetOneById,
-    private readonly rolDelete: RolDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post()
@@ -44,7 +42,8 @@ export class RolController {
   async create(
     @Body() rolCreateRequest: RolRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.rolCreate.run(rolCreateRequest);
+    const command = new CreateRolCommand(rolCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -58,7 +57,8 @@ export class RolController {
     @Param('id', ParseIntPipe) id: number,
     @Body() rolUpdateRequest: RolRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.rolUpdate.run({ ...rolUpdateRequest, id });
+    const command = new UpdateRolCommand({ ...rolUpdateRequest, id });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -75,7 +75,8 @@ export class RolController {
   ): Promise<SuccessResponseDto<RolGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const rolPagination = await this.rolGetAll.run(paginationParams, filter);
+      const query = new GetRolesQuery(paginationParams, filter);
+      const rolPagination = await this.queryBus.execute(query);
       if (rolPagination instanceof Pagination) {
         const rolHttpDto = rolPagination
           .getEntityList()
@@ -95,7 +96,8 @@ export class RolController {
       }
     }
 
-    const rols = await this.rolGetAll.run(undefined, filter);
+    const query = new GetRolesQuery(undefined, filter);
+    const rols = await this.queryBus.execute(query);
 
     const rolHttpDto = Array.isArray(rols)
       ? rols.map((rol) => RolHttpDto.fromEntity(rol))
@@ -112,7 +114,8 @@ export class RolController {
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<RolHttpDto>> {
-    const rol = await this.rolGetOneById.run(id);
+    const query = new GetRolByIdQuery(id);
+    const rol = await this.queryBus.execute(query);
     if (!rol) {
       throw new NotFoundException('Rol', id.toString());
     }
@@ -129,7 +132,8 @@ export class RolController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.rolDelete.run(id);
+    const command = new DeleteRolCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,

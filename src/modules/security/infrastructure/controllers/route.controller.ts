@@ -11,11 +11,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { RouteCreate } from '../../application/use-cases/route/route-create';
-import { RouteUpdate } from '../../application/use-cases/route/route-update';
-import { RouteGetAll } from '../../application/use-cases/route/route-get-all';
-import { RouteGetOneById } from '../../application/use-cases/route/route-get-one-by-id';
-import { RouteDelete } from '../../application/use-cases/route/route-delete';
 import { RouteRequestDto } from '../dtos/validators/route/route.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
@@ -25,6 +20,12 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Route } from '../../domain/entities/route';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateRouteCommand } from '../../application/route/commands/create-route/create-route.command';
+import { UpdateRouteCommand } from '../../application/route/commands/update-route/update-route.command';
+import { DeleteRouteCommand } from '../../application/route/commands/delete-route/delete-route.command';
+import { GetRoutesQuery } from '../../application/route/queries/get-routes/get-routes.query';
+import { GetRouteByIdQuery } from '../../application/route/queries/get-route-by-id/get-route-by-id.query';
 
 type RouteGetAllResponse =
   | HttpPaginatedResponseDto<RouteHttpDto>
@@ -34,11 +35,8 @@ type RouteGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class RouteController {
   constructor(
-    private readonly routeCreate: RouteCreate,
-    private readonly routeUpdate: RouteUpdate,
-    private readonly routeGetAll: RouteGetAll,
-    private readonly routeGetOneById: RouteGetOneById,
-    private readonly routeDelete: RouteDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post()
@@ -46,7 +44,8 @@ export class RouteController {
   async create(
     @Body() routeCreateRequest: RouteRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.routeCreate.run(routeCreateRequest);
+    const command = new CreateRouteCommand(routeCreateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -60,7 +59,8 @@ export class RouteController {
     @Param('id', ParseIntPipe) id: number,
     @Body() routeUpdateRequest: RouteRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.routeUpdate.run({ ...routeUpdateRequest, id });
+    const command = new UpdateRouteCommand({ ...routeUpdateRequest, id });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -77,10 +77,8 @@ export class RouteController {
   ): Promise<SuccessResponseDto<RouteGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const routesPagination = await this.routeGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetRoutesQuery(paginationParams, filter);
+      const routesPagination = await this.queryBus.execute(query);
       if (routesPagination instanceof Pagination) {
         const routesHttpDto = routesPagination
           .getEntityList()
@@ -101,7 +99,8 @@ export class RouteController {
       }
     }
 
-    const routes = await this.routeGetAll.run(undefined, filter);
+    const query = new GetRoutesQuery(undefined, filter);
+    const routes = await this.queryBus.execute(query);
 
     const routesHttpDto = Array.isArray(routes)
       ? routes.map((route) => RouteHttpDto.fromEntity(route))
@@ -118,7 +117,8 @@ export class RouteController {
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<RouteHttpDto>> {
-    const route = await this.routeGetOneById.run(id);
+    const query = new GetRouteByIdQuery(id);
+    const route = await this.queryBus.execute(query);
     if (!route) {
       throw new NotFoundException('Route', id.toString());
     }
@@ -135,7 +135,8 @@ export class RouteController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.routeDelete.run(id);
+    const command = new DeleteRouteCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,

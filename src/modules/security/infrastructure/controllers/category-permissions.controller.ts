@@ -11,11 +11,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CategoryPermissionsCreate } from '../../application/use-cases/category-permissions/category-permissions-create';
-import { CategoryPermissionsUpdate } from '../../application/use-cases/category-permissions/category-permissions-update';
-import { CategoryPermissionsGetAll } from '../../application/use-cases/category-permissions/category-permissions-get-all';
-import { CategoryPermissionsGetOneById } from '../../application/use-cases/category-permissions/category-permissions-get-one-by-id';
-import { CategoryPermissionsDelete } from '../../application/use-cases/category-permissions/category-permissions-delete';
 import { CategoryPermissionsRequestDto } from '../dtos/validators/category-permissions/category-permissions.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
@@ -25,6 +20,12 @@ import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { CategoryPermissions } from '../../domain/entities/category-permissions';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateCategoryPermissionsCommand } from '../../application/category-permissions/commands/create-category-permissions/create-category-permissions.command';
+import { UpdateCategoryPermissionsCommand } from '../../application/category-permissions/commands/update-category-permissions/update-category-permissions.command';
+import { DeleteCategoryPermissionsCommand } from '../../application/category-permissions/commands/delete-category-permissions/delete-category-permissions.command';
+import { GetCategoryPermissionsQuery } from '../../application/category-permissions/queries/get-category-permissions/get-category-permissions.query';
+import { GetCategoryPermissionsByIdQuery } from '../../application/category-permissions/queries/get-category-permissions-by-id/get-category-permissions-by-id.query';
 
 type CategoryPermissionsGetAllResponse =
   | HttpPaginatedResponseDto<CategoryPermissionsHttpDto>
@@ -34,11 +35,8 @@ type CategoryPermissionsGetAllResponse =
 @ApiBearerAuth('JWT-auth')
 export class CategoryPermissionsController {
   constructor(
-    private readonly categoryPermissionsCreate: CategoryPermissionsCreate,
-    private readonly categoryPermissionsUpdate: CategoryPermissionsUpdate,
-    private readonly categoryPermissionsGetAll: CategoryPermissionsGetAll,
-    private readonly categoryPermissionsGetOneById: CategoryPermissionsGetOneById,
-    private readonly categoryPermissionsDelete: CategoryPermissionsDelete,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post()
@@ -46,7 +44,10 @@ export class CategoryPermissionsController {
   async create(
     @Body() categoryPermissionsCreateRequest: CategoryPermissionsRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.categoryPermissionsCreate.run(categoryPermissionsCreateRequest);
+    const command = new CreateCategoryPermissionsCommand(
+      categoryPermissionsCreateRequest,
+    );
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.CREATED,
@@ -60,10 +61,11 @@ export class CategoryPermissionsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() categoryPermissionsUpdateRequest: CategoryPermissionsRequestDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.categoryPermissionsUpdate.run({
+    const command = new UpdateCategoryPermissionsCommand({
       ...categoryPermissionsUpdateRequest,
       id,
     });
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -80,8 +82,8 @@ export class CategoryPermissionsController {
   ): Promise<SuccessResponseDto<CategoryPermissionsGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const categoryPermissionsPagination =
-        await this.categoryPermissionsGetAll.run(paginationParams, filter);
+      const query = new GetCategoryPermissionsQuery(paginationParams, filter);
+      const categoryPermissionsPagination = await this.queryBus.execute(query);
       if (categoryPermissionsPagination instanceof Pagination) {
         const categoryPermissionsHttpDto = categoryPermissionsPagination
           .getEntityList()
@@ -106,10 +108,8 @@ export class CategoryPermissionsController {
       }
     }
 
-    const categoryPermissions = await this.categoryPermissionsGetAll.run(
-      undefined,
-      filter,
-    );
+    const query = new GetCategoryPermissionsQuery(undefined, filter);
+    const categoryPermissions = await this.queryBus.execute(query);
 
     const categoryPermissionsHttpDto = Array.isArray(categoryPermissions)
       ? categoryPermissions.map((categoryPermissions) =>
@@ -128,8 +128,8 @@ export class CategoryPermissionsController {
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<CategoryPermissionsHttpDto>> {
-    const categoryPermissions =
-      await this.categoryPermissionsGetOneById.run(id);
+    const query = new GetCategoryPermissionsByIdQuery(id);
+    const categoryPermissions = await this.queryBus.execute(query);
     if (!categoryPermissions) {
       throw new NotFoundException('Category-permissions', id.toString());
     }
@@ -147,7 +147,8 @@ export class CategoryPermissionsController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.categoryPermissionsDelete.run(id);
+    const command = new DeleteCategoryPermissionsCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
