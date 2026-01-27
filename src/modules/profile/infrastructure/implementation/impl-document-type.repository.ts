@@ -11,9 +11,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { DocumentTypeReadRepository } from '../../application/repositories/document-type-read.repository';
 
 @Injectable()
-export class ImplDocumentTypeRepository implements DocumentTypeRepository {
+export class ImplDocumentTypeRepository
+  implements DocumentTypeRepository, DocumentTypeReadRepository
+{
   private documentTypes: DocumentType[] = [];
   constructor(private readonly prisma: PrismaService) {}
   async create(documentType: DocumentType): Promise<void> {

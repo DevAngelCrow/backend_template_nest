@@ -13,9 +13,12 @@ import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { mnt_peopleWhereInput } from 'generated/prisma/models';
+import { PersonReadRepository } from '../../application/repositories/person-read.repository';
 
 @Injectable()
-export class ImplPersonRepository implements PersonRepository {
+export class ImplPersonRepository
+  implements PersonRepository, PersonReadRepository
+{
   private persons: Person[] = [];
   constructor(
     private readonly prisma: PrismaService,

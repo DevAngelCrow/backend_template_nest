@@ -12,9 +12,12 @@ import { PaginationParams } from '@/shared/domain/value-object/pagination-params
 import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
+import { AddressReadRepository } from '../../application/repositories/address-read.repository';
 
 @Injectable()
-export class ImplAddressRepository implements AddressRepository {
+export class ImplAddressRepository
+  implements AddressRepository, AddressReadRepository
+{
   private addresses: Address[] = [];
   constructor(
     private readonly prisma: PrismaService,
