@@ -12,9 +12,12 @@ import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
+import { CategoryPermissionsReadRepository } from '../../application/repositories/category-permissions-read.repository';
 
 @Injectable()
-export class ImplCategoryPermissionsRepository implements CategoryPermissionsRepository {
+export class ImplCategoryPermissionsRepository
+  implements CategoryPermissionsRepository, CategoryPermissionsReadRepository
+{
   private categoryPermissions: CategoryPermissions[] = [];
   constructor(
     private readonly prisma: PrismaService,

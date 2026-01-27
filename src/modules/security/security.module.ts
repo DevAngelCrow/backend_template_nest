@@ -9,10 +9,20 @@ import { repositories } from './infrastructure/config/repositories.config';
 import { JwtPassportAuthGuard } from '../auth/infrastructure/guards/jwt-passport-auth.guard';
 import { serviceProviders } from './infrastructure/config/services.config';
 import { MenuController } from './infrastructure/controllers/menu.controller';
+import { CqrsModule } from '@nestjs/cqrs';
+import {
+  commandAdapters,
+  commandHandlerProviders,
+} from './infrastructure/config/commands-handlers.config';
+import {
+  queryAdapters,
+  queryHandlerProviders,
+} from './infrastructure/config/queries-handlers.config';
 
 @Module({
   imports: [
     RouterModule.register([{ path: 'security', module: SecurityModule }]),
+    CqrsModule,
   ],
   controllers: [
     CategoryPermissionsController,
@@ -25,8 +35,17 @@ import { MenuController } from './infrastructure/controllers/menu.controller';
     ...useCasesProviders,
     ...serviceProviders,
     ...repositories,
+    ...commandHandlerProviders,
+    ...commandAdapters,
+    ...queryHandlerProviders,
+    ...queryAdapters,
     { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
   ],
-  exports: [...useCasesProviders, ...serviceProviders],
+  exports: [
+    ...useCasesProviders,
+    ...serviceProviders,
+    ...commandHandlerProviders,
+    ...queryHandlerProviders,
+  ],
 })
 export class SecurityModule {}

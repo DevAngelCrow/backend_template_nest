@@ -12,9 +12,12 @@ import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { ctl_permissions } from 'generated/prisma/client';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Injectable } from '@nestjs/common';
+import { PermissionsReadRepository } from '../../application/repositories/permissions-read.repository';
 
 @Injectable()
-export class ImplPermissionsRepository implements PermissionsRepository {
+export class ImplPermissionsRepository
+  implements PermissionsRepository, PermissionsReadRepository
+{
   private permissions: Permissions[] = [];
   constructor(
     private readonly prisma: PrismaService,

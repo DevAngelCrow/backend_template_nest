@@ -12,9 +12,10 @@ import { mnt_role } from 'generated/prisma/browser';
 import { RolId } from '../../domain/value-objects/rol-value-object/rol-id';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Injectable } from '@nestjs/common';
+import { RolReadRepository } from '../../application/repositories/rol-read.repository';
 
 @Injectable()
-export class ImplRolRepository implements RolRepository {
+export class ImplRolRepository implements RolRepository, RolReadRepository {
   private role: Rol[] = [];
   constructor(
     private readonly prisma: PrismaService,

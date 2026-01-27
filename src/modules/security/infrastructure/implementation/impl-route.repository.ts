@@ -12,9 +12,12 @@ import { EntityList } from '@/shared/domain/value-object/entity-list';
 import { TotalItems } from '@/shared/domain/value-object/total-items';
 import { TotalPages } from '@/shared/domain/value-object/total-page';
 import { Injectable } from '@nestjs/common';
+import { RouteReadRepository } from '../../application/repositories/route-read.repository';
 
 @Injectable()
-export class ImplRouteRepository implements RouteRepository {
+export class ImplRouteRepository
+  implements RouteRepository, RouteReadRepository
+{
   private routes: Route[] = [];
   constructor(
     private readonly prisma: PrismaService,
