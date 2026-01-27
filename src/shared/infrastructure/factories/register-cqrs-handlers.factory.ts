@@ -1,6 +1,6 @@
 import { Abstract, Type } from '@nestjs/common';
 
-export function registerCommandHandler<T>(
+export function registerCqrsHandler<T>(
   commandHandlerClass: Type<T>,
   dependencies: Array<Type<unknown> | Abstract<unknown>>,
 ) {

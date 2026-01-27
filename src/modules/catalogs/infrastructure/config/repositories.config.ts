@@ -1,3 +1,4 @@
+import { CountryQueriesRepository } from '../../application/repositories/country-read.repository';
 import { CountryRepository } from '../../domain/repositories/country-repository';
 import { DepartmentRepository } from '../../domain/repositories/department-repository';
 import { DistrictRepository } from '../../domain/repositories/district-repository';
@@ -18,4 +19,5 @@ export const repositories = [
   { provide: MunicipalityRespository, useClass: ImplMunicipalityRepository },
   { provide: GlobalStatsusRepository, useClass: ImplGlobalStatusRepository },
   { provide: MaritalStatusRepository, useClass: ImplMaritalStatusRepository },
+  { provide: CountryQueriesRepository, useClass: ImplCountryRepository },
 ];

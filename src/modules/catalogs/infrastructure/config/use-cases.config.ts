@@ -1,9 +1,9 @@
 import { registerUseCase } from '@/shared/infrastructure/factories/register-use-case.factory';
-import { CountryCreate } from '../../application/use-cases/country/country-create';
-import { CountryDelete } from '../../application/use-cases/country/country-delete';
-import { CountryGetAll } from '../../application/use-cases/country/country-get-all';
-import { CountryGetOneById } from '../../application/use-cases/country/country-get-one-by-id';
-import { CountryUpdate } from '../../application/use-cases/country/country-update';
+// import { CountryCreate } from '../../application/use-cases/country/country-create';
+// import { CountryDelete } from '../../application/use-cases/country/country-delete';
+// import { CountryGetAll } from '../../application/use-cases/country/country-get-all';
+// import { CountryGetOneById } from '../../application/use-cases/country/country-get-one-by-id';
+// import { CountryUpdate } from '../../application/use-cases/country/country-update';
 import { DepartmentCreate } from '../../application/use-cases/department/department-create';
 import { DepartmentDelete } from '../../application/use-cases/department/department-delete';
 import { DepartmentGetAll } from '../../application/use-cases/department/department-get-all';
@@ -29,7 +29,7 @@ import { MunicipalityDelete } from '../../application/use-cases/municipality/mun
 import { MunicipalityGetAll } from '../../application/use-cases/municipality/municipality-get-all';
 import { MunicipalityGetOneById } from '../../application/use-cases/municipality/municipality-get-one-by-id';
 import { MunicipalityUpdate } from '../../application/use-cases/municipality/municipality-update';
-import { CountryRepository } from '../../domain/repositories/country-repository';
+//import { CountryRepository } from '../../domain/repositories/country-repository';
 import { DepartmentRepository } from '../../domain/repositories/department-repository';
 import { DistrictRepository } from '../../domain/repositories/district-repository';
 import { GlobalStatsusRepository } from '../../domain/repositories/global-status-repository';
@@ -41,26 +41,26 @@ export const useCases: Array<{
   useCase: Type<unknown>;
   deps: Array<Type<unknown> | Abstract<unknown>>;
 }> = [
-  {
-    useCase: CountryCreate,
-    deps: [CountryRepository],
-  },
-  {
-    useCase: CountryUpdate,
-    deps: [CountryRepository],
-  },
-  {
-    useCase: CountryDelete,
-    deps: [CountryRepository],
-  },
-  {
-    useCase: CountryGetAll,
-    deps: [CountryRepository],
-  },
-  {
-    useCase: CountryGetOneById,
-    deps: [CountryRepository],
-  },
+  // {
+  //   useCase: CountryCreate,
+  //   deps: [CountryRepository],
+  // },
+  // {
+  //   useCase: CountryUpdate,
+  //   deps: [CountryRepository],
+  // },
+  // {
+  //   useCase: CountryDelete,
+  //   deps: [CountryRepository],
+  // },
+  // {
+  //   useCase: CountryGetAll,
+  //   deps: [CountryRepository],
+  // },
+  // {
+  //   useCase: CountryGetOneById,
+  //   deps: [CountryRepository],
+  // },
   {
     useCase: DepartmentCreate,
     deps: [DepartmentRepository],

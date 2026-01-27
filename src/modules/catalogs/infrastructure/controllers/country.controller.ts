@@ -11,25 +11,29 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CountryCreate } from '../../application/use-cases/country/country-create';
+// import { CountryCreate } from '../../application/use-cases/country/country-create';
 import { CreateCountryDto } from '../dtos/validators/country/create-country.dto';
 import { SuccessResponseDto } from '../../../../shared/infrastructure/http/dtos/http-success-response.dto';
-import { CountryUpdate } from '../../application/use-cases/country/country-update';
+//import { CountryUpdate } from '../../application/use-cases/country/country-update';
 import { UpdateCountryDto } from '../dtos/validators/country/update-country.dto';
 import { HttpPaginatedResponseDto } from '../../../../shared/infrastructure/http/dtos/http-paginated-response.dto';
 
-import { CountryGetAll } from '../../application/use-cases/country/country-get-all';
-import { CountryGetOneById } from '../../application/use-cases/country/country-get-one-by-id';
-import { CountryDelete } from '../../application/use-cases/country/country-delete';
+//import { CountryGetAll } from '../../application/use-cases/country/country-get-all';
+//import { CountryGetOneById } from '../../application/use-cases/country/country-get-one-by-id';
+//import { CountryDelete } from '../../application/use-cases/country/country-delete';
 import { CountryHttpDto } from '../dtos/http/country-http-dto/country-http.dto';
 import { NotFoundException } from '@/shared/domain/exceptions/not-found.exception';
 import { Pagination } from '@/shared/domain/value-object/pagination';
 import { PaginationParamsDto } from '@/shared/application/dtos/pagination.dto';
 import { Country } from '../../domain/entities/country';
-import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CreateCountryCommand } from '../../application/country/commands/create-country/create-country.command';
-import { CreateCountryHandler } from '../../application/country/commands/create-country/create-country.handler';
-import { CommandBus } from '@nestjs/cqrs';
+//import { CreateCountryHandler } from '../../application/country/commands/create-country/create-country.handler';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { UpdateCountryCommand } from '../../application/country/commands/update-country/update-country.command';
+import { GetCountriesQuery } from '../../application/country/queries/get-countries/get-countries.query';
+import { GetCountryQuery } from '../../application/country/queries/get-country/get-country.query';
+import { DeleteCountryCommand } from '../../application/country/commands/delete-country/delete-country.command';
 
 type CountryGetAllResponse =
   | HttpPaginatedResponseDto<CountryHttpDto>
@@ -40,10 +44,11 @@ type CountryGetAllResponse =
 export class CountryController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly countryUpdate: CountryUpdate,
-    private readonly countryGetAll: CountryGetAll,
-    private readonly countryGetOneById: CountryGetOneById,
-    private readonly countryDelete: CountryDelete,
+    private readonly queryBus: QueryBus,
+    // private readonly countryUpdate: CountryUpdate,
+    // private readonly countryGetAll: CountryGetAll,
+    // private readonly countryGetOneById: CountryGetOneById,
+    // private readonly countryDelete: CountryDelete,
   ) {}
   @Post()
   @HttpCode(201)
@@ -71,7 +76,8 @@ export class CountryController {
     @Param('id', ParseIntPipe) id: number,
     @Body() countryUpdateRequest: UpdateCountryDto,
   ): Promise<SuccessResponseDto<null>> {
-    await this.countryUpdate.run({ ...countryUpdateRequest, id });
+    const command = new UpdateCountryCommand(countryUpdateRequest);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
@@ -90,10 +96,10 @@ export class CountryController {
   ): Promise<SuccessResponseDto<CountryGetAllResponse>> {
     if (page && per_page) {
       const paginationParams = new PaginationParamsDto(page, per_page);
-      const countriesPagination = await this.countryGetAll.run(
-        paginationParams,
-        filter,
-      );
+      const query = new GetCountriesQuery(paginationParams, filter);
+
+      const countriesPagination = await this.queryBus.execute(query);
+
       if (countriesPagination instanceof Pagination) {
         const countriesHttpDto = countriesPagination
           .getEntityList()
@@ -113,8 +119,8 @@ export class CountryController {
         );
       }
     }
-
-    const countries = await this.countryGetAll.run(undefined, filter);
+    const query = new GetCountriesQuery();
+    const countries = await this.queryBus.execute(query);
 
     const countriesHttpDto = Array.isArray(countries)
       ? countries.map((country) => CountryHttpDto.fromEntity(country))
@@ -127,11 +133,12 @@ export class CountryController {
   }
   @Get(':id')
   @HttpCode(200)
-  @ApiQuery({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'id', required: true, type: Number })
   async getOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<CountryHttpDto>> {
-    const country = await this.countryGetOneById.run(id);
+    const query = new GetCountryQuery(id);
+    const country = await this.queryBus.execute(query);
     if (!country) {
       throw new NotFoundException('Country', id.toString());
     }
@@ -148,7 +155,8 @@ export class CountryController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SuccessResponseDto<null>> {
-    await this.countryDelete.run(id);
+    const command = new DeleteCountryCommand(id);
+    await this.commandBus.execute(command);
     return new SuccessResponseDto<null>(
       null,
       HttpStatus.OK,
