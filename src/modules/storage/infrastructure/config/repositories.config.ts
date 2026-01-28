@@ -4,11 +4,17 @@ import { StorageFilesRepository } from '../../domain/repositories/storage-files.
 import { ImplProviderStorageRepository } from '../implementation/impl-provider-storage.repository';
 import { ImplStorageFilesRepository } from '../implementation/impl-storage-files.repository';
 import { JwtPassportAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-passport-auth.guard';
+import { ProviderStorageQueriesRepository } from '../../application/repositories/provider-storage-read.repository';
+import { ImplProviderStorageQueriesRepository } from '../implementation/impl-provider-storage-queries.repository';
 
 export const repositories = [
   {
     provide: ProviderStorageRepository,
     useClass: ImplProviderStorageRepository,
+  },
+  {
+    provide: ProviderStorageQueriesRepository,
+    useClass: ImplProviderStorageQueriesRepository,
   },
   {
     provide: StorageFilesRepository,

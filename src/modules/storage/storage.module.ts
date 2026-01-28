@@ -7,13 +7,36 @@ import { StorageFilesController } from './infrastructure/controllers/storage-fil
 import { useCaseProviders } from './infrastructure/config/use-cases.config';
 import { repositories } from './infrastructure/config/repositories.config';
 import { serviceProviders } from './infrastructure/config/services.config';
+import { CqrsModule } from '@nestjs/cqrs';
+import {
+  commandAdapters,
+  commandHandlerProviders,
+} from './infrastructure/config/commands-handlers.config';
+import {
+  queryAdapters,
+  queryHandlerProviders,
+} from './infrastructure/config/queries-handlers.config';
 
 @Module({
   imports: [
     RouterModule.register([{ path: 'storage', module: StorageModule }]),
+    CqrsModule,
   ],
   controllers: [ProviderStorageController, StorageFilesController],
-  providers: [...useCaseProviders, ...repositories, ...serviceProviders],
-  exports: [...serviceProviders, ...useCaseProviders],
+  providers: [
+    ...useCaseProviders,
+    ...repositories,
+    ...serviceProviders,
+    ...commandHandlerProviders,
+    ...commandAdapters,
+    ...queryHandlerProviders,
+    ...queryAdapters,
+  ],
+  exports: [
+    ...serviceProviders,
+    ...useCaseProviders,
+    ...commandHandlerProviders,
+    ...queryHandlerProviders,
+  ],
 })
 export class StorageModule {}
