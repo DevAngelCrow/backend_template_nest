@@ -16,5 +16,5 @@ export abstract class PersonRepository {
   ): Promise<Pagination<Person> | Person[]>;
   abstract getOneById(id: PersonId): Promise<Person | null>;
   abstract getOneByEmail(email: PersonEmail): Promise<Person | null>;
-  //abstract delete(id: PersonId): Promise<void>;
+  abstract delete(id: PersonId): Promise<void>;
 }

@@ -24,7 +24,6 @@ export class ImplPersonRepository
     private readonly prisma: PrismaService,
     private readonly transactionContext: TransactionContextService,
   ) {}
-
   private getPrismaClient() {
     return this.transactionContext.getTransaction() ?? this.prisma;
   }
@@ -222,9 +221,9 @@ export class ImplPersonRepository
       );
     }
   }
-  // delete(id: PersonId): Promise<void> {
-  //   throw new Error('Method not implemented.');
-  // }
+  delete(id: PersonId): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   private mapToDomain(prismaPerson: mnt_people): Person {
     return Person.create({
       first_name: prismaPerson.first_name,

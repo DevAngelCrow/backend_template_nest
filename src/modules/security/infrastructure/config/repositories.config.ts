@@ -12,6 +12,10 @@ import { ImplRolRepository } from '../implementation/impl-rol.repository';
 import { ImplRouteRepository } from '../implementation/impl-route.repository';
 import { ImplUserRoleRepository } from '../implementation/impl-user-role.repository';
 import { ImplDecodeTokenPort } from '@/modules/auth/infrastructure/implementation/auth-port-implementation/impl-decode-token.port';
+import { RouteReadRepository } from '../../application/repositories/route-read.repository';
+import { CategoryPermissionsReadRepository } from '../../application/repositories/category-permissions-read.repository';
+import { PermissionsReadRepository } from '../../application/repositories/permissions-read.repository';
+import { RolReadRepository } from '../../application/repositories/rol-read.repository';
 
 export const repositories = [
   { provide: RouteRepository, useClass: ImplRouteRepository },
@@ -30,4 +34,11 @@ export const repositories = [
     provide: DecodeTokenPort,
     useClass: ImplDecodeTokenPort,
   },
+  { provide: RouteReadRepository, useClass: ImplRouteRepository },
+  {
+    provide: CategoryPermissionsReadRepository,
+    useClass: ImplCategoryPermissionsRepository,
+  },
+  { provide: PermissionsReadRepository, useClass: ImplPermissionsRepository },
+  { provide: RolReadRepository, useClass: ImplRolRepository },
 ];

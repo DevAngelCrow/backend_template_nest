@@ -8,6 +8,10 @@ import { ImplDocumentTypeRepository } from '../implementation/impl-document-type
 import { ImplDocumentRepository } from '../implementation/impl-document.repository';
 import { ImplPersonRepository } from '../implementation/impl-person.repository';
 import { JwtPassportAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-passport-auth.guard';
+import { PersonReadRepository } from '../../application/repositories/person-read.repository';
+import { DocumentTypeReadRepository } from '../../application/repositories/document-type-read.repository';
+import { DocumentReadRepository } from '../../application/repositories/document-read.repository';
+import { AddressReadRepository } from '../../application/repositories/address-read.repository';
 
 export const repositories = [
   { provide: PersonRepository, useClass: ImplPersonRepository },
@@ -15,4 +19,8 @@ export const repositories = [
   { provide: DocumentRepository, useClass: ImplDocumentRepository },
   { provide: AddressRepository, useClass: ImplAddressRepository },
   { provide: APP_GUARD, useClass: JwtPassportAuthGuard },
+  { provide: PersonReadRepository, useClass: ImplPersonRepository },
+  { provide: DocumentTypeReadRepository, useClass: ImplDocumentTypeRepository },
+  { provide: DocumentReadRepository, useClass: ImplDocumentRepository },
+  { provide: AddressReadRepository, useClass: ImplAddressRepository },
 ];
