@@ -8,12 +8,14 @@ import { TransactionInterceptor } from './shared/infrastructure/interceptors/tra
 import { SecurityModule } from './modules/security/security.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { IdentityAccessManagementModule } from './modules/identity-access-management/identity-access-management.module';
+import { validate } from './shared/infrastructure/config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      validate: validate,
     }),
     PrismaModule,
     CatalogsModule,

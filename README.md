@@ -119,6 +119,8 @@ sonar-scanner.bat
 │ 	│ 		│ 	 └── 📁 aggregates
 │ 	│ 		├── 📁 application
 │ 	│ 		│ 	 ├── 📁 dtos
+|	|		|	 ├── 📁 commands
+|	|		|	 ├── 📁 queries
 | 	| 		| 	 ├── 📁 queries-repositories
 | 	| 		| 	 ├── 📁 use-cases
 | 	| 		| 	 └── 📁 services
