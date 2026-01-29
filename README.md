@@ -20,7 +20,9 @@ Esta plantilla cuenta con las tecnologias descritas para poder iniciar con un de
 
 #### Arquitectura hexagonal
 
-#### Drive Domain Desing
+#### Drive Domain Design
+
+#### CQRS
 
 ## Configuración del inicial de la plantilla backend
 
