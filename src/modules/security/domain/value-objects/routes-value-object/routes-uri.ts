@@ -11,7 +11,7 @@ export class RoutesUri {
     this._value = Validator.of(value, createException)
       .required('Routes uri is required')
       .string('Routes uri must be a string')
-      .minLength(2, 'Routes uri must be at least 2 characters long')
+      .minLength(1, 'Routes uri must be at least 2 characters long')
       .maxLength(255, 'Routes uri must be at most 255 characters long')
       .getValue();
   }

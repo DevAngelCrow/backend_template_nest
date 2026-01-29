@@ -159,14 +159,9 @@ export class ImplRouteRepository
       );
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(
-          `Error updating category permissions: ${error.message}`,
-        );
+        throw new Error(`Error getAll: ${error.message}`);
       }
-      throw new DatabaseException(
-        'Error updating category permissions',
-        'getAll',
-      );
+      throw new DatabaseException('Error getAll routes', 'getAll');
     }
   }
   async getOneById(id: RoutesId): Promise<Route | null> {
