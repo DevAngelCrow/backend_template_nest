@@ -1,23 +1,27 @@
 import { DomainException } from '../exceptions/domain.exception';
 
-export class Validator<T> {
-  private value: T;
-  private exceptionClass: new (message: string) => DomainException;
+type DomainExceptionConstructor = new (message: string) => DomainException;
+type DomainExceptionFactory = (message: string) => DomainException;
 
-  constructor(
+export class Validator<T> {
+  private constructor(
+    private readonly value: T,
+    private readonly exceptionFactory: DomainExceptionFactory,
+  ) {}
+
+  static of<T>(
     value: T,
-    exceptionClass: new (message: string) => DomainException,
-  ) {
-    this.value = value;
-    const instance = new exceptionClass('test');
-    if (!(instance instanceof DomainException)) {
-      throw new DomainException(
-        'Invalid exception type validator',
-        'INVALID_VALIDATOR',
-      );
-    }
-    this.exceptionClass = exceptionClass;
+    exceptionFactory: DomainExceptionConstructor | DomainExceptionFactory,
+  ): Validator<T> {
+    const factory =
+      typeof exceptionFactory === 'function' && exceptionFactory.prototype
+        ? (msg: string) =>
+            new (exceptionFactory as DomainExceptionConstructor)(msg)
+        : (exceptionFactory as DomainExceptionFactory);
+
+    return new Validator(value, factory);
   }
+
   required(message: string = 'Field is required'): this {
     if (
       this.value === null ||
@@ -25,7 +29,7 @@ export class Validator<T> {
       this.value === '' ||
       (Array.isArray(this.value) && this.value.length === 0)
     ) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
@@ -34,35 +38,35 @@ export class Validator<T> {
   email(message: string = 'Invalid email format'): this {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(String(this.value))) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
   number(message: string = 'Invalid number format'): this {
-    if (typeof this.value !== 'number' || isNaN(this.value)) {
-      throw new this.exceptionClass(message);
+    if (typeof this.value !== 'number' || Number.isNaN(this.value)) {
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
-  positiveInteger(message: string = 'Invalid positive integer format'): this {
+  positiveInteger(message: string = 'Must be a positive integer'): this {
     if (
       typeof this.value !== 'number' ||
       !Number.isInteger(this.value) ||
       this.value <= 0
     ) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
-  string(message: string = 'Invalid string format'): this {
+  string(message: string = 'Must be a string'): this {
     if (typeof this.value !== 'string') {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
@@ -73,54 +77,71 @@ export class Validator<T> {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
     if (!uuidRegex.test(String(this.value))) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
   ip(message: string = 'Invalid IP address format'): this {
-    const ipv4Regex =
-      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+    const ipv4Regex = /^(?:\d{1,3}\.){3}\d{1,3}$/;
+    const ipv6Regex = /^(?:[\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$/;
 
     const strValue = String(this.value);
     if (!ipv4Regex.test(strValue) && !ipv6Regex.test(strValue)) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
-  minLength(length: number, message: string = 'Invalid string length'): this {
+  minLength(length: number, message?: string): this {
     const strValue = String(this.value);
     if (strValue.length < length) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(
+        message || `Minimum length is ${length} characters`,
+      );
     }
 
     return this;
   }
 
-  maxLength(length: number, message: string = 'Invalid string length'): this {
+  maxLength(length: number, message?: string): this {
     const strValue = String(this.value);
     if (strValue.length > length) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(
+        message || `Maximum length is ${length} characters`,
+      );
     }
 
     return this;
   }
 
-  min(min: number, message: string = 'Value is below minimum'): this {
+  min(min: number, message?: string): this {
     if (typeof this.value !== 'number' || this.value < min) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message || `Value must be at least ${min}`);
     }
 
     return this;
   }
 
-  max(max: number, message: string = 'Value exceeds maximum'): this {
+  max(max: number, message?: string): this {
     if (typeof this.value !== 'number' || this.value > max) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message || `Value must not exceed ${max}`);
+    }
+
+    return this;
+  }
+
+  range(min: number, max: number, message?: string): this {
+    if (
+      typeof this.value !== 'number' ||
+      this.value < min ||
+      this.value > max
+    ) {
+      throw this.exceptionFactory(
+        message || `Value must be between ${min} and ${max}`,
+      );
     }
 
     return this;
@@ -128,23 +149,23 @@ export class Validator<T> {
 
   pattern(regex: RegExp, message: string = 'Invalid format'): this {
     if (!regex.test(String(this.value))) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
-  boolean(message: string = 'Invalid boolean format'): this {
+  boolean(message: string = 'Must be a boolean'): this {
     if (typeof this.value !== 'boolean') {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
   }
 
-  array(message: string = 'Invalid array format'): this {
+  array(message: string = 'Must be an array'): this {
     if (!Array.isArray(this.value)) {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
@@ -152,8 +173,8 @@ export class Validator<T> {
 
   date(message: string = 'Invalid date format'): this {
     const date = new Date(this.value as unknown as string | number | Date);
-    if (isNaN(date.getTime())) {
-      throw new this.exceptionClass(message);
+    if (Number.isNaN(date.getTime())) {
+      throw this.exceptionFactory(message);
     }
 
     return this;
@@ -163,9 +184,24 @@ export class Validator<T> {
     try {
       new URL(String(this.value));
     } catch {
-      throw new this.exceptionClass(message);
+      throw this.exceptionFactory(message);
     }
 
     return this;
+  }
+
+  custom(
+    predicate: (value: T) => boolean,
+    message: string = 'Validation failed',
+  ): this {
+    if (!predicate(this.value)) {
+      throw this.exceptionFactory(message);
+    }
+
+    return this;
+  }
+
+  getValue(): T {
+    return this.value;
   }
 }

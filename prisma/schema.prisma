@@ -1,0 +1,330 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ctl_category_permissions {
+  id              BigInt            @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  description     String            @db.VarChar(255)
+  created_at      DateTime?         @db.Timestamp(0)
+  updated_at      DateTime?         @db.Timestamp(0)
+  deleted_at      DateTime?         @db.Timestamp(0)
+  active          Boolean           @default(true)
+  ctl_permissions ctl_permissions[]
+}
+
+model ctl_country {
+  id             BigInt           @id @default(autoincrement())
+  name           String           @db.VarChar(150)
+  abbreviation   String           @db.VarChar(150)
+  code           String           @db.VarChar(150)
+  active         Boolean          @default(true)
+  created_at     DateTime?        @db.Timestamp(0)
+  updated_at     DateTime?        @db.Timestamp(0)
+  deleted_at     DateTime?        @db.Timestamp(0)
+  ctl_department ctl_department[]
+  people_country people_country[]
+}
+
+model ctl_department {
+  id               BigInt             @id @default(autoincrement())
+  name             String             @db.VarChar(150)
+  description      String             @db.VarChar(150)
+  id_country       BigInt
+  active           Boolean            @default(true)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  deleted_at       DateTime?          @db.Timestamp(0)
+  ctl_country      ctl_country        @relation(fields: [id_country], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ctl_department_id_country_foreign")
+  ctl_municipality ctl_municipality[]
+}
+
+model ctl_district {
+  id               BigInt           @id @default(autoincrement())
+  id_municipality  BigInt
+  name             String           @db.VarChar(150)
+  description      String           @db.VarChar(150)
+  active           Boolean          @default(true)
+  created_at       DateTime?        @db.Timestamp(0)
+  updated_at       DateTime?        @db.Timestamp(0)
+  deleted_at       DateTime?        @db.Timestamp(0)
+  ctl_municipality ctl_municipality @relation(fields: [id_municipality], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ctl_district_id_municipality_foreign")
+  mnt_address      mnt_address[]
+}
+
+model ctl_document_type {
+  id           BigInt         @id @default(autoincrement())
+  name         String         @db.VarChar(150)
+  description  String         @db.VarChar(150)
+  mask         String         @db.VarChar(150)
+  active       Boolean        @default(true)
+  created_at   DateTime?      @db.Timestamp(0)
+  updated_at   DateTime?      @db.Timestamp(0)
+  deleted_at   DateTime?      @db.Timestamp(0)
+  mnt_document mnt_document[]
+}
+
+model ctl_gender {
+  id         BigInt       @id @default(autoincrement())
+  name       String       @db.VarChar(100)
+  created_at DateTime?    @db.Timestamp(0)
+  updated_at DateTime?    @db.Timestamp(0)
+  deleted_at DateTime?    @db.Timestamp(0)
+  mnt_people mnt_people[]
+}
+
+model ctl_marital_status {
+  id          BigInt       @id @default(autoincrement())
+  name        String       @db.VarChar(100)
+  description String       @db.VarChar(255)
+  created_at  DateTime?    @db.Timestamp(0)
+  updated_at  DateTime?    @db.Timestamp(0)
+  deleted_at  DateTime?    @db.Timestamp(0)
+  mnt_people  mnt_people[]
+}
+
+model ctl_municipality {
+  id             BigInt         @id @default(autoincrement())
+  id_department  BigInt
+  name           String         @db.VarChar(150)
+  description    String         @db.VarChar(150)
+  active         Boolean        @default(true)
+  created_at     DateTime?      @db.Timestamp(0)
+  updated_at     DateTime?      @db.Timestamp(0)
+  deleted_at     DateTime?      @db.Timestamp(0)
+  ctl_district   ctl_district[]
+  ctl_department ctl_department @relation(fields: [id_department], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ctl_municipality_id_department_foreign")
+}
+
+model ctl_permissions {
+  id                       BigInt                   @id @default(autoincrement())
+  name                     String                   @db.VarChar(150)
+  description              String                   @db.VarChar(150)
+  id_category_permissions  BigInt
+  created_at               DateTime?                @db.Timestamp(0)
+  updated_at               DateTime?                @db.Timestamp(0)
+  deleted_at               DateTime?                @db.Timestamp(0)
+  active                   Boolean                  @default(true)
+  ctl_category_permissions ctl_category_permissions @relation(fields: [id_category_permissions], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ctl_permissions_id_category_permissions_foreign")
+  mnt_route_permissions    mnt_route_permissions[]
+  rol_permissions          rol_permissions[]
+}
+
+model ctl_provider_storage {
+  id                BigInt              @id @default(autoincrement())
+  name              String              @db.VarChar(150)
+  code              String              @db.VarChar(6)
+  description       String              @db.VarChar(150)
+  active            Boolean             @default(true)
+  deleted_at        DateTime?           @db.Timestamp(0)
+  created_at        DateTime?           @db.Timestamp(0)
+  updated_at        DateTime?           @db.Timestamp(0)
+  mnt_storage_files mnt_storage_files[]
+}
+
+model ctl_status {
+  id           BigInt       @id @default(autoincrement())
+  table_header String       @db.VarChar(255)
+  name         String       @db.VarChar(255)
+  description  String       @db.VarChar(255)
+  state        Boolean      @default(true)
+  deleted_at   DateTime?    @db.Timestamp(0)
+  created_at   DateTime?    @db.Timestamp(0)
+  updated_at   DateTime?    @db.Timestamp(0)
+  mnt_people   mnt_people[]
+  mnt_role     mnt_role[]
+  mnt_user     mnt_user[]
+}
+
+model mnt_address {
+  id            BigInt       @id @default(autoincrement())
+  id_people     BigInt
+  street        String       @db.VarChar(150)
+  street_number String       @db.VarChar(150)
+  neighborhood  String       @db.VarChar(150)
+  id_district   BigInt
+  house_number  String       @db.VarChar(150)
+  block         String       @db.VarChar(150)
+  pathway       String       @db.VarChar(150)
+  current       Boolean
+  created_at    DateTime?    @db.Timestamp(0)
+  updated_at    DateTime?    @db.Timestamp(0)
+  deleted_at    DateTime?    @db.Timestamp(0)
+  active        Boolean      @default(true)
+  ctl_district  ctl_district @relation(fields: [id_district], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_address_id_district_foreign")
+  mnt_people    mnt_people   @relation(fields: [id_people], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_address_id_people_foreign")
+}
+
+model mnt_document {
+  id                BigInt            @id @default(autoincrement())
+  document_number   String            @db.VarChar(255)
+  id_document_type  BigInt
+  id_people         BigInt
+  description       String            @db.VarChar(150)
+  active            Boolean           @default(true)
+  created_at        DateTime?         @db.Timestamp(0)
+  updated_at        DateTime?         @db.Timestamp(0)
+  deleted_at        DateTime?         @db.Timestamp(0)
+  ctl_document_type ctl_document_type @relation(fields: [id_document_type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_document_id_document_type_foreign")
+  mnt_people        mnt_people        @relation(fields: [id_people], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_document_id_people_foreign")
+}
+
+model mnt_people {
+  id                 BigInt             @id @default(autoincrement())
+  first_name         String             @db.VarChar(150)
+  middle_name        String             @db.VarChar(150)
+  last_name          String             @db.VarChar(150)
+  birthdate          DateTime           @db.Date
+  id_gender          BigInt
+  email              String             @unique(map: "mnt_people_email_unique") @db.VarChar(150)
+  id_marital_status  BigInt
+  img_path           String             @db.VarChar(255)
+  phone              String             @db.VarChar(14)
+  id_status          BigInt
+  created_at         DateTime?          @db.Timestamp(0)
+  updated_at         DateTime?          @db.Timestamp(0)
+  deleted_at         DateTime?          @db.Timestamp(0)
+  mnt_address        mnt_address[]
+  mnt_document       mnt_document[]
+  ctl_gender         ctl_gender         @relation(fields: [id_gender], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_people_id_gender_foreign")
+  ctl_marital_status ctl_marital_status @relation(fields: [id_marital_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_people_id_marital_status_foreign")
+  ctl_status         ctl_status         @relation(fields: [id_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_people_id_status_foreign")
+  mnt_user           mnt_user?
+  people_country     people_country[]
+}
+
+model mnt_role {
+  id              BigInt            @id @default(autoincrement())
+  name            String            @db.VarChar(150)
+  description     String            @db.VarChar(150)
+  id_status       BigInt
+  created_at      DateTime?         @db.Timestamp(0)
+  updated_at      DateTime?         @db.Timestamp(0)
+  deleted_at      DateTime?         @db.Timestamp(0)
+  active          Boolean           @default(true)
+  ctl_status      ctl_status        @relation(fields: [id_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_role_id_status_foreign")
+  mnt_user_rol    mnt_user_rol[]
+  rol_permissions rol_permissions[]
+}
+
+model mnt_route {
+  id                    BigInt                  @id @default(autoincrement())
+  name                  String                  @db.VarChar(150)
+  description           String?                 @db.VarChar(255)
+  icon                  String                  @db.VarChar(150)
+  uri                   String                  @db.VarChar(150)
+  active                Boolean                 @default(true)
+  show                  Boolean                 @default(true)
+  order                 Int?
+  required_auth         Boolean                 @default(true)
+  title                 String                  @db.VarChar(150)
+  id_parent             BigInt?
+  created_at            DateTime?               @db.Timestamp(0)
+  updated_at            DateTime?               @db.Timestamp(0)
+  deleted_at            DateTime?               @db.Timestamp(0)
+  parent                mnt_route?              @relation("mnt_routeTomnt_route", fields: [id_parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_route_id_parent_foreign")
+  children              mnt_route[]             @relation("mnt_routeTomnt_route")
+  mnt_route_permissions mnt_route_permissions[]
+}
+
+model mnt_route_permissions {
+  id              BigInt          @id @default(autoincrement())
+  id_permission   BigInt
+  id_route        BigInt
+  created_at      DateTime?       @db.Timestamp(0)
+  updated_at      DateTime?       @db.Timestamp(0)
+  deleted_at      DateTime?       @db.Timestamp(0)
+  ctl_permissions ctl_permissions @relation(fields: [id_permission], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_route_permissions_id_permission_foreign")
+  mnt_route       mnt_route       @relation(fields: [id_route], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_route_permissions_id_route_foreign")
+}
+
+model mnt_storage_files {
+  id                   BigInt               @id @default(autoincrement())
+  filename             String               @db.VarChar(150)
+  path                 String               @db.VarChar(500)
+  id_provider          BigInt
+  size                 BigInt
+  mime_type            String               @db.VarChar(150)
+  id_user              BigInt?
+  active               Boolean              @default(true)
+  deleted_at           DateTime?            @db.Timestamp(0)
+  created_at           DateTime?            @db.Timestamp(0)
+  updated_at           DateTime?            @db.Timestamp(0)
+  ctl_provider_storage ctl_provider_storage @relation(fields: [id_provider], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_storage_files_id_provider_foreign")
+  mnt_user             mnt_user?            @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_storage_files_id_user_foreign")
+}
+
+model mnt_user {
+  id                BigInt              @id @default(autoincrement())
+  id_people         BigInt                 @unique(map: "mnt_user_id_people_unique")
+  user_name         String              @db.VarChar(150)
+  password          String              @db.VarChar(150)
+  id_status         BigInt
+  last_access       DateTime            @db.Date
+  is_validated      Boolean
+  email_verified_at DateTime?           @db.Timestamp(0)
+  created_at        DateTime?           @db.Timestamp(0)
+  updated_at        DateTime?           @db.Timestamp(0)
+  deleted_at        DateTime?           @db.Timestamp(0)
+  mnt_storage_files mnt_storage_files[]
+  mnt_people        mnt_people          @relation(fields: [id_people], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_id_people_foreign")
+  ctl_status        ctl_status          @relation(fields: [id_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_id_status_foreign")
+  mnt_user_rol      mnt_user_rol[]
+}
+
+model mnt_user_rol {
+  id         BigInt    @id @default(autoincrement())
+  id_role    BigInt
+  id_user    BigInt
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+  mnt_role   mnt_role  @relation(fields: [id_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_rol_id_role_foreign")
+  mnt_user   mnt_user  @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mnt_user_rol_id_user_foreign")
+}
+
+model people_country {
+  id          BigInt      @id @default(autoincrement())
+  id_people   BigInt
+  id_country  BigInt
+  created_at  DateTime?   @db.Timestamp(0)
+  updated_at  DateTime?   @db.Timestamp(0)
+  deleted_at  DateTime?   @db.Timestamp(0)
+  ctl_country ctl_country @relation(fields: [id_country], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "people_country_id_country_foreign")
+  mnt_people  mnt_people  @relation(fields: [id_people], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "people_country_id_people_foreign")
+}
+
+model rol_permissions {
+  id              BigInt          @id @default(autoincrement())
+  id_role         BigInt
+  id_permission   BigInt
+  created_at      DateTime?       @db.Timestamp(0)
+  updated_at      DateTime?       @db.Timestamp(0)
+  deleted_at      DateTime?       @db.Timestamp(0)
+  ctl_permissions ctl_permissions @relation(fields: [id_permission], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rol_permissions_id_permission_foreign")
+  mnt_role        mnt_role        @relation(fields: [id_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rol_permissions_id_role_foreign")
+}
+
+model mnt_email_verification_tokens {
+  id         BigInt    @id @default(autoincrement())
+  id_user    BigInt
+  token      String    @unique @db.VarChar(255)
+  expires_at DateTime  @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  
+  @@index([id_user])
+  @@index([token])
+}
+
